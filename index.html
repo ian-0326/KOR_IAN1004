@@ -11,12 +11,12 @@
     
     <style>
         :root {
-            --primary: #f7b500;      /* 你的主色調 */
-            --bg: #f2f4f6;           /* Toss 風格背景灰 */
+            --primary: #f7b500;
+            --bg: #f2f4f6;
             --white: #ffffff;
-            --text-main: #191f28;    /* 深灰色標題 */
-            --text-sub: #4e5968;     /* 中灰色內文 */
-            --radius-lg: 24px;       /* 極致圓角 */
+            --text-main: #191f28;
+            --text-sub: #4e5968;
+            --radius-lg: 24px;
             --radius-md: 16px;
         }
 
@@ -28,7 +28,6 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* Toss 風格卡片 */
         .toss-card {
             background: var(--white);
             border-radius: var(--radius-lg);
@@ -37,90 +36,38 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
 
-        /* 標題區域 */
-        header {
-            padding: 32px 24px 8px 24px;
-        }
-        .brand-tag {
-            color: var(--primary);
-            font-weight: 900;
-            font-size: 12px;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-        }
-        h1 {
-            margin: 8px 0;
-            font-size: 28px;
-            font-weight: 900;
-            letter-spacing: -0.5px;
-        }
+        header { padding: 32px 24px 8px 24px; }
+        .brand-tag { color: var(--primary); font-weight: 900; font-size: 12px; letter-spacing: 1.5px; }
+        h1 { margin: 8px 0; font-size: 28px; font-weight: 900; }
 
-        /* 按鈕樣式 */
         .btn-primary {
             background-color: var(--primary);
-            color: white;
-            border: none;
-            border-radius: var(--radius-md);
-            padding: 16px;
-            width: 100%;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s ease;
+            color: white; border: none; border-radius: var(--radius-md);
+            padding: 16px; width: 100%; font-size: 16px; font-weight: 700;
+            cursor: pointer; transition: all 0.2s ease;
         }
-        .btn-primary:active {
-            transform: scale(0.97);
-            filter: brightness(0.95);
-        }
+        .btn-primary:active { transform: scale(0.97); filter: brightness(0.95); }
 
-        /* 輸入框樣式 */
-        label {
-            display: block;
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--text-sub);
-            margin-bottom: 8px;
-            padding-left: 4px;
+        label { display: block; font-size: 12px; font-weight: 700; color: var(--text-sub); margin-bottom: 8px; padding-left: 4px; }
+        input {
+            width: 100%; padding: 16px; margin-bottom: 20px;
+            border: 1px solid #e5e8eb; border-radius: var(--radius-md);
+            background: #f9fafb; font-size: 16px; box-sizing: border-box; outline: none;
         }
-        input, select {
-            width: 100%;
-            padding: 16px;
-            margin-bottom: 20px;
-            border: 1px solid #e5e8eb;
-            border-radius: var(--radius-md);
-            background: #f9fafb;
-            font-size: 16px;
-            box-sizing: border-box;
-            outline: none;
-        }
-        input:focus {
-            border-color: var(--primary);
-            background: var(--white);
-        }
+        input:focus { border-color: var(--primary); background: var(--white); }
 
-        /* 全螢幕 Loading 與 彈窗 */
         #loading-screen {
-            position: fixed; inset: 0;
-            background: var(--white);
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            z-index: 1000;
+            position: fixed; inset: 0; background: var(--white);
+            display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1000;
         }
         .modal-overlay {
-            display: none;
-            position: fixed; inset: 0;
-            background: rgba(0,0,0,0.4);
-            backdrop-filter: blur(8px);
-            z-index: 500;
-            align-items: center; justify-content: center;
-            padding: 20px;
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(8px); z-index: 500; align-items: center; justify-content: center; padding: 20px;
         }
 
         .spinner {
-            width: 40px; height: 40px;
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid var(--primary);
-            border-radius: 50%;
+            width: 40px; height: 40px; border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary); border-radius: 50%;
             animation: spin 1s linear infinite;
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -136,20 +83,14 @@
     <div id="onboarding-modal" class="modal-overlay">
         <div class="toss-card" style="width: 100%; max-width: 340px; margin: 0;">
             <h2 style="margin-top:0; font-size: 24px;">👋 歡迎加入！</h2>
-            <p style="color: var(--text-sub); font-size: 14px; margin-bottom: 24px;">
-                為了確保韓國代購包裹準確送達，請先完善您的收件資料。
-            </p>
-            
+            <p style="color: var(--text-sub); font-size: 14px; margin-bottom: 24px;">請先完善您的收件資料，開始韓國連線購物。</p>
             <label>真實姓名</label>
             <input type="text" id="reg-name" placeholder="請填寫中文全名">
-            
             <label>聯絡電話</label>
             <input type="tel" id="reg-phone" placeholder="09xx-xxx-xxx">
-            
             <label>電子信箱</label>
             <input type="email" id="reg-email" placeholder="example@mail.com">
-
-            <button class="btn-primary" onclick="saveProfile()">開始購物 ➔</button>
+            <button class="btn-primary" onclick="saveProfile()">完成註冊並購物 ➔</button>
         </div>
     </div>
 
@@ -158,45 +99,38 @@
             <span class="brand-tag">KOR.IAN SELECT</span>
             <h1>韓國連線賣場</h1>
         </header>
-
         <div id="product-container">
             <div class="toss-card" style="text-align: center; padding: 60px 20px;">
                 <div style="font-size: 40px; margin-bottom: 16px;">📦</div>
-                <p style="color: var(--text-sub); font-weight: 500;">目前還沒有連線商品上架喔<br>敬請期待歐膩的最新挑選！</p>
+                <p style="color: var(--text-sub); font-weight: 500;">目前還沒有連線商品上架喔<br>敬請期待最新挑選！</p>
             </div>
         </div>
     </div>
 
     <script>
-        // --- 核心設定區 ---
-        const LIFF_ID = '你的_LIFF_ID'; // 請填入你從 LINE Developers 拿到的 LIFF ID
+        // --- 已自動嵌入設定 ---
+        const LIFF_ID = '2009405888-D5absVA3'; 
         const SUPABASE_URL = 'https://ivpctyqlrkjstfsoweeh.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml2cGN0eXFscmtqc3Rmc293ZWVoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTk1MTksImV4cCI6MjA4ODc3NTUxOX0.DYgzhaTH3_5NFwv009ZfZAshfUnCW2PeTuNcJ9feyMU';
 
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         let userLineId = null;
 
-        // 初始化入口
         async function initApp() {
             try {
-                // 1. 初始化 LIFF
                 await liff.init({ liffId: LIFF_ID });
-                
                 if (!liff.isLoggedIn()) {
                     liff.login();
                 } else {
                     const profile = await liff.getProfile();
                     userLineId = profile.userId;
-                    // 2. 檢查 Supabase 會員狀態
                     checkMemberStatus(profile.displayName);
                 }
             } catch (err) {
                 console.error('LIFF 初始化失敗', err);
-                alert('系統載入失敗，請從 LINE 重新開啟');
             }
         }
 
-        // 檢查會員資料是否已完善
         async function checkMemberStatus(lineDisplayName) {
             const { data, error } = await _supabase
                 .from('profiles')
@@ -207,17 +141,13 @@
             document.getElementById('loading-screen').style.display = 'none';
 
             if (!data || !data.is_onboarded) {
-                // 顯示完善資料彈窗
                 document.getElementById('onboarding-modal').style.display = 'flex';
                 document.getElementById('reg-name').value = lineDisplayName;
             } else {
-                // 進入賣場主頁
                 document.getElementById('main-app').style.display = 'block';
-                console.log('會員已登入:', data.full_name);
             }
         }
 
-        // 儲存會員資料
         async function saveProfile() {
             const name = document.getElementById('reg-name').value;
             const phone = document.getElementById('reg-phone').value;
@@ -237,10 +167,8 @@
             }, { onConflict: 'line_id' });
 
             if (error) {
-                console.error(error);
                 alert('儲存失敗，請再試一次');
             } else {
-                // 成功後重新整理
                 location.reload();
             }
         }
