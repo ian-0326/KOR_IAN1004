@@ -19,7 +19,7 @@
             --error: #f44336;
             --radius-lg: 24px;
             --radius-md: 16px;
-            --radius-pill: 50px; /* 為了實現圖片中的橢圓感 */
+            --radius-pill: 50px;
         }
 
         body {
@@ -34,9 +34,13 @@
             background: var(--white);
             border-radius: var(--radius-lg);
             margin: 16px;
-            padding: 32px 24px;
+            padding: 24px 20px; /* 縮小內距 */
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
+
+        /* 標題與副標間距縮小 */
+        h2 { margin: 0 0 4px 0; font-size: 24px; font-weight: 900; }
+        .sub-title { color: var(--text-sub); font-size: 13px; margin-bottom: 20px; line-height: 1.5; font-weight: 500; }
 
         header { padding: 32px 24px 8px 24px; }
         .brand-tag { color: var(--primary); font-weight: 900; font-size: 12px; letter-spacing: 1.5px; }
@@ -47,43 +51,39 @@
             color: white; border: none; border-radius: var(--radius-md);
             padding: 16px; width: 100%; font-size: 16px; font-weight: 700;
             cursor: pointer; transition: all 0.2s ease;
-            margin-top: 10px;
+            margin-top: 8px;
         }
         .btn-primary:active { transform: scale(0.97); }
 
-        /* 欄位佈局 */
-        .field-group { margin-bottom: 24px; width: 100%; }
-        .label-row { margin-bottom: 10px; padding-left: 4px; }
-        .required-star { color: var(--error); margin-right: 4px; }
-        label { font-size: 13px; font-weight: 700; color: var(--text-sub); }
+        /* 欄位間隔縮小 */
+        .field-group { margin-bottom: 12px; width: 100%; }
+        .label-row { margin-bottom: 6px; padding-left: 4px; }
+        .required-star { color: var(--error); margin-right: 2px; }
+        label { font-size: 12px; font-weight: 700; color: var(--text-sub); }
         
-        /* 統一長度與樣式 */
         input, .select-group select {
-            width: 100%; padding: 14px 16px;
+            width: 100%; padding: 12px 16px;
             border: 1.5px solid #e5e8eb; border-radius: var(--radius-md);
             background: #f9fafb; font-size: 16px; box-sizing: border-box; outline: none;
-            height: 52px;
-            transition: border-color 0.2s;
+            height: 48px;
         }
         input:focus, .select-group select:focus { border-color: var(--primary); background: #fff; }
         input.invalid, .select-group select.invalid { border-color: var(--error); background: #fff8f8; }
 
-        /* 生日欄位專用樣式 (參考附件圖片) */
-        .select-group { display: flex; gap: 8px; width: 100%; }
+        .select-group { display: flex; gap: 6px; width: 100%; }
         .select-item { flex: 1; position: relative; }
         .select-item select {
-            border-radius: var(--radius-pill); /* 橢圓形 */
-            padding-right: 30px;
+            border-radius: var(--radius-pill);
+            padding-right: 24px;
             text-align: center;
             appearance: none;
-            -webkit-appearance: none;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23adb5bd'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
             background-repeat: no-repeat;
-            background-position: right 12px center;
-            background-size: 16px;
+            background-position: right 8px center;
+            background-size: 14px;
         }
 
-        .error-msg { color: var(--error); font-size: 11px; margin-top: 6px; padding-left: 4px; display: none; font-weight: 500; }
+        .error-msg { color: var(--error); font-size: 10px; margin-top: 4px; padding-left: 4px; display: none; font-weight: 500; }
 
         #loading-screen {
             position: fixed; inset: 0; background: var(--white);
@@ -111,49 +111,33 @@
 
     <div id="onboarding-modal" class="modal-overlay">
         <div class="toss-card" style="width: 100%; max-width: 340px; margin: 0; box-sizing: border-box;">
-            <h2 style="margin-top:0; font-size: 26px; font-weight: 900;">報到櫃檯</h2>
-            <p style="color: var(--text-sub); font-size: 13px; margin-bottom: 28px; line-height: 1.6; font-weight: 500;">
-                歡迎使用 IAN AIR 線上報到服務，請在此登錄個人資料完成報到。
-            </p>
+            <h2>報到櫃檯</h2>
+            <p class="sub-title">歡迎使用 IAN AIR 線上報到服務，請在此登錄個人資料完成報到。</p>
             
             <div class="field-group">
-                <div class="label-row">
-                    <span class="required-star">*</span><label>真實姓名</label>
-                </div>
+                <div class="label-row"><span class="required-star">*</span><label>真實姓名</label></div>
                 <input type="text" id="reg-name" placeholder="請填寫收件人全名">
                 <div class="error-msg" id="err-name">想要完成報到請幫我正確填寫資料喔！</div>
             </div>
             
             <div class="field-group">
-                <div class="label-row">
-                    <span class="required-star">*</span><label>聯絡電話</label>
-                </div>
-                <input type="tel" id="reg-phone" placeholder="09xx-xxx-xxx">
+                <div class="label-row"><span class="required-star">*</span><label>聯絡電話</label></div>
+                <input type="tel" id="reg-phone" placeholder="09xxxxxxxx" maxlength="10">
                 <div class="error-msg" id="err-phone">想要完成報到請幫我正確填寫資料喔！</div>
             </div>
 
             <div class="field-group">
-                <div class="label-row">
-                    <span class="required-star">*</span><label>出生日期</label>
-                </div>
+                <div class="label-row"><span class="required-star">*</span><label>出生日期</label></div>
                 <div class="select-group">
-                    <div class="select-item">
-                        <select id="reg-birth-y"><option value="">年</option></select>
-                    </div>
-                    <div class="select-item">
-                        <select id="reg-birth-m"><option value="">月</option></select>
-                    </div>
-                    <div class="select-item">
-                        <select id="reg-birth-d"><option value="">日</option></select>
-                    </div>
+                    <div class="select-item"><select id="reg-birth-y"><option value="">年</option></select></div>
+                    <div class="select-item"><select id="reg-birth-m"><option value="">月</option></select></div>
+                    <div class="select-item"><select id="reg-birth-d"><option value="">日</option></select></div>
                 </div>
                 <div class="error-msg" id="err-birthday">想要完成報到請幫我正確填寫資料喔！</div>
             </div>
             
             <div class="field-group">
-                <div class="label-row">
-                    <span class="required-star">*</span><label>電子信箱</label>
-                </div>
+                <div class="label-row"><span class="required-star">*</span><label>電子信箱</label></div>
                 <input type="email" id="reg-email" placeholder="example@mail.com">
                 <div class="error-msg" id="err-email">想要完成報到請幫我正確填寫資料喔！</div>
             </div>
@@ -183,7 +167,6 @@
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         let userLineId = null;
 
-        // 初始化生日選項
         function initBirthdaySelects() {
             const y = document.getElementById('reg-birth-y');
             const m = document.getElementById('reg-birth-m');
@@ -191,7 +174,6 @@
             const now = new Date().getFullYear();
             for(let i=now; i>=1940; i--) y.options.add(new Option(i, i));
             for(let i=1; i<=12; i++) m.options.add(new Option(i < 10 ? '0'+i : i, i < 10 ? '0'+i : i));
-            
             const updateDays = () => {
                 const year = y.value; const month = m.value;
                 d.innerHTML = '<option value="">日</option>';
@@ -225,42 +207,52 @@
         }
 
         async function saveProfile() {
-            const fields = [
-                { id: 'reg-name', err: 'err-name' },
-                { id: 'reg-phone', err: 'err-phone' },
-                { id: 'reg-email', err: 'err-email' }
-            ];
-            
-            let isAllValid = true;
-            fields.forEach(f => {
-                const el = document.getElementById(f.id);
-                const err = document.getElementById(f.err);
-                if (!el.value) { el.classList.add('invalid'); err.style.display = 'block'; isAllValid = false; }
-                else { el.classList.remove('invalid'); err.style.display = 'none'; }
-            });
-
-            // 生日檢查
+            const name = document.getElementById('reg-name');
+            const phone = document.getElementById('reg-phone');
+            const email = document.getElementById('reg-email');
             const by = document.getElementById('reg-birth-y');
             const bm = document.getElementById('reg-birth-m');
             const bd = document.getElementById('reg-birth-d');
-            const bErr = document.getElementById('err-birthday');
-            if(!by.value || !bm.value || !bd.value) {
-                by.classList.add('invalid'); bm.classList.add('invalid'); bd.classList.add('invalid');
-                bErr.style.display = 'block'; isAllValid = false;
-            } else {
-                by.classList.remove('invalid'); bm.classList.remove('invalid'); bd.classList.remove('invalid');
-                bErr.style.display = 'none';
+
+            let isAllValid = true;
+
+            // 姓名驗證
+            if(!name.value) { name.classList.add('invalid'); document.getElementById('err-name').style.display = 'block'; isAllValid = false; }
+            else { name.classList.remove('invalid'); document.getElementById('err-name').style.display = 'none'; }
+
+            // 電話防呆：09開頭且必須10位數
+            const phoneRegex = /^09\d{8}$/;
+            if(!phoneRegex.test(phone.value)) { 
+                phone.classList.add('invalid'); 
+                document.getElementById('err-phone').style.display = 'block'; 
+                isAllValid = false; 
+            } else { 
+                phone.classList.remove('invalid'); 
+                document.getElementById('err-phone').style.display = 'none'; 
             }
+
+            // 生日驗證
+            if(!by.value || !bm.value || !bd.value) { 
+                by.classList.add('invalid'); bm.classList.add('invalid'); bd.classList.add('invalid');
+                document.getElementById('err-birthday').style.display = 'block'; isAllValid = false; 
+            } else { 
+                by.classList.remove('invalid'); bm.classList.remove('invalid'); bd.classList.remove('invalid');
+                document.getElementById('err-birthday').style.display = 'none'; 
+            }
+
+            // 信箱驗證
+            if(!email.value) { email.classList.add('invalid'); document.getElementById('err-email').style.display = 'block'; isAllValid = false; }
+            else { email.classList.remove('invalid'); document.getElementById('err-email').style.display = 'none'; }
 
             if (!isAllValid) return;
 
             const birthday = `${by.value}-${bm.value}-${bd.value}`;
             const { error } = await _supabase.from('profiles').upsert({
                 line_id: userLineId,
-                full_name: document.getElementById('reg-name').value,
-                phone: document.getElementById('reg-phone').value,
+                full_name: name.value,
+                phone: phone.value,
                 birthday: birthday,
-                email: document.getElementById('reg-email').value,
+                email: email.value,
                 is_onboarded: true
             }, { onConflict: 'line_id' });
 
