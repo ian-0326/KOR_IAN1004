@@ -16,6 +16,7 @@
             --white: #ffffff;
             --text-main: #191f28;
             --text-sub: #4e5968;
+            --error: #f44336;
             --radius-lg: 24px;
             --radius-md: 16px;
         }
@@ -48,13 +49,20 @@
         }
         .btn-primary:active { transform: scale(0.97); filter: brightness(0.95); }
 
-        label { display: block; font-size: 12px; font-weight: 700; color: var(--text-sub); margin-bottom: 8px; padding-left: 4px; }
+        /* 欄位樣式 */
+        .field-group { margin-bottom: 20px; position: relative; }
+        .label-row { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px; padding-left: 4px; }
+        .required-star { color: var(--error); margin-right: 4px; }
+        label { font-size: 12px; font-weight: 700; color: var(--text-sub); }
+        .hint-small { font-size: 9px; color: var(--text-sub); font-weight: 400; }
+        
         input {
-            width: 100%; padding: 16px; margin-bottom: 20px;
+            width: 100%; padding: 16px;
             border: 1px solid #e5e8eb; border-radius: var(--radius-md);
             background: #f9fafb; font-size: 16px; box-sizing: border-box; outline: none;
         }
-        input:focus { border-color: var(--primary); background: var(--white); }
+        input.invalid { border-color: var(--error); background: #fff8f8; }
+        .error-msg { color: var(--error); font-size: 11px; margin-top: 6px; padding-left: 4px; display: none; font-weight: 500; }
 
         #loading-screen {
             position: fixed; inset: 0; background: var(--white);
@@ -81,16 +89,46 @@
     </div>
 
     <div id="onboarding-modal" class="modal-overlay">
-        <div class="toss-card" style="width: 100%; max-width: 340px; margin: 0;">
-            <h2 style="margin-top:0; font-size: 24px;">👋 歡迎加入！</h2>
-            <p style="color: var(--text-sub); font-size: 14px; margin-bottom: 24px;">請先完善您的收件資料，開始韓國連線購物。</p>
-            <label>真實姓名</label>
-            <input type="text" id="reg-name" placeholder="請填寫中文全名">
-            <label>聯絡電話</label>
-            <input type="tel" id="reg-phone" placeholder="09xx-xxx-xxx">
-            <label>電子信箱</label>
-            <input type="email" id="reg-email" placeholder="example@mail.com">
-            <button class="btn-primary" onclick="saveProfile()">完成註冊並購物 ➔</button>
+        <div class="toss-card" style="width: 100%; max-width: 340px; margin: 0; max-height: 90vh; overflow-y: auto;">
+            <h2 style="margin-top:0; font-size: 24px;">🎫 報到櫃檯</h2>
+            <p style="color: var(--text-sub); font-size: 13px; margin-bottom: 24px; line-height: 1.6;">
+                歡迎使用 IAN AIR 線上報到服務，請在此登錄個人資料完成報到。
+            </p>
+            
+            <div class="field-group">
+                <div class="label-row">
+                    <span><span class="required-star">*</span><label>真實姓名</label></span>
+                    <span class="hint-small">若與身分證不符導致無法取件概不負責</span>
+                </div>
+                <input type="text" id="reg-name" placeholder="請填寫收件人全名">
+                <div class="error-msg" id="err-name">想要完成報到請幫我正確填寫資料喔！</div>
+            </div>
+            
+            <div class="field-group">
+                <div class="label-row">
+                    <span><span class="required-star">*</span><label>聯絡電話</label></span>
+                </div>
+                <input type="tel" id="reg-phone" placeholder="09xx-xxx-xxx">
+                <div class="error-msg" id="err-phone">想要完成報到請幫我正確填寫資料喔！</div>
+            </div>
+
+            <div class="field-group">
+                <div class="label-row">
+                    <span><span class="required-star">*</span><label>出生日期</label></span>
+                </div>
+                <input type="date" id="reg-birthday">
+                <div class="error-msg" id="err-birthday">想要完成報到請幫我正確填寫資料喔！</div>
+            </div>
+            
+            <div class="field-group">
+                <div class="label-row">
+                    <span><span class="required-star">*</span><label>電子信箱</label></span>
+                </div>
+                <input type="email" id="reg-email" placeholder="example@mail.com">
+                <div class="error-msg" id="err-email">想要完成報到請幫我正確填寫資料喔！</div>
+            </div>
+
+            <button class="btn-primary" onclick="saveProfile()">完成報到</button>
         </div>
     </div>
 
@@ -108,7 +146,6 @@
     </div>
 
     <script>
-        // --- 已自動嵌入設定 ---
         const LIFF_ID = '2009405888-D5absVA3'; 
         const SUPABASE_URL = 'https://ivpctyqlrkjstfsoweeh.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml2cGN0eXFscmtqc3Rmc293ZWVoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTk1MTksImV4cCI6MjA4ODc3NTUxOX0.DYgzhaTH3_5NFwv009ZfZAshfUnCW2PeTuNcJ9feyMU';
@@ -121,54 +158,65 @@
                 await liff.init({ liffId: LIFF_ID });
                 if (!liff.isLoggedIn()) {
                     liff.login();
-                } else {
-                    const profile = await liff.getProfile();
-                    userLineId = profile.userId;
-                    checkMemberStatus(profile.displayName);
+                    return;
                 }
-            } catch (err) {
-                console.error('LIFF 初始化失敗', err);
-            }
+                const profile = await liff.getProfile();
+                userLineId = profile.userId;
+                checkMemberStatus();
+            } catch (err) { console.error(err); }
         }
 
-        async function checkMemberStatus(lineDisplayName) {
-            const { data, error } = await _supabase
-                .from('profiles')
-                .select('*')
-                .eq('line_id', userLineId)
-                .maybeSingle();
-
+        async function checkMemberStatus() {
+            const { data } = await _supabase.from('profiles').select('*').eq('line_id', userLineId).maybeSingle();
             document.getElementById('loading-screen').style.display = 'none';
-
             if (!data || !data.is_onboarded) {
                 document.getElementById('onboarding-modal').style.display = 'flex';
-                document.getElementById('reg-name').value = lineDisplayName;
+                // 這裡不再預填姓名
             } else {
                 document.getElementById('main-app').style.display = 'block';
             }
         }
 
         async function saveProfile() {
-            const name = document.getElementById('reg-name').value;
-            const phone = document.getElementById('reg-phone').value;
-            const email = document.getElementById('reg-email').value;
+            const fields = [
+                { id: 'reg-name', err: 'err-name' },
+                { id: 'reg-phone', err: 'err-phone' },
+                { id: 'reg-birthday', err: 'err-birthday' },
+                { id: 'reg-email', err: 'err-email' }
+            ];
 
-            if (!name || !phone) {
-                alert('姓名與電話為必填項喔！');
-                return;
-            }
+            let isAllValid = true;
+
+            fields.forEach(field => {
+                const el = document.getElementById(field.id);
+                const errEl = document.getElementById(field.err);
+                if (!el.value) {
+                    el.classList.add('invalid');
+                    errEl.style.display = 'block';
+                    isAllValid = false;
+                } else {
+                    el.classList.remove('invalid');
+                    errEl.style.display = 'none';
+                }
+            });
+
+            if (!isAllValid) return;
 
             const { error } = await _supabase.from('profiles').upsert({
                 line_id: userLineId,
-                full_name: name,
-                phone: phone,
-                email: email,
+                full_name: document.getElementById('reg-name').value,
+                phone: document.getElementById('reg-phone').value,
+                birthday: document.getElementById('reg-birthday').value,
+                email: document.getElementById('reg-email').value,
                 is_onboarded: true
             }, { onConflict: 'line_id' });
 
             if (error) {
-                alert('儲存失敗，請再試一次');
+                alert('報到失敗，請檢查網路狀態');
             } else {
+                // 成功送出：關閉註冊彈窗並跳出歡迎彈窗
+                document.getElementById('onboarding-modal').style.display = 'none';
+                alert('✈️ 歡迎登機');
                 location.reload();
             }
         }
