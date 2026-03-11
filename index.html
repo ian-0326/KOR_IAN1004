@@ -81,13 +81,7 @@
 
         .error-msg { color: var(--error); font-size: 10px; margin-top: 4px; padding-left: 4px; display: none; font-weight: 500; }
 
-        /* 全黑背景與登機成功彈窗 */
-        .modal-overlay {
-            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6);
-            backdrop-filter: blur(8px); z-index: 500; align-items: center; justify-content: center; padding: 20px;
-        }
-        
-        /* 成功彈窗專屬：背景全黑 */
+        /* 全黑背景與成功彈窗 */
         #success-overlay {
             display: none; position: fixed; inset: 0; background: #000000; z-index: 2000;
             align-items: center; justify-content: center; padding: 20px;
@@ -121,6 +115,11 @@
             animation: spin 1s linear infinite;
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        .modal-overlay {
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(8px); z-index: 500; align-items: center; justify-content: center; padding: 20px;
+        }
     </style>
 </head>
 <body>
@@ -175,8 +174,8 @@
                 </svg>
             </div>
             <h3 style="font-size: 24px; font-weight: 900; margin: 0 0 12px 0;">歡迎登機</h3>
-            <p style="color: var(--text-sub); font-size: 15px; margin-bottom: 32px; font-weight: 500;">您的資料已登錄成功<br>祝您購物愉快！</p>
-            <button class="btn-primary" onclick="location.reload()">進入賣場</button>
+            <p style="color: var(--text-sub); font-size: 15px; margin-bottom: 32px; font-weight: 500;">您的資料已登錄成功</p>
+            <button class="btn-primary" onclick="location.reload()">旅程開始</button>
         </div>
     </div>
 
@@ -276,7 +275,6 @@
 
             if (error) { alert('報到失敗'); } 
             else {
-                // 隱藏報到表單，顯示全黑成功畫面
                 document.getElementById('onboarding-modal').style.display = 'none';
                 document.getElementById('success-overlay').style.display = 'flex';
             }
