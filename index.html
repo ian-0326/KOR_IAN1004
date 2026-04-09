@@ -31,17 +31,41 @@
             overflow-x: hidden;
         }
 
-        .toss-card {
-            background: var(--white);
-            border-radius: var(--radius-lg);
-            margin: 16px;
-            padding: 24px 20px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        }
-
+        /* 內容區塊 */
         .page-content { display: none; padding-top: 20px; padding-bottom: 120px; }
         .page-content.active { display: block; }
 
+        /* 商品網格：兩兩一行 */
+        .product-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            padding: 0 16px;
+        }
+        .product-card {
+            background: var(--white);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .product-img-box {
+            width: 100%;
+            padding-top: 100%; /* 1:1 正方形 */
+            position: relative;
+            background: #eee;
+        }
+        .product-img-box img {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%; object-fit: cover;
+        }
+        .product-info { padding: 10px; }
+        .p-name { font-size: 14px; font-weight: 500; line-height: 1.4; height: 40px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; margin-bottom: 4px; }
+        .p-price { font-size: 16px; font-weight: 900; color: var(--primary); }
+        .p-price::before { content: "NT$ "; font-size: 11px; }
+
+        /* 底部導覽列 */
         .bottom-nav {
             position: fixed; bottom: 0; left: 0; right: 0;
             background: rgba(255, 255, 255, 0.95);
@@ -53,29 +77,29 @@
         }
         .nav-item {
             flex: 1; text-align: center; border: none; background: none;
-            color: #adb5bd; transition: all 0.3s ease;
-            display: flex; flex-direction: column; align-items: center; gap: 6px;
-            cursor: pointer;
+            color: #adb5bd; display: flex; flex-direction: column; align-items: center; gap: 4px;
         }
         .nav-item.active { color: var(--primary); }
         .nav-item span { font-size: 11px; font-weight: 900; }
         .nav-icon { width: 24px; height: 24px; }
 
-        /* 報到彈窗與其他樣式維持不變 */
-        .btn-primary { background-color: var(--primary); color: white; border: none; border-radius: var(--radius-md); padding: 16px; width: 100%; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 8px; }
-        .field-group { margin-bottom: 12px; width: 100%; }
-        .label-row { margin-bottom: 6px; padding-left: 4px; }
-        .required-star { color: var(--error); margin-right: 2px; }
-        label { font-size: 12px; font-weight: 700; color: var(--text-sub); }
-        input, .select-group select { width: 100%; padding: 12px 16px; border: 1.5px solid #e5e8eb; border-radius: var(--radius-md); background: #f9fafb; font-size: 16px; box-sizing: border-box; outline: none; height: 48px; }
-        .select-group { display: flex; gap: 6px; width: 100%; }
-        .select-item { flex: 1; position: relative; }
-        .select-item select { border-radius: var(--radius-pill); padding-right: 24px; text-align: center; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23adb5bd'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 8px center; background-size: 14px; }
-        .error-msg { color: var(--error); font-size: 10px; margin-top: 4px; padding-left: 4px; display: none; font-weight: 500; }
+        /* 報到彈窗樣式 */
+        .toss-card { background: var(--white); border-radius: var(--radius-lg); margin: 16px; padding: 24px 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
         .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(8px); z-index: 500; align-items: center; justify-content: center; padding: 20px; }
-        #success-overlay { display: none; position: fixed; inset: 0; background: #000000; z-index: 2000; align-items: center; justify-content: center; padding: 20px; }
-        .success-modal { background: white; border-radius: 32px; padding: 40px 32px; width: 100%; max-width: 300px; text-align: center; animation: modalPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .field-group { margin-bottom: 12px; }
+        label { font-size: 12px; font-weight: 700; color: var(--text-sub); display: block; margin-bottom: 6px; }
+        input, select { width: 100%; padding: 12px 16px; border: 1.5px solid #e5e8eb; border-radius: var(--radius-md); background: #f9fafb; font-size: 16px; box-sizing: border-box; outline: none; height: 48px; }
+        .select-group { display: flex; gap: 6px; }
+        .select-item { flex: 1; }
+        .select-item select { border-radius: var(--radius-pill); appearance: none; text-align: center; }
+        .btn-primary { background-color: var(--primary); color: white; border: none; border-radius: var(--radius-md); padding: 16px; width: 100%; font-size: 16px; font-weight: 700; cursor: pointer; }
+        .error-msg { color: var(--error); font-size: 10px; margin-top: 4px; display: none; font-weight: 500; }
+
+        /* 成功報到畫面 (全黑背景) */
+        #success-overlay { display: none; position: fixed; inset: 0; background: #000; z-index: 2000; align-items: center; justify-content: center; padding: 20px; }
+        .success-modal { background: white; border-radius: 32px; padding: 40px 32px; width: 100%; max-width: 300px; text-align: center; }
         .airplane-icon { width: 60px; height: 60px; background: #fff8e6; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px auto; color: var(--primary); }
+
         #loading-screen { position: fixed; inset: 0; background: var(--white); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; }
         .spinner { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -89,21 +113,21 @@
     </div>
 
     <div id="onboarding-modal" class="modal-overlay">
-        <div class="toss-card" style="width: 100%; max-width: 340px; margin: 0; box-sizing: border-box;">
-            <h2 style="font-size: 26px;">報到櫃檯</h2>
-            <p style="color: var(--text-sub); font-size: 13px; margin-bottom: 20px; line-height: 1.5; font-weight: 500;">歡迎使用 IAN AIR 線上報到服務，請在此登錄個人資料完成報到。</p>
+        <div class="toss-card" style="width: 100%; max-width: 340px; margin: 0;">
+            <h2 style="margin: 0 0 4px 0; font-size: 24px; font-weight: 900;">報到櫃檯</h2>
+            <p style="color: var(--text-sub); font-size: 13px; margin-bottom: 20px; font-weight: 500;">歡迎使用 IAN AIR 線上報到服務，請在此登錄個人資料完成報到。</p>
             <div class="field-group">
-                <div class="label-row"><span class="required-star">*</span><label>真實姓名</label></div>
-                <input type="text" id="reg-name" placeholder="請填寫收件人全名">
+                <label><span style="color:var(--error)">*</span> 真實姓名</label>
+                <input type="text" id="reg-name" placeholder="收件人姓名">
                 <div class="error-msg" id="err-name">想要完成報到請幫我正確填寫資料喔！</div>
             </div>
             <div class="field-group">
-                <div class="label-row"><span class="required-star">*</span><label>聯絡電話</label></div>
+                <label><span style="color:var(--error)">*</span> 聯絡電話</label>
                 <input type="tel" id="reg-phone" placeholder="09xxxxxxxx" maxlength="10">
                 <div class="error-msg" id="err-phone">想要完成報到請幫我正確填寫資料喔！</div>
             </div>
             <div class="field-group">
-                <div class="label-row"><span class="required-star">*</span><label>出生日期</label></div>
+                <label><span style="color:var(--error)">*</span> 出生日期</label>
                 <div class="select-group">
                     <div class="select-item"><select id="reg-birth-y"><option value="">年</option></select></div>
                     <div class="select-item"><select id="reg-birth-m"><option value="">月</option></select></div>
@@ -112,7 +136,7 @@
                 <div class="error-msg" id="err-birthday">想要完成報到請幫我正確填寫資料喔！</div>
             </div>
             <div class="field-group">
-                <div class="label-row"><span class="required-star">*</span><label>電子信箱</label></div>
+                <label><span style="color:var(--error)">*</span> 電子信箱</label>
                 <input type="email" id="reg-email" placeholder="example@mail.com">
                 <div class="error-msg" id="err-email">想要完成報到請幫我正確填寫資料喔！</div>
             </div>
@@ -133,88 +157,56 @@
 
     <div id="main-app" style="display:none;">
         <section id="page-shop" class="page-content active">
-            <div id="product-container">
-                <div class="toss-card" style="text-align: center; padding: 60px 20px;">
-                    <div style="font-size: 40px; margin-bottom: 16px;">🛍️</div>
-                    <p style="color: var(--text-sub); font-weight: 500;">弘大漫遊中...<br>請期待最新的選物上架！</p>
+            <div id="product-grid" class="product-grid">
                 </div>
-            </div>
         </section>
 
         <section id="page-pop" class="page-content">
-            <div class="toss-card" style="text-align: center; padding: 60px 20px;">
+            <div class="toss-card" style="text-align: center; padding: 80px 20px;">
                 <div style="font-size: 40px; margin-bottom: 16px;">🪄</div>
-                <p style="color: var(--text-sub); font-weight: 500;">韓風 POP 互動區<br>活動準備中，敬請期待！</p>
+                <p style="color: var(--text-sub); font-weight: 500;">韓風 POP 專區<br>最新活動即將登場！</p>
             </div>
         </section>
 
         <section id="page-passport" class="page-content">
             <div class="toss-card">
-                <h3 style="margin-top:0;">我的護照</h3>
-                <div id="user-info-display" style="line-height: 2;"></div>
-                <button class="btn-primary" style="background:#eee; color:#666; margin-top:20px;" onclick="liff.logout(); location.reload();">登出帳號</button>
+                <h3 style="margin: 0 0 20px 0; font-weight: 900; font-size: 22px;">我的護照</h3>
+                <div id="user-info-display" style="line-height: 2.2; color: var(--text-sub); font-weight: 500;"></div>
+                <button class="btn-primary" style="background:#f2f4f6; color:#adb5bd; margin-top:32px; font-size: 14px;" onclick="liff.logout(); location.reload();">登出報到</button>
             </div>
         </section>
 
         <nav class="bottom-nav">
             <button class="nav-item active" onclick="switchPage('shop')">
-                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/>
-                </svg>
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
                 <span>弘大漫遊</span>
             </button>
             <button class="nav-item" onclick="switchPage('pop')">
-                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m11.314 11.314l.707.707M12 8a4 4 0 100 8 4 4 0 000-8z"/>
-                </svg>
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m11.314 11.314l.707.707M12 8a4 4 0 100 8 4 4 0 000-8z"/></svg>
                 <span>韓風POP</span>
             </button>
             <button class="nav-item" onclick="switchPage('passport')">
-                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/><path d="M12 8v4"/><path d="M12 16h.01"/>
-                </svg>
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
                 <span>我的護照</span>
             </button>
         </nav>
     </div>
 
     <script>
-        // JS 邏輯維持不變 (switchPage, initApp, saveProfile 等)
         const LIFF_ID = '2009405888-D5absVA3'; 
         const SUPABASE_URL = 'https://ivpctyqlrkjstfsoweeh.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml2cGN0eXFscmtqc3Rmc293ZWVoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTk1MTksImV4cCI6MjA4ODc3NTUxOX0.DYgzhaTH3_5NFwv009ZfZAshfUnCW2PeTuNcJ9feyMU';
+
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         let userLineId = null;
-
-        function switchPage(pageId) {
-            document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
-            document.getElementById('page-' + pageId).classList.add('active');
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            const index = { 'shop': 0, 'pop': 1, 'passport': 2 }[pageId];
-            document.querySelectorAll('.nav-item')[index].classList.add('active');
-        }
-
-        function initBirthdaySelects() {
-            const y = document.getElementById('reg-birth-y'); const m = document.getElementById('reg-birth-m'); const d = document.getElementById('reg-birth-d');
-            const now = new Date().getFullYear();
-            for(let i=now; i>=1940; i--) y.options.add(new Option(i, i));
-            for(let i=1; i<=12; i++) m.options.add(new Option(i < 10 ? '0'+i : i, i < 10 ? '0'+i : i));
-            const updateDays = () => {
-                const year = y.value; const month = m.value; d.innerHTML = '<option value="">日</option>';
-                if(year && month) {
-                    const days = new Date(year, month, 0).getDate();
-                    for(let i=1; i<=days; i++) d.options.add(new Option(i < 10 ? '0'+i : i, i < 10 ? '0'+i : i));
-                }
-            };
-            y.onchange = updateDays; m.onchange = updateDays;
-        }
 
         async function initApp() {
             initBirthdaySelects();
             try {
                 await liff.init({ liffId: LIFF_ID });
                 if (!liff.isLoggedIn()) { liff.login(); return; }
-                const profile = await liff.getProfile(); userLineId = profile.userId;
+                const profile = await liff.getProfile();
+                userLineId = profile.userId;
                 checkMemberStatus();
             } catch (err) { console.error(err); }
         }
@@ -227,34 +219,63 @@
             } else {
                 document.getElementById('main-app').style.display = 'block';
                 document.getElementById('user-info-display').innerHTML = `
-                    <p><b>姓名：</b>${data.full_name}</p>
-                    <p><b>電話：</b>${data.phone}</p>
-                    <p><b>生日：</b>${data.birthday}</p>
-                    <p><b>信箱：</b>${data.email}</p>
+                    <p><b>登機姓名：</b>${data.full_name}</p>
+                    <p><b>聯絡電話：</b>${data.phone}</p>
+                    <p><b>出生日期：</b>${data.birthday}</p>
+                    <p><b>電子信箱：</b>${data.email}</p>
                 `;
+                fetchProducts(); // 進入賣場後，開始抓取商品
             }
         }
 
+        // --- 核心：抓取資料庫商品 ---
+        async function fetchProducts() {
+            const grid = document.getElementById('product-grid');
+            const { data, error } = await _supabase
+                .from('products')
+                .select('name_zh, krw_price, image_url')
+                .order('created_at', { ascending: false });
+
+            if (data && data.length > 0) {
+                grid.innerHTML = data.map(p => `
+                    <div class="product-card">
+                        <div class="product-img-box">
+                            <img src="${p.image_url}" onerror="this.src='https://via.placeholder.com/300?text=KOR.IAN'">
+                        </div>
+                        <div class="product-info">
+                            <div class="p-name">${p.name_zh}</div>
+                            <div class="p-price">${Number(p.krw_price).toLocaleString()}</div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function switchPage(p) {
+            document.querySelectorAll('.page-content').forEach(el => el.classList.remove('active'));
+            document.getElementById('page-' + p).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            const idx = { 'shop': 0, 'pop': 1, 'passport': 2 }[p];
+            document.querySelectorAll('.nav-item')[idx].classList.add('active');
+        }
+
+        function initBirthdaySelects() {
+            const y = document.getElementById('reg-birth-y'); const m = document.getElementById('reg-birth-m'); const d = document.getElementById('reg-birth-d');
+            const now = new Date().getFullYear();
+            for(let i=now; i>=1940; i--) y.options.add(new Option(i, i));
+            for(let i=1; i<=12; i++) m.options.add(new Option(i < 10 ? '0'+i : i, i < 10 ? '0'+i : i));
+            const upd = () => { d.innerHTML = '<option value="">日</option>'; if(y.value && m.value) { const days = new Date(y.value, m.value, 0).getDate(); for(let i=1; i<=days; i++) d.options.add(new Option(i<10?'0'+i:i, i<10?'0'+i:i)); } };
+            y.onchange = upd; m.onchange = upd;
+        }
+
         async function saveProfile() {
-            const name = document.getElementById('reg-name'); const phone = document.getElementById('reg-phone'); const email = document.getElementById('reg-email');
+            const n = document.getElementById('reg-name'); const p = document.getElementById('reg-phone'); const e = document.getElementById('reg-email');
             const by = document.getElementById('reg-birth-y'); const bm = document.getElementById('reg-birth-m'); const bd = document.getElementById('reg-birth-d');
-            let isAllValid = true;
-            if(!name.value) { name.classList.add('invalid'); document.getElementById('err-name').style.display = 'block'; isAllValid = false; }
-            else { name.classList.remove('invalid'); document.getElementById('err-name').style.display = 'none'; }
-            const phoneRegex = /^09\d{8}$/;
-            if(!phoneRegex.test(phone.value)) { phone.classList.add('invalid'); document.getElementById('err-phone').style.display = 'block'; isAllValid = false; }
-            else { phone.classList.remove('invalid'); document.getElementById('err-phone').style.display = 'none'; }
-            if(!by.value || !bm.value || !bd.value) { by.classList.add('invalid'); bm.classList.add('invalid'); bd.classList.add('invalid'); document.getElementById('err-birthday').style.display = 'block'; isAllValid = false; }
-            else { by.classList.remove('invalid'); bm.classList.remove('invalid'); bd.classList.remove('invalid'); document.getElementById('err-birthday').style.display = 'none'; }
-            if(!email.value) { email.classList.add('invalid'); document.getElementById('err-email').style.display = 'block'; isAllValid = false; }
-            else { email.classList.remove('invalid'); document.getElementById('err-email').style.display = 'none'; }
-            if (!isAllValid) return;
-            const birthday = `${by.value}-${bm.value}-${bd.value}`;
+            if(!n.value || !/^09\d{8}$/.test(p.value) || !by.value || !bm.value || !bd.value || !e.value) { alert('請正確填寫所有必填欄位喔！'); return; }
             const { error } = await _supabase.from('profiles').upsert({
-                line_id: userLineId, full_name: name.value, phone: phone.value, birthday: birthday, email: email.value, is_onboarded: true
-            }, { onConflict: 'line_id' });
-            if (error) { alert('報到失敗'); } 
-            else { document.getElementById('onboarding-modal').style.display = 'none'; document.getElementById('success-overlay').style.display = 'flex'; }
+                line_id: userLineId, full_name: n.value, phone: p.value, birthday: `${by.value}-${bm.value}-${bd.value}`, email: e.value, is_onboarded: true
+            });
+            if (!error) { document.getElementById('onboarding-modal').style.display='none'; document.getElementById('success-overlay').style.display='flex'; }
         }
         window.onload = initApp;
     </script>
