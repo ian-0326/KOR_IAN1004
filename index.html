@@ -31,7 +31,6 @@
             overflow-x: hidden;
         }
 
-        /* 統一卡片樣式 */
         .toss-card {
             background: var(--white);
             border-radius: var(--radius-lg);
@@ -40,30 +39,29 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
 
-        /* 內容區塊控制 */
-        .page-content { display: none; padding-top: 20px; padding-bottom: 100px; }
+        .page-content { display: none; padding-top: 20px; padding-bottom: 120px; }
         .page-content.active { display: block; }
 
-        /* 底部導覽列 */
         .bottom-nav {
             position: fixed; bottom: 0; left: 0; right: 0;
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
             display: flex; justify-content: space-around;
-            padding: 12px 10px calc(12px + env(safe-area-inset-bottom));
+            padding: 12px 10px calc(15px + env(safe-area-inset-bottom));
             border-top: 1px solid #e5e8eb;
             z-index: 100;
         }
         .nav-item {
             flex: 1; text-align: center; border: none; background: none;
             color: #adb5bd; transition: all 0.3s ease;
-            display: flex; flex-direction: column; align-items: center; gap: 4px;
+            display: flex; flex-direction: column; align-items: center; gap: 6px;
+            cursor: pointer;
         }
         .nav-item.active { color: var(--primary); }
         .nav-item span { font-size: 11px; font-weight: 900; }
         .nav-icon { width: 24px; height: 24px; }
 
-        /* 原有的彈窗樣式保持不變... (以下省略部分重複 CSS 以節省篇幅，但功能完整) */
+        /* 報到彈窗與其他樣式維持不變 */
         .btn-primary { background-color: var(--primary); color: white; border: none; border-radius: var(--radius-md); padding: 16px; width: 100%; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 8px; }
         .field-group { margin-bottom: 12px; width: 100%; }
         .label-row { margin-bottom: 6px; padding-left: 4px; }
@@ -125,9 +123,7 @@
     <div id="success-overlay">
         <div class="success-modal">
             <div class="airplane-icon">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3.5S18 3 16.5 4.5L13 8 4.8 6.2c-1.2-.3-2.4.3-2.8 1.5-.4 1.2.1 2.5 1.2 3L10 14l-3 3-3-1-2 2 4 4 2-2-1-3 3-3 3 6.8c.5 1.1 1.8 1.6 3 1.2 1.2-.4 1.8-1.6 1.5-2.8z"/>
-                </svg>
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3.5S18 3 16.5 4.5L13 8 4.8 6.2c-1.2-.3-2.4.3-2.8 1.5-.4 1.2.1 2.5 1.2 3L10 14l-3 3-3-1-2 2 4 4 2-2-1-3 3-3 3 6.8c.5 1.1 1.8 1.6 3 1.2 1.2-.4 1.8-1.6 1.5-2.8z"/></svg>
             </div>
             <h3 style="font-size: 24px; font-weight: 900; margin: 0 0 12px 0;">歡迎登機</h3>
             <p style="color: var(--text-sub); font-size: 15px; margin-bottom: 32px; font-weight: 500;">您的資料已登錄成功</p>
@@ -136,19 +132,18 @@
     </div>
 
     <div id="main-app" style="display:none;">
-        
         <section id="page-shop" class="page-content active">
             <div id="product-container">
                 <div class="toss-card" style="text-align: center; padding: 60px 20px;">
-                    <div style="font-size: 40px; margin-bottom: 16px;">📦</div>
-                    <p style="color: var(--text-sub); font-weight: 500;">弘大商圈連線中...<br>請期待最新的選物上架！</p>
+                    <div style="font-size: 40px; margin-bottom: 16px;">🛍️</div>
+                    <p style="color: var(--text-sub); font-weight: 500;">弘大漫遊中...<br>請期待最新的選物上架！</p>
                 </div>
             </div>
         </section>
 
         <section id="page-pop" class="page-content">
             <div class="toss-card" style="text-align: center; padding: 60px 20px;">
-                <div style="font-size: 40px; margin-bottom: 16px;">✨</div>
+                <div style="font-size: 40px; margin-bottom: 16px;">🪄</div>
                 <p style="color: var(--text-sub); font-weight: 500;">韓風 POP 互動區<br>活動準備中，敬請期待！</p>
             </div>
         </section>
@@ -156,56 +151,56 @@
         <section id="page-passport" class="page-content">
             <div class="toss-card">
                 <h3 style="margin-top:0;">我的護照</h3>
-                <div id="user-info-display" style="line-height: 2;">
-                    </div>
+                <div id="user-info-display" style="line-height: 2;"></div>
                 <button class="btn-primary" style="background:#eee; color:#666; margin-top:20px;" onclick="liff.logout(); location.reload();">登出帳號</button>
             </div>
         </section>
 
         <nav class="bottom-nav">
             <button class="nav-item active" onclick="switchPage('shop')">
-                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/>
+                </svg>
                 <span>弘大漫遊</span>
             </button>
             <button class="nav-item" onclick="switchPage('pop')">
-                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m11.314 11.314l.707.707M12 8a4 4 0 100 8 4 4 0 000-8z"/>
+                </svg>
                 <span>韓風POP</span>
             </button>
             <button class="nav-item" onclick="switchPage('passport')">
-                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/><path d="M12 8v4"/><path d="M12 16h.01"/>
+                </svg>
                 <span>我的護照</span>
             </button>
         </nav>
     </div>
 
     <script>
+        // JS 邏輯維持不變 (switchPage, initApp, saveProfile 等)
         const LIFF_ID = '2009405888-D5absVA3'; 
         const SUPABASE_URL = 'https://ivpctyqlrkjstfsoweeh.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml2cGN0eXFscmtqc3Rmc293ZWVoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTk1MTksImV4cCI6MjA4ODc3NTUxOX0.DYgzhaTH3_5NFwv009ZfZAshfUnCW2PeTuNcJ9feyMU';
-
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         let userLineId = null;
 
-        // 分頁切換邏輯
         function switchPage(pageId) {
             document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
             document.getElementById('page-' + pageId).classList.add('active');
-            
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             const index = { 'shop': 0, 'pop': 1, 'passport': 2 }[pageId];
             document.querySelectorAll('.nav-item')[index].classList.add('active');
         }
 
         function initBirthdaySelects() {
-            const y = document.getElementById('reg-birth-y');
-            const m = document.getElementById('reg-birth-m');
-            const d = document.getElementById('reg-birth-d');
+            const y = document.getElementById('reg-birth-y'); const m = document.getElementById('reg-birth-m'); const d = document.getElementById('reg-birth-d');
             const now = new Date().getFullYear();
             for(let i=now; i>=1940; i--) y.options.add(new Option(i, i));
             for(let i=1; i<=12; i++) m.options.add(new Option(i < 10 ? '0'+i : i, i < 10 ? '0'+i : i));
             const updateDays = () => {
-                const year = y.value; const month = m.value;
-                d.innerHTML = '<option value="">日</option>';
+                const year = y.value; const month = m.value; d.innerHTML = '<option value="">日</option>';
                 if(year && month) {
                     const days = new Date(year, month, 0).getDate();
                     for(let i=1; i<=days; i++) d.options.add(new Option(i < 10 ? '0'+i : i, i < 10 ? '0'+i : i));
@@ -219,8 +214,7 @@
             try {
                 await liff.init({ liffId: LIFF_ID });
                 if (!liff.isLoggedIn()) { liff.login(); return; }
-                const profile = await liff.getProfile();
-                userLineId = profile.userId;
+                const profile = await liff.getProfile(); userLineId = profile.userId;
                 checkMemberStatus();
             } catch (err) { console.error(err); }
         }
@@ -232,7 +226,6 @@
                 document.getElementById('onboarding-modal').style.display = 'flex';
             } else {
                 document.getElementById('main-app').style.display = 'block';
-                // 填充護照頁資料
                 document.getElementById('user-info-display').innerHTML = `
                     <p><b>姓名：</b>${data.full_name}</p>
                     <p><b>電話：</b>${data.phone}</p>
@@ -243,39 +236,25 @@
         }
 
         async function saveProfile() {
-            const name = document.getElementById('reg-name');
-            const phone = document.getElementById('reg-phone');
-            const email = document.getElementById('reg-email');
-            const by = document.getElementById('reg-birth-y');
-            const bm = document.getElementById('reg-birth-m');
-            const bd = document.getElementById('reg-birth-d');
-
+            const name = document.getElementById('reg-name'); const phone = document.getElementById('reg-phone'); const email = document.getElementById('reg-email');
+            const by = document.getElementById('reg-birth-y'); const bm = document.getElementById('reg-birth-m'); const bd = document.getElementById('reg-birth-d');
             let isAllValid = true;
             if(!name.value) { name.classList.add('invalid'); document.getElementById('err-name').style.display = 'block'; isAllValid = false; }
             else { name.classList.remove('invalid'); document.getElementById('err-name').style.display = 'none'; }
-
             const phoneRegex = /^09\d{8}$/;
             if(!phoneRegex.test(phone.value)) { phone.classList.add('invalid'); document.getElementById('err-phone').style.display = 'block'; isAllValid = false; }
             else { phone.classList.remove('invalid'); document.getElementById('err-phone').style.display = 'none'; }
-
             if(!by.value || !bm.value || !bd.value) { by.classList.add('invalid'); bm.classList.add('invalid'); bd.classList.add('invalid'); document.getElementById('err-birthday').style.display = 'block'; isAllValid = false; }
             else { by.classList.remove('invalid'); bm.classList.remove('invalid'); bd.classList.remove('invalid'); document.getElementById('err-birthday').style.display = 'none'; }
-
             if(!email.value) { email.classList.add('invalid'); document.getElementById('err-email').style.display = 'block'; isAllValid = false; }
             else { email.classList.remove('invalid'); document.getElementById('err-email').style.display = 'none'; }
-
             if (!isAllValid) return;
-
             const birthday = `${by.value}-${bm.value}-${bd.value}`;
             const { error } = await _supabase.from('profiles').upsert({
                 line_id: userLineId, full_name: name.value, phone: phone.value, birthday: birthday, email: email.value, is_onboarded: true
             }, { onConflict: 'line_id' });
-
             if (error) { alert('報到失敗'); } 
-            else {
-                document.getElementById('onboarding-modal').style.display = 'none';
-                document.getElementById('success-overlay').style.display = 'flex';
-            }
+            else { document.getElementById('onboarding-modal').style.display = 'none'; document.getElementById('success-overlay').style.display = 'flex'; }
         }
         window.onload = initApp;
     </script>
