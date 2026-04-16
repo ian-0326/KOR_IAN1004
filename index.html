@@ -11,12 +11,25 @@
     
     <style>
         :root {
-            --primary: #f7b500; --bg: #f2f4f6; --white: #ffffff;
-            --text-main: #191f28; --text-sub: #4e5968; --error: #f44336;
-            --radius-lg: 24px; --radius-md: 16px; --radius-pill: 50px;
+            --primary: #f7b500;
+            --bg: #f2f4f6;
+            --white: #ffffff;
+            --text-main: #191f28;
+            --text-sub: #4e5968;
+            --error: #f44336;
+            --radius-lg: 24px;
+            --radius-md: 16px;
+            --radius-pill: 50px;
         }
 
-        body { font-family: 'Noto Sans TC', sans-serif; background-color: var(--bg); margin: 0; padding: 0; color: var(--text-main); -webkit-font-smoothing: antialiased; }
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: var(--bg);
+            margin: 0; padding: 0;
+            color: var(--text-main);
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
 
         /* 右上角添加按鈕 */
         .add-btn {
@@ -27,37 +40,86 @@
             z-index: 90; cursor: pointer; border: none;
         }
 
+        /* 內容區塊 */
         .page-content { display: none; padding-top: 40px; padding-bottom: 120px; }
         .page-content.active { display: block; }
 
-        /* 商品網格 */
-        .product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 16px; }
-        .product-card { background: var(--white); border-radius: var(--radius-md); overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
-        .product-img-box { width: 100%; padding-top: 100%; position: relative; background: #eee; }
-        .product-img-box img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
+        /* 商品網格：兩兩一行 */
+        .product-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            padding: 0 16px;
+        }
+        .product-card {
+            background: var(--white);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .product-img-box {
+            width: 100%;
+            padding-top: 100%;
+            position: relative;
+            background: #eee;
+        }
+        .product-img-box img {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%; object-fit: cover;
+        }
         .product-info { padding: 12px; }
-        .p-name { font-size: 14px; font-weight: 500; height: 40px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; line-height: 1.4; }
-        .p-price { font-size: 16px; font-weight: 900; color: var(--primary); margin-top: 4px; }
+        .p-name { font-size: 14px; font-weight: 500; line-height: 1.4; height: 40px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; margin-bottom: 4px; }
+        .p-price { font-size: 16px; font-weight: 900; color: var(--primary); }
         .p-price::before { content: "NT$ "; font-size: 11px; }
 
         /* 底部導覽列 */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; padding: 12px 10px calc(15px + env(safe-area-inset-bottom)); border-top: 1px solid #e5e8eb; z-index: 100; }
-        .nav-item { flex: 1; text-align: center; border: none; background: none; color: #adb5bd; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            display: flex; justify-content: space-around;
+            padding: 12px 10px calc(15px + env(safe-area-inset-bottom));
+            border-top: 1px solid #e5e8eb;
+            z-index: 100;
+        }
+        .nav-item {
+            flex: 1; text-align: center; border: none; background: none;
+            color: #adb5bd; display: flex; flex-direction: column; align-items: center; gap: 4px;
+        }
         .nav-item.active { color: var(--primary); }
+        .nav-item span { font-size: 11px; font-weight: 900; }
         .nav-icon { width: 24px; height: 24px; }
 
-        /* 彈窗樣式 */
-        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); z-index: 500; align-items: center; justify-content: center; padding: 20px; }
-        .toss-card { background: var(--white); border-radius: var(--radius-lg); padding: 28px 24px; width: 100%; max-width: 340px; box-sizing: border-box; }
+        /* 彈窗通用樣式 */
+        .modal-overlay {
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(8px); z-index: 500; align-items: center; justify-content: center; padding: 20px;
+        }
+        .toss-card {
+            background: var(--white); border-radius: var(--radius-lg); padding: 28px 24px;
+            width: 100%; max-width: 340px; box-sizing: border-box; box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
         label { display: block; font-size: 12px; font-weight: 700; color: var(--text-sub); margin-bottom: 8px; }
-        input, select { width: 100%; padding: 14px 16px; border: 1.5px solid #e5e8eb; border-radius: var(--radius-md); background: #f9fafb; font-size: 16px; box-sizing: border-box; outline: none; margin-bottom: 16px; }
-        .btn-primary { background-color: var(--primary); color: white; border: none; border-radius: var(--radius-md); padding: 16px; width: 100%; font-size: 16px; font-weight: 700; cursor: pointer; }
+        input, select {
+            width: 100%; padding: 14px 16px; border: 1.5px solid #e5e8eb; border-radius: var(--radius-md);
+            background: #f9fafb; font-size: 16px; box-sizing: border-box; outline: none; margin-bottom: 16px;
+        }
+        .btn-primary {
+            background-color: var(--primary); color: white; border: none; border-radius: var(--radius-md);
+            padding: 16px; width: 100%; font-size: 16px; font-weight: 700; cursor: pointer;
+        }
 
-        /* 成功報到 (全黑沉浸) */
-        #success-overlay { display: none; position: fixed; inset: 0; background: #000; z-index: 2000; align-items: center; justify-content: center; padding: 20px; }
+        /* 成功畫面 (全黑背景) */
+        #success-overlay {
+            display: none; position: fixed; inset: 0; background: #000; z-index: 2000;
+            align-items: center; justify-content: center; padding: 20px;
+        }
         .success-modal { background: white; border-radius: 32px; padding: 40px 32px; width: 100%; max-width: 300px; text-align: center; }
         .airplane-icon { width: 64px; height: 64px; background: #fff8e6; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px auto; color: var(--primary); }
 
+        /* 載入中 */
         #loading-screen { position: fixed; inset: 0; background: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; }
         .spinner { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -80,9 +142,9 @@
             <label>* 商品名稱</label>
             <input type="text" id="add-name" placeholder="請輸入中文品名">
             <label>* 商品價格 (NT)</label>
-            <input type="number" id="add-price" placeholder="請填寫售價">
-            <label>* 商品網址</label>
-            <input type="url" id="add-url" placeholder="請貼上韓國官網網址">
+            <input type="number" id="add-price" placeholder="請輸入台幣價格">
+            <label>* 商品圖片/網址</label>
+            <input type="url" id="add-url" placeholder="請貼上 LURL 圖片直接連結">
             <div style="display: flex; gap: 10px;">
                 <button class="btn-primary" style="background:#eee; color:#666;" onclick="closeAddModal()">取消</button>
                 <button id="submit-btn" class="btn-primary" onclick="submitProduct()">商品登錄</button>
@@ -119,14 +181,35 @@
     </div>
 
     <div id="main-app" style="display:none;">
-        <section id="page-shop" class="page-content active"><div id="product-grid" class="product-grid"></div></section>
-        <section id="page-pop" class="page-content"><div class="toss-card" style="text-align:center; padding:60px 20px;">🪄 韓風 POP 專區</div></section>
-        <section id="page-passport" class="page-content"><div class="toss-card"><h3 style="margin:0 0 20px 0;">我的護照</h3><div id="user-info-display"></div><button class="btn-primary" style="background:#eee; color:#adb5bd; margin-top:32px;" onclick="liff.logout(); location.reload();">登出報到</button></div></section>
+        <section id="page-shop" class="page-content active">
+            <div id="product-grid" class="product-grid"></div>
+        </section>
+
+        <section id="page-pop" class="page-content">
+            <div class="toss-card" style="text-align: center; padding: 60px 20px;">🪄 韓風 POP 活動準備中</div>
+        </section>
+
+        <section id="page-passport" class="page-content">
+            <div class="toss-card">
+                <h3 style="margin-top:0;">我的護照</h3>
+                <div id="user-info-display" style="line-height: 2.2;"></div>
+                <button class="btn-primary" style="background:#eee; color:#666; margin-top:32px;" onclick="liff.logout(); location.reload();">登出報到</button>
+            </div>
+        </section>
 
         <nav class="bottom-nav">
-            <button class="nav-item active" onclick="switchPage('shop')"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg><span>弘大漫遊</span></button>
-            <button class="nav-item" onclick="switchPage('pop')"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m11.314 11.314l.707.707M12 8a4 4 0 100 8 4 4 0 000-8z"/></svg><span>韓風POP</span></button>
-            <button class="nav-item" onclick="switchPage('passport')"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg><span>我的護照</span></button>
+            <button class="nav-item active" onclick="switchPage('shop')">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+                <span>弘大漫遊</span>
+            </button>
+            <button class="nav-item" onclick="switchPage('pop')">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m11.314 11.314l.707.707M12 8a4 4 0 100 8 4 4 0 000-8z"/></svg>
+                <span>韓風POP</span>
+            </button>
+            <button class="nav-item" onclick="switchPage('passport')">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
+                <span>我的護照</span>
+            </button>
         </nav>
     </div>
 
@@ -150,16 +233,21 @@
         async function checkMemberStatus() {
             const { data } = await _supabase.from('profiles').select('*').eq('line_id', userLineId).maybeSingle();
             document.getElementById('loading-screen').style.display = 'none';
-            if (!data || !data.is_onboarded) { document.getElementById('onboarding-modal').style.display = 'flex'; }
-            else {
+            if (!data || !data.is_onboarded) {
+                document.getElementById('onboarding-modal').style.display = 'flex';
+            } else {
                 document.getElementById('main-app').style.display = 'block';
                 document.getElementById('add-product-btn').style.display = 'flex';
-                document.getElementById('user-info-display').innerHTML = `<p><b>登機姓名：</b>${data.full_name}</p><p><b>聯絡電話：</b>${data.phone}</p><p><b>出生日期：</b>${data.birthday}</p><p><b>電子信箱：</b>${data.email}</p>`;
+                document.getElementById('user-info-display').innerHTML = `
+                    <p><b>登機姓名：</b>${data.full_name}</p>
+                    <p><b>聯絡電話：</b>${data.phone}</p>
+                    <p><b>出生日期：</b>${data.birthday}</p>
+                    <p><b>電子信箱：</b>${data.email}</p>
+                `;
                 fetchProducts();
             }
         }
 
-        // --- 商品登錄與 AI 抓圖 ---
         function openAddModal() { document.getElementById('add-modal').style.display = 'flex'; }
         function closeAddModal() { document.getElementById('add-modal').style.display = 'none'; }
 
@@ -173,32 +261,32 @@
 
             btn.innerText = "登錄中..."; btn.disabled = true;
 
-            // AI 抓圖：抓取該網站的 SEO 封面圖 (OG Image)
-            const aiImageUrl = `https://s2.googleusercontent.com/s2/favicons?domain_url=${url}&sz=128`;
-
             const { error } = await _supabase.from('products').insert({
                 name_zh: name,
                 price_nt: price,
                 product_url: url,
-                image_url: aiImageUrl,
+                image_url: url, // 這裡是重點：你截圖轉好的網址貼這
                 status: '待核准'
             });
 
-            if (error) {
-                console.error(error);
-                alert('登錄失敗：' + error.message);
-            } else {
-                alert('登錄成功！待我核對後就會上架囉✈️');
-                closeAddModal();
-            }
+            if (error) { alert('登錄失敗：' + error.message); } 
+            else { alert('登錄成功！待我核對後就會上架囉✈️'); closeAddModal(); }
             btn.innerText = "商品登錄"; btn.disabled = false;
         }
 
         async function fetchProducts() {
             const grid = document.getElementById('product-grid');
-            const { data, error } = await _supabase.from('products').select('*').eq('status', '可上架').order('created_at', { ascending: false });
+            const { data } = await _supabase.from('products').select('*').eq('status', '可上架').order('created_at', { ascending: false });
             if (data && data.length > 0) {
-                grid.innerHTML = data.map(p => `<div class="product-card"><div class="product-img-box"><img src="${p.image_url}" onerror="this.src='https://via.placeholder.com/300?text=KOR.IAN'"></div><div class="product-info"><div class="p-name">${p.name_zh}</div><div class="p-price">${Number(p.price_nt).toLocaleString()}</div></div></div>`).join('');
+                grid.innerHTML = data.map(p => `
+                    <div class="product-card">
+                        <div class="product-img-box"><img src="${p.image_url}" onerror="this.src='https://via.placeholder.com/300?text=KOR.IAN'"></div>
+                        <div class="product-info">
+                            <div class="p-name">${p.name_zh}</div>
+                            <div class="p-price">${Number(p.price_nt).toLocaleString()}</div>
+                        </div>
+                    </div>
+                `).join('');
             } else { grid.innerHTML = '<p style="grid-column:1/3; text-align:center; padding:60px 20px; color:#adb5bd;">目前還沒有連線商品上架喔</p>'; }
         }
 
