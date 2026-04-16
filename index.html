@@ -12,18 +12,24 @@
     <style>
         :root {
             --primary: #f7b500; --bg: #f2f4f6; --white: #ffffff;
-            --text-main: #191f28; --text-sub: #4e5968; --radius-lg: 24px; --radius-md: 16px;
+            --text-main: #191f28; --text-sub: #4e5968; --error: #f44336;
+            --radius-lg: 24px; --radius-md: 16px;
         }
 
         body { font-family: 'Noto Sans TC', sans-serif; background-color: var(--bg); margin: 0; padding: 0; color: var(--text-main); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
 
+        /* 載入畫面 */
+        #loading-screen { position: fixed; inset: 0; background: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; }
+        .spinner { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* 右上角添加按鈕 */
         .add-btn { position: fixed; top: 20px; right: 20px; width: 48px; height: 48px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; box-shadow: 0 4px 15px rgba(247, 181, 0, 0.4); z-index: 90; cursor: pointer; border: none; }
         
-        /* 頁面切換內容 */
-        .page-content { display: none; padding-top: 40px; padding-bottom: 120px; min-height: 100vh; box-sizing: border-box; }
+        .page-content { display: none; padding-top: 20px; padding-bottom: 120px; min-height: 100vh; box-sizing: border-box; }
         .page-content.active { display: block; }
 
-        /* 商品卡片佈局 */
+        /* 商品佈局 */
         .product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 16px; }
         .product-card { background: var(--white); border-radius: var(--radius-md); overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
         .product-img-box { width: 100%; padding-top: 100%; position: relative; background: #eee; }
@@ -43,19 +49,36 @@
         /* 彈窗樣式 */
         .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); z-index: 500; align-items: center; justify-content: center; padding: 20px; }
         .toss-card { background: var(--white); border-radius: var(--radius-lg); padding: 28px 24px; width: 100%; max-width: 340px; box-sizing: border-box; }
-        input { width: 100%; padding: 14px 16px; border: 1.5px solid #e5e8eb; border-radius: var(--radius-md); background: #f9fafb; font-size: 16px; box-sizing: border-box; outline: none; margin-bottom: 12px; }
+        input, select { width: 100%; padding: 14px 16px; border: 1.5px solid #e5e8eb; border-radius: var(--radius-md); background: #f9fafb; font-size: 16px; box-sizing: border-box; outline: none; margin-bottom: 12px; }
         .btn-primary { background-color: var(--primary); color: white; border: none; border-radius: var(--radius-md); padding: 16px; width: 100%; font-size: 16px; font-weight: 700; cursor: pointer; }
-
-        #loading-screen { position: fixed; inset: 0; background: #fff; display: flex; align-items: center; justify-content: center; z-index: 1000; font-weight: 700; }
     </style>
 </head>
 <body>
+
+    <div id="loading-screen">
+        <div class="spinner"></div>
+        <p style="margin-top: 16px; font-weight: 700; color: var(--text-sub);">安全連線中...</p>
+    </div>
 
     <button id="add-product-btn" class="add-btn" style="display:none;" onclick="openAddModal()">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
     </button>
 
-    <div id="loading-screen">安全連線中...</div>
+    <div id="onboarding-modal" class="modal-overlay">
+        <div class="toss-card">
+            <h2 style="margin: 0 0 10px 0; font-weight: 900;">報到櫃檯</h2>
+            <p style="font-size: 13px; color: var(--text-sub); margin-bottom: 20px;">歡迎使用 IAN AIR 線上報到服務。</p>
+            <input type="text" id="reg-name" placeholder="真實姓名">
+            <input type="tel" id="reg-phone" placeholder="聯絡電話" maxlength="10">
+            <div style="display:flex; gap:6px; margin-bottom:12px;">
+                <select id="reg-birth-y" style="border-radius:50px;"><option value="">年</option></select>
+                <select id="reg-birth-m" style="border-radius:50px;"><option value="">月</option></select>
+                <select id="reg-birth-d" style="border-radius:50px;"><option value="">日</option></select>
+            </div>
+            <input type="email" id="reg-email" placeholder="電子信箱">
+            <button class="btn-primary" onclick="saveProfile()">完成報到</button>
+        </div>
+    </div>
 
     <div id="add-modal" class="modal-overlay">
         <div class="toss-card">
@@ -73,7 +96,7 @@
     <div id="main-app" style="display:none;">
         <section id="page-shop" class="page-content active"><div id="product-grid" class="product-grid"></div></section>
         <section id="page-pop" class="page-content"><div class="toss-card" style="text-align: center; padding: 60px 20px;">🪄 韓風 POP 準備中</div></section>
-        <section id="page-passport" class="page-content"><div class="toss-card"><h3>我的護照</h3><div id="user-info-display"></div></div></section>
+        <section id="page-passport" class="page-content"><div class="toss-card"><h3>我的護照</h3><div id="user-info-display" style="line-height:2.2;"></div><button class="btn-primary" style="background:#eee; color:#666; margin-top:32px;" onclick="liff.logout(); location.reload();">登出帳號</button></div></section>
 
         <nav class="bottom-nav">
             <div class="nav-item active" id="nav-shop" onclick="switchPage('shop')">
@@ -98,23 +121,47 @@
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         let userLineId = null;
 
+        // Failsafe: 如果 8 秒後還在讀取，強制關閉載入畫面
+        setTimeout(() => {
+            const loader = document.getElementById('loading-screen');
+            if (loader.style.display !== 'none') {
+                console.log("Failsafe triggered");
+                loader.style.display = 'none';
+                document.getElementById('main-app').style.display = 'block';
+            }
+        }, 8000);
+
         async function initApp() {
+            initBirthdaySelects();
             try {
                 await liff.init({ liffId: LIFF_ID });
                 if (!liff.isLoggedIn()) { liff.login(); return; }
-                const profile = await liff.getProfile(); userLineId = profile.userId;
+                const profile = await liff.getProfile(); 
+                userLineId = profile.userId;
                 checkMemberStatus();
-            } catch (err) { console.error(err); }
+            } catch (err) { 
+                console.error(err);
+                document.getElementById('loading-screen').style.display = 'none';
+                document.getElementById('main-app').style.display = 'block';
+            }
         }
 
         async function checkMemberStatus() {
-            const { data } = await _supabase.from('profiles').select('*').eq('line_id', userLineId).maybeSingle();
-            document.getElementById('loading-screen').style.display = 'none';
-            if (data && data.is_onboarded) {
+            try {
+                const { data, error } = await _supabase.from('profiles').select('*').eq('line_id', userLineId).maybeSingle();
+                document.getElementById('loading-screen').style.display = 'none';
+                
+                if (data && data.is_onboarded) {
+                    document.getElementById('main-app').style.display = 'block';
+                    document.getElementById('add-product-btn').style.display = 'flex';
+                    document.getElementById('user-info-display').innerHTML = `<p><b>姓名：</b>${data.full_name}</p><p><b>電話：</b>${data.phone}</p><p><b>生日：</b>${data.birthday}</p>`;
+                    fetchProducts();
+                } else {
+                    document.getElementById('onboarding-modal').style.display = 'flex';
+                }
+            } catch (e) {
+                document.getElementById('loading-screen').style.display = 'none';
                 document.getElementById('main-app').style.display = 'block';
-                document.getElementById('add-product-btn').style.display = 'flex';
-                document.getElementById('user-info-display').innerHTML = `<p><b>姓名：</b>${data.full_name}</p><p><b>電話：</b>${data.phone}</p>`;
-                fetchProducts();
             }
         }
 
@@ -125,8 +172,7 @@
             const name = document.getElementById('add-name').value;
             const price = document.getElementById('add-price').value;
             const file = document.getElementById('add-file').files[0];
-
-            if(!name || !price || !file) return alert('請完整填寫並選擇截圖');
+            if(!name || !price || !file) return alert('請填寫完整資訊');
             
             const btn = document.getElementById('submit-btn');
             btn.innerText = "上傳中..."; btn.disabled = true;
@@ -136,7 +182,7 @@
 
             if (uploadError) {
                 btn.innerText = "商品登錄"; btn.disabled = false;
-                return alert('上傳失敗：請檢查 Storage 是否已建立 product-images 並開啟 Policy');
+                return alert('上傳失敗，請確認 Storage 是否有建立 product-images 儲存桶');
             }
 
             const { data: publicUrl } = _supabase.storage.from('product-images').getPublicUrl(fileName);
@@ -149,5 +195,50 @@
         }
 
         async function fetchProducts() {
-            const grid = document.getElementById('product-grid');
-            const { data } = await _supabase.from('products
+            const { data } = await _supabase.from('products').select('*').eq('status', '可上架').order('created_at', { ascending: false });
+            if (data) {
+                document.getElementById('product-grid').innerHTML = data.map(p => `
+                    <div class="product-card">
+                        <div class="product-img-box"><img src="${p.image_url}" loading="lazy"></div>
+                        <div class="product-info"><div class="p-name">${p.name_zh}</div><div class="p-price">${Number(p.price_nt).toLocaleString()}</div></div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function switchPage(p) {
+            document.querySelectorAll('.page-content').forEach(el => el.classList.remove('active'));
+            document.getElementById('page-' + p).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById('nav-' + p).classList.add('active');
+            document.getElementById('add-product-btn').style.display = (p === 'shop') ? 'flex' : 'none';
+        }
+
+        function initBirthdaySelects() {
+            const y = document.getElementById('reg-birth-y'); const m = document.getElementById('reg-birth-m'); const d = document.getElementById('reg-birth-d');
+            const now = new Date().getFullYear();
+            for(let i=now; i>=1940; i--) y.options.add(new Option(i, i));
+            for(let i=1; i<=12; i++) m.options.add(new Option(i<10?'0'+i:i, i<10?'0'+i:i));
+            const upd = () => { d.innerHTML = '<option value="">日</option>'; if(y.value && m.value) { const days = new Date(y.value, m.value, 0).getDate(); for(let i=1; i<=days; i++) d.options.add(new Option(i<10?'0'+i:i, i<10?'0'+i:i)); } };
+            y.onchange = upd; m.onchange = upd;
+        }
+
+        async function saveProfile() {
+            const n = document.getElementById('reg-name').value; 
+            const p = document.getElementById('reg-phone').value; 
+            const e = document.getElementById('reg-email').value;
+            const by = document.getElementById('reg-birth-y').value; 
+            const bm = document.getElementById('reg-birth-m').value; 
+            const bd = document.getElementById('reg-birth-d').value;
+            if(!n || !p || !e || !by || !bm || !bd) return alert('請填寫完整報到資訊');
+            
+            const { error } = await _supabase.from('profiles').upsert({ 
+                line_id: userLineId, full_name: n, phone: p, birthday: `${by}-${bm}-${bd}`, email: e, is_onboarded: true 
+            });
+            if (!error) { location.reload(); } else { alert('報到失敗，請再試一次'); }
+        }
+
+        window.onload = initApp;
+    </script>
+</body>
+</html>
