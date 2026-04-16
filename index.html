@@ -12,57 +12,37 @@
     <style>
         :root {
             --primary: #f7b500; --bg: #f2f4f6; --white: #ffffff;
-            --text-main: #191f28; --text-sub: #4e5968; --error: #f44336;
-            --radius-lg: 24px; --radius-md: 16px;
+            --text-main: #191f28; --text-sub: #4e5968; --radius-lg: 24px; --radius-md: 16px;
         }
 
         body { font-family: 'Noto Sans TC', sans-serif; background-color: var(--bg); margin: 0; padding: 0; color: var(--text-main); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
 
-        /* 右上角添加按鈕 */
-        .add-btn {
-            position: fixed; top: 20px; right: 20px;
-            width: 48px; height: 48px; background: var(--primary);
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            color: white; box-shadow: 0 4px 15px rgba(247, 181, 0, 0.4);
-            z-index: 90; cursor: pointer; border: none;
-        }
-
-        /* 內容區塊 */
+        .add-btn { position: fixed; top: 20px; right: 20px; width: 48px; height: 48px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; box-shadow: 0 4px 15px rgba(247, 181, 0, 0.4); z-index: 90; cursor: pointer; border: none; }
         .page-content { display: none; padding-top: 20px; padding-bottom: 120px; min-height: 100vh; box-sizing: border-box; }
         .page-content.active { display: block; }
 
-        /* 商品卡片佈局 */
+        /* 商品卡片 */
         .product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 16px; }
         .product-card { background: var(--white); border-radius: var(--radius-md); overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
-        .product-img-box { width: 100%; padding-top: 100%; position: relative; background: #eee; overflow: hidden; }
-        .product-img-box img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; transition: opacity 0.3s; }
+        .product-img-box { width: 100%; padding-top: 100%; position: relative; background: #eee; }
+        .product-img-box img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
         .product-info { padding: 12px; }
         .p-name { font-size: 14px; font-weight: 500; height: 40px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; line-height: 1.4; margin-bottom: 4px; }
         .p-price { font-size: 16px; font-weight: 900; color: var(--primary); }
         .p-price::before { content: "NT$ "; font-size: 11px; }
 
-        /* 底部導覽列 */
-        .bottom-nav {
-            position: fixed; bottom: 0; left: 0; right: 0;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            display: flex; justify-content: space-around;
-            padding: 12px 10px calc(15px + env(safe-area-inset-bottom));
-            border-top: 1px solid #e5e8eb;
-            z-index: 100;
-        }
-        .nav-item {
-            flex: 1; text-align: center; border: none; background: none;
-            color: #adb5bd; display: flex; flex-direction: column; align-items: center; gap: 4px;
-        }
+        /* 底部導覽 */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; padding: 12px 10px calc(15px + env(safe-area-inset-bottom)); border-top: 1px solid #e5e8eb; z-index: 100; }
+        .nav-item { flex: 1; text-align: center; border: none; background: none; color: #adb5bd; display: flex; flex-direction: column; align-items: center; gap: 4px; }
         .nav-item.active { color: var(--primary); }
         .nav-item span { font-size: 11px; font-weight: 900; }
         .nav-icon { width: 24px; height: 24px; }
 
-        /* 彈窗樣式 */
+        /* 彈窗 */
         .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); z-index: 500; align-items: center; justify-content: center; padding: 20px; }
         .toss-card { background: var(--white); border-radius: var(--radius-lg); padding: 28px 24px; width: 100%; max-width: 340px; box-sizing: border-box; }
-        input { width: 100%; padding: 14px 16px; border: 1.5px solid #e5e8eb; border-radius: var(--radius-md); background: #f9fafb; font-size: 16px; box-sizing: border-box; outline: none; margin-bottom: 16px; }
+        label { display: block; font-size: 12px; font-weight: 700; color: var(--text-sub); margin-bottom: 4px; }
+        input { width: 100%; padding: 14px 16px; border: 1.5px solid #e5e8eb; border-radius: var(--radius-md); background: #f9fafb; font-size: 16px; box-sizing: border-box; outline: none; margin-bottom: 12px; }
         .btn-primary { background-color: var(--primary); color: white; border: none; border-radius: var(--radius-md); padding: 16px; width: 100%; font-size: 16px; font-weight: 700; cursor: pointer; }
 
         #loading-screen { position: fixed; inset: 0; background: #fff; display: flex; align-items: center; justify-content: center; z-index: 1000; font-weight: 700; }
@@ -79,10 +59,13 @@
     <div id="add-modal" class="modal-overlay">
         <div class="toss-card">
             <h2 style="margin: 0 0 20px 0; font-weight: 900;">新增商品</h2>
-            <input type="text" id="add-name" placeholder="商品名稱">
-            <input type="number" id="add-price" placeholder="價格 (NT)">
-            <input type="url" id="add-url" placeholder="貼上網址 (官網或截圖網頁)">
-            <div style="display: flex; gap: 10px;">
+            <label>商品名稱</label>
+            <input type="text" id="add-name" placeholder="請輸入名稱">
+            <label>價格 (NT)</label>
+            <input type="number" id="add-price" placeholder="請輸入台幣價格">
+            <label>上傳商品截圖</label>
+            <input type="file" id="add-file" accept="image/*">
+            <div style="display: flex; gap: 10px; margin-top: 10px;">
                 <button class="btn-primary" style="background:#eee; color:#666;" onclick="closeAddModal()">取消</button>
                 <button id="submit-btn" class="btn-primary" onclick="submitProduct()">商品登錄</button>
             </div>
@@ -90,21 +73,9 @@
     </div>
 
     <div id="main-app" style="display:none;">
-        <section id="page-shop" class="page-content active">
-            <div id="product-grid" class="product-grid"></div>
-        </section>
-
-        <section id="page-pop" class="page-content">
-            <div class="toss-card" style="text-align: center; padding: 60px 20px;">🪄 韓風 POP 活動準備中</div>
-        </section>
-
-        <section id="page-passport" class="page-content">
-            <div class="toss-card">
-                <h3 style="margin-top:0;">我的護照</h3>
-                <div id="user-info-display" style="line-height: 2.2; margin-top: 20px;"></div>
-                <button class="btn-primary" style="background:#eee; color:#666; margin-top:32px;" onclick="liff.logout(); location.reload();">登出報到</button>
-            </div>
-        </section>
+        <section id="page-shop" class="page-content active"><div id="product-grid" class="product-grid"></div></section>
+        <section id="page-pop" class="page-content"><div class="toss-card" style="text-align: center; padding: 60px 20px;">🪄 韓風 POP 準備中</div></section>
+        <section id="page-passport" class="page-content"><div class="toss-card"><h3>我的護照</h3><div id="user-info-display"></div></div></section>
 
         <nav class="bottom-nav">
             <div class="nav-item active" id="nav-shop" onclick="switchPage('shop')">
@@ -144,10 +115,8 @@
             if (data && data.is_onboarded) {
                 document.getElementById('main-app').style.display = 'block';
                 document.getElementById('add-product-btn').style.display = 'flex';
-                document.getElementById('user-info-display').innerHTML = `<p><b>登機姓名：</b>${data.full_name}</p><p><b>電話：</b>${data.phone}</p><p><b>生日：</b>${data.birthday}</p>`;
+                document.getElementById('user-info-display').innerHTML = `<p><b>姓名：</b>${data.full_name}</p><p><b>電話：</b>${data.phone}</p>`;
                 fetchProducts();
-            } else {
-                alert('請先完成報到流程喔！');
             }
         }
 
@@ -155,50 +124,59 @@
         function closeAddModal() { document.getElementById('add-modal').style.display = 'none'; }
 
         async function submitProduct() {
-            const n = document.getElementById('add-name').value;
-            const p = document.getElementById('add-price').value;
-            const u = document.getElementById('add-url').value;
-            if(!n || !p || !u) return alert('請填寫完整資訊');
+            const name = document.getElementById('add-name').value;
+            const price = document.getElementById('add-price').value;
+            const fileInput = document.getElementById('add-file');
+            const file = fileInput.files[0];
 
-            const { error } = await _supabase.from('products').insert({
-                name_zh: n, price_nt: p, product_url: u, image_url: u, status: '待核准'
+            if(!name || !price || !file) return alert('請填寫資訊並選擇圖片');
+            
+            const btn = document.getElementById('submit-btn');
+            btn.innerText = "上傳中..."; btn.disabled = true;
+
+            // 1. 上傳圖片到 Storage (product-images)
+            const fileName = `${Date.now()}_${file.name}`;
+            const { data: uploadData, error: uploadError } = await _supabase.storage
+                .from('product-images')
+                .upload(fileName, file);
+
+            if (uploadError) { 
+                btn.innerText = "商品登錄"; btn.disabled = false;
+                return alert('上傳失敗：' + uploadError.message); 
+            }
+
+            // 2. 獲取圖片公開連結
+            const { data: publicUrl } = _supabase.storage.from('product-images').getPublicUrl(fileName);
+            const imageUrl = publicUrl.publicUrl;
+
+            // 3. 寫入資料庫
+            const { error: dbError } = await _supabase.from('products').insert({
+                name_zh: name, price_nt: price, image_url: imageUrl, status: '待核准'
             });
 
-            if(!error) { alert('登錄成功！待審核上架'); closeAddModal(); }
+            if(!dbError) { alert('上傳成功！審核後就會出現在店面。'); closeAddModal(); fetchProducts(); }
+            btn.innerText = "商品登錄"; btn.disabled = false;
         }
 
-        // --- 核心：類 Notion 的網頁預覽技術 ---
         async function fetchProducts() {
             const grid = document.getElementById('product-grid');
             const { data } = await _supabase.from('products').select('*').eq('status', '可上架').order('created_at', { ascending: false });
-            
-            if (data && data.length > 0) {
-                grid.innerHTML = data.map(p => {
-                    // 使用 Microlink 服務，這能抓取網頁的 SEO 封面圖 (og:image)
-                    // 它會像 Notion 一樣分析網址並提取代表性圖片
-                    const proxyImageUrl = `https://api.microlink.io/?url=${encodeURIComponent(p.image_url)}&embed=screenshot.url`;
-
-                    return `
-                        <div class="product-card">
-                            <div class="product-img-box">
-                                <img src="${proxyImageUrl}" onerror="this.src='https://via.placeholder.com/300?text=Wait+Loading...'">
-                            </div>
-                            <div class="product-info">
-                                <div class="p-name">${p.name_zh}</div>
-                                <div class="p-price">${Number(p.price_nt).toLocaleString()}</div>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
+            if (data) {
+                grid.innerHTML = data.map(p => `
+                    <div class="product-card">
+                        <div class="product-img-box"><img src="${p.image_url}" loading="lazy"></div>
+                        <div class="product-info"><div class="p-name">${p.name_zh}</div><div class="p-price">${Number(p.price_nt).toLocaleString()}</div></div>
+                    </div>
+                `).join('');
             }
         }
 
-        function switchPage(pageId) {
-            document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
-            document.getElementById('page-' + pageId).classList.add('active');
+        function switchPage(p) {
+            document.querySelectorAll('.page-content').forEach(el => el.classList.remove('active'));
+            document.getElementById('page-' + p).classList.add('active');
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.getElementById('nav-' + pageId).classList.add('active');
-            document.getElementById('add-product-btn').style.display = (pageId === 'shop') ? 'flex' : 'none';
+            document.getElementById('nav-' + p).classList.add('active');
+            document.getElementById('add-product-btn').style.display = (p === 'shop') ? 'flex' : 'none';
         }
 
         window.onload = initApp;
