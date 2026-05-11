@@ -3,53 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>KOR.IAN | 韓國代購連線</title>
+    <title>KOR.IAN | 韓國連線清單</title>
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #f7b500; --bg: #f2f4f6; --white: #ffffff; --radius-md: 16px; }
+        :root { --primary: #f7b500; --bg: #f2f4f6; --white: #ffffff; }
         body { font-family: 'Noto Sans TC', sans-serif; background-color: var(--bg); margin: 0; padding: 0; }
-        .add-btn { position: fixed; top: 20px; right: 20px; width: 48px; height: 48px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; z-index: 90; border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        
+        .add-btn { position: fixed; top: 20px; right: 20px; width: 48px; height: 48px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; z-index: 90; border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.1); font-size: 24px; }
+        
         .page-content { display: none; padding: 20px 16px 120px 16px; min-height: 100vh; box-sizing: border-box; }
         .page-content.active { display: block; }
-        .product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .product-card { background: var(--white); border-radius: var(--radius-md); overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.04); display: flex; flex-direction: column; }
-        .product-img-box { width: 100%; padding-top: 100%; position: relative; background: #eee; }
-        .product-img-box img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
-        .product-info { padding: 12px; }
-        .p-name { font-size: 14px; height: 40px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; line-height: 1.4; }
-        .p-price { color: var(--primary); font-weight: 900; margin-top: 6px; }
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; display: flex; justify-content: space-around; padding: 12px 0 calc(15px + env(safe-area-inset-bottom)); border-top: 1px solid #eee; z-index: 100; }
-        .nav-item { color: #adb5bd; text-align: center; flex: 1; font-size: 11px; font-weight: 900; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+
+        /* 清單樣式 */
+        .item-list { display: flex; flex-direction: column; gap: 10px; }
+        .item-row { background: #fff; padding: 16px; border-radius: 16px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+        .item-main { flex: 1; cursor: pointer; padding-right: 10px; }
+        .item-name { font-size: 15px; font-weight: 700; color: #191f28; text-decoration: underline; margin-bottom: 4px; display: block; }
+        .item-price { color: var(--primary); font-weight: 900; font-size: 14px; }
+
+        /* 數量按鈕 */
+        .qty-controls { display: flex; align-items: center; gap: 12px; background: #f9fafb; padding: 6px 12px; border-radius: 50px; }
+        .qty-btn { background: none; border: none; font-size: 20px; font-weight: 700; color: #4e5968; cursor: pointer; width: 24px; }
+        .qty-num { font-size: 16px; font-weight: 700; min-width: 20px; text-align: center; }
+
+        .cart-bar { position: fixed; bottom: 85px; left: 16px; right: 16px; background: #191f28; color: #fff; padding: 16px 24px; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; z-index: 95; }
+        
+        /* 底部選單 */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; display: flex; justify-content: space-around; padding: 12px 0 calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid #eee; z-index: 100; }
+        .nav-item { color: #adb5bd; text-align: center; flex: 1; font-size: 11px; font-weight: 900; }
         .nav-item.active { color: var(--primary); }
+
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 500; align-items: center; justify-content: center; padding: 20px; }
         .toss-card { background: #fff; border-radius: 24px; padding: 28px 24px; width: 100%; max-width: 340px; box-sizing: border-box; }
-        input { width: 100%; padding: 14px; border: 1.5px solid #eee; border-radius: 12px; margin-bottom: 12px; box-sizing: border-box; font-size: 16px; outline: none; }
-        .btn-main { background: var(--primary); color: #fff; border: none; padding: 16px; width: 100%; border-radius: 12px; font-weight: 700; font-size: 16px; cursor: pointer; }
+        input { width: 100%; padding: 14px; border: 1.5px solid #eee; border-radius: 12px; margin-bottom: 12px; font-size: 16px; outline: none; }
     </style>
 </head>
 <body>
 
     <button id="add-btn" class="add-btn" onclick="document.getElementById('add-modal').style.display='flex'">＋</button>
 
-    <section id="page-shop" class="page-content active"><div id="product-grid" class="product-grid"></div></section>
-    <section id="page-pop" class="page-content"><div style="text-align:center; padding-top:100px;">準備中</div></section>
-    <section id="page-passport" class="page-content"><div class="toss-card" style="margin:0 auto;"><h3>我的護照</h3><div id="u-id">載入中...</div></div></section>
+    <div id="main-app">
+        <section id="page-shop" class="page-content active">
+            <div id="item-list" class="item-list"></div>
+        </section>
 
-    <nav class="bottom-nav">
-        <div class="nav-item active" id="nav-shop" onclick="switchPage('shop')"><span>弘大漫遊</span></div>
-        <div class="nav-item" id="nav-pop" onclick="switchPage('pop')"><span>韓風POP</span></div>
-        <div class="nav-item" id="nav-passport" onclick="switchPage('passport')"><span>我的護照</span></div>
-    </nav>
+        <div id="cart-bar" class="cart-bar" style="display:none;">
+            <span>已選 <span id="cart-qty">0</span> 件商品</span>
+            <span style="color:var(--primary); font-weight:900;">加入預約單 →</span>
+        </div>
+
+        <nav class="bottom-nav">
+            <div class="nav-item active" onclick="switchPage('shop')">弘大漫遊</div>
+            <div class="nav-item" onclick="switchPage('pop')">韓風POP</div>
+            <div class="nav-item" onclick="switchPage('passport')">我的護照</div>
+        </nav>
+    </div>
 
     <div id="add-modal" class="modal">
         <div class="toss-card">
-            <h2 style="margin:0 0 20px 0;">新增商品</h2>
-            <input type="text" id="in-name" placeholder="商品品名">
-            <input type="number" id="in-price" placeholder="價格 (NT)">
-            <input type="file" id="in-file" accept="image/*">
-            <button class="btn-main" id="sub-btn" onclick="upload()">確認登錄</button>
+            <h2 style="margin:0 0 20px 0;">登錄導購商品</h2>
+            <input type="text" id="in-name" placeholder="中文品名">
+            <input type="number" id="in-price" placeholder="台幣價格 NT$">
+            <input type="url" id="in-url" placeholder="OliveYoung 網址">
+            <button style="background:var(--primary); color:#fff; border:none; padding:16px; width:100%; border-radius:12px; font-weight:700;" onclick="upload()">確認登錄</button>
             <button style="background:none; border:none; color:#999; margin-top:10px; width:100%;" onclick="document.getElementById('add-modal').style.display='none'">取消</button>
         </div>
     </div>
@@ -57,59 +75,63 @@
     <script>
         const LIFF_ID = '2009405888-D5absVA3'; 
         const SUPABASE_URL = 'https://ivpctyqlrkjstfsoweeh.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml2cGN0eXFscmtqc3Rmc293ZWVoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTk1MTksImV4cCI6MjA4ODc3NTUxOX0.DYgzhaTH3_5NFwv009ZfZAshfUnCW2PeTuNcJ9feyMU';
+        const SUPABASE_KEY = '你的_KEY'; 
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let cart = {};
 
         async function init() {
             await liff.init({ liffId: LIFF_ID });
             if (!liff.isLoggedIn()) { liff.login(); return; }
-            const p = await liff.getProfile();
-            document.getElementById('u-id').innerText = p.displayName;
-            fetch();
+            fetchProducts();
         }
 
         async function upload() {
             const n = document.getElementById('in-name').value;
             const p = document.getElementById('in-price').value;
-            const f = document.getElementById('in-file').files[0];
-            if(!n || !p || !f) return alert('必填！');
+            const u = document.getElementById('in-url').value;
+            if(!n || !p || !u) return alert('請完整填寫');
 
-            const btn = document.getElementById('sub-btn');
-            btn.innerText = "傳圖中..."; btn.disabled = true;
-
-            const fName = `img_${Date.now()}.jpg`;
-            const { error: upErr } = await _supabase.storage.from('product-images').upload(fName, f);
-            if(upErr) return alert('Storage 沒建好或是沒開 Policy');
-
-            const { data: u } = _supabase.storage.from('product-images').getPublicUrl(fName);
-
-            // 這裡就是你說的：直接寫入 image_url 欄位
-            const { error: dbErr } = await _supabase.from('products').insert({
-                name_zh: n, price_nt: p, image_url: u.publicUrl, status: '待核准'
+            await _supabase.from('products').insert({
+                name_zh: n, price_nt: p, olive_url: u, status: '待核准'
             });
-
-            if(!dbErr) { alert('成功！'); location.reload(); }
+            alert('登錄成功'); location.reload();
         }
 
-        async function fetch() {
-            const { data } = await _supabase.from('products').select('*').eq('status', '可上架').order('created_at', { ascending: false });
+        async function fetchProducts() {
+            const { data } = await _supabase.from('products').select('*').eq('status', '可上架');
             if(data) {
-                document.getElementById('product-grid').innerHTML = data.map(i => `
-                    <div class="product-card">
-                        <div class="product-img-box"><img src="${i.image_url}"></div>
-                        <div class="product-info"><div class="p-name">${i.name_zh}</div><div class="p-price">NT$ ${i.price_nt}</div></div>
+                document.getElementById('item-list').innerHTML = data.map(p => `
+                    <div class="item-row">
+                        <div class="item-main" onclick="window.open('${p.olive_url}', '_blank')">
+                            <span class="item-name">${p.name_zh}</span>
+                            <span class="item-price">NT$ ${p.price_nt}</span>
+                        </div>
+                        <div class="qty-controls">
+                            <button class="qty-btn" onclick="updateQty('${p.id}', -1)">-</button>
+                            <span class="qty-num" id="qty-${p.id}">0</span>
+                            <button class="qty-btn" onclick="updateQty('${p.id}', 1)">+</button>
+                        </div>
                     </div>
                 `).join('');
             }
         }
 
+        function updateQty(id, delta) {
+            if (!cart[id]) cart[id] = 0;
+            cart[id] = Math.max(0, cart[id] + delta);
+            document.getElementById(`qty-${id}`).innerText = cart[id];
+            
+            let total = Object.values(cart).reduce((a, b) => a + b, 0);
+            document.getElementById('cart-bar').style.display = total > 0 ? 'flex' : 'none';
+            document.getElementById('cart-qty').innerText = total;
+        }
+
         function switchPage(p) {
             document.querySelectorAll('.page-content').forEach(e => e.classList.remove('active'));
             document.getElementById('page-' + p).classList.add('active');
-            document.querySelectorAll('.nav-item').forEach(e => e.classList.remove('active'));
-            document.getElementById('nav-' + p).classList.add('active');
-            document.getElementById('add-btn').style.display = (p === 'shop') ? 'flex' : 'none';
         }
+
         window.onload = init;
     </script>
 </body>
