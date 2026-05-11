@@ -48,15 +48,16 @@
         .nav-item.active { color: var(--primary); }
         .nav-icon { width: 22px; height: 22px; }
 
+        /* 彈窗樣式 */
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 500; align-items: center; justify-content: center; padding: 20px; }
-        .toss-card { background: #fff; border-radius: 28px; padding: 32px 24px; width: 100%; max-width: 340px; box-sizing: border-box; }
+        .toss-card { background: #fff; border-radius: 28px; padding: 32px 24px; width: 100%; max-width: 340px; box-sizing: border-box; position: relative; }
         input { width: 100%; padding: 16px; border: 1.5px solid #eee; border-radius: 14px; margin-bottom: 12px; font-size: 16px; outline: none; background: #f9f9f9; box-sizing: border-box; }
-        .btn-main { background: var(--primary); color: #fff; border: none; padding: 16px; width: 100%; border-radius: 14px; font-weight: 700; font-size: 16px; cursor: pointer; }
+        .btn-main { background: var(--primary); color: #fff; border: none; padding: 16px; width: 100%; border-radius: 14px; font-weight: 700; font-size: 16px; cursor: pointer; margin-top: 10px; }
     </style>
 </head>
 <body>
 
-    <button id="add-btn" class="add-btn" onclick="document.getElementById('add-modal').style.display='flex'">
+    <button id="add-btn" class="add-btn" onclick="openModal()">
         <i data-feather="plus"></i>
     </button>
 
@@ -104,14 +105,13 @@
     </div>
 
     <div id="add-modal" class="modal">
-        <div class="toss-card">
+        <div class="toss-card" id="modal-card">
             <h2 style="margin:0 0 24px 0; font-weight: 900; font-size: 22px;">登錄商品</h2>
-            <input type="text" id="in-name" placeholder="商品中文名稱">
-            <input type="text" id="in-option" placeholder="商品款式 (如：粉色, 100ml / 選填)">
+            <input type="text" id="in-name" placeholder="商品名稱">
+            <input type="text" id="in-option" placeholder="商品款式 (選填)">
             <input type="number" id="in-price" placeholder="台幣售價 NT$">
-            <input type="url" id="in-url" placeholder="OliveYoung 導購網址">
+            <input type="url" id="in-url" placeholder="商品來源網址">
             <button class="btn-main" id="sub-btn" onclick="upload()">確認登錄</button>
-            <button style="background:none; border:none; color:#999; margin-top:16px; width:100%; font-weight: 700;" onclick="document.getElementById('add-modal').style.display='none'">取消返回</button>
         </div>
     </div>
 
@@ -122,82 +122,84 @@
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         let cart = {};
-        let userLineId = "unknown"; // 初始值設為 unknown 防止報錯
+        let userLineId = "unknown";
 
         async function init() {
             try {
                 await liff.init({ liffId: LIFF_ID });
                 if (!liff.isLoggedIn()) { liff.login(); return; }
-                
                 const profile = await liff.getProfile();
-                userLineId = profile.userId; // 確保拿到 ID
-                
+                userLineId = profile.userId;
                 document.getElementById('user-info').innerHTML = `<b>帳號：</b>${profile.displayName}`;
                 fetchProducts();
                 feather.replace();
-            } catch (e) { 
-                console.error("LIFF Init Error:", e);
-                alert("連線失敗，請重新開啟頁面");
+            } catch (e) { console.error(e); }
+        }
+
+        // 彈窗邏輯
+        function openModal() {
+            document.getElementById('add-modal').style.display = 'flex';
+        }
+
+        // 點擊背景關閉彈窗
+        window.onclick = function(event) {
+            const modal = document.getElementById('add-modal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
             }
         }
 
         async function upload() {
-            const n = document.getElementById('in-name').value;
-            const o = document.getElementById('in-option').value;
-            const p = document.getElementById('in-price').value;
-            const u = document.getElementById('in-url').value;
+            const n = document.getElementById('in-name').value.trim();
+            const o = document.getElementById('in-option').value.trim();
+            const p = document.getElementById('in-price').value.trim();
+            const u = document.getElementById('in-url').value.trim();
             
-            if(!n || !p || !u) return alert('請完整填寫資訊喔！');
+            // 除了款式(o)以外，其他皆為必填
+            if(!n || !p || !u) return alert('除了款式以外，其他欄位都是必填的喔！');
 
             const btn = document.getElementById('sub-btn');
             btn.innerText = "登錄中..."; btn.disabled = true;
 
-            // 執行寫入
             const { error } = await _supabase.from('products').insert({
                 name_zh: n, 
                 option: o || null, 
                 price_nt: p, 
                 olive_url: u, 
                 is_active: false,
-                created_by: userLineId // 自動帶入 ID
+                created_by: userLineId
             });
 
             if(!error) { 
                 alert('商品已登錄！審核後上架✈️'); 
                 location.reload(); 
             } else { 
-                console.error("Upload Error:", error);
                 alert('登錄失敗：' + error.message);
-                btn.innerText = "確認登錄";
-                btn.disabled = false;
+                btn.innerText = "確認登錄"; btn.disabled = false;
             }
         }
 
         async function fetchProducts() {
-            try {
-                const { data } = await _supabase.from('products').select('*').eq('is_active', true).order('created_at', { ascending: false });
-                if(data && data.length > 0) {
-                    document.getElementById('item-list').innerHTML = data.map(p => {
-                        const optionHtml = p.option ? `<span class="item-option">${p.option}</span>` : '';
-                        return `
-                        <div class="item-row">
-                            <div class="item-main" onclick="window.open('${p.olive_url}', '_blank')">
-                                <div><span class="item-name">${p.name_zh}</span>${optionHtml}</div>
-                                <span class="item-price">${Number(p.price_nt).toLocaleString()}</span>
-                            </div>
-                            <div class="qty-controls">
-                                <button class="qty-btn" onclick="updateQty('${p.id}', -1)"><i data-feather="minus" style="width:18px;"></i></button>
-                                <span class="qty-num" id="qty-${p.id}">0</span>
-                                <button class="qty-btn" onclick="updateQty('${p.id}', 1)"><i data-feather="plus" style="width:18px;"></i></button>
-                            </div>
+            const { data } = await _supabase.from('products').select('*').eq('is_active', true).order('created_at', { ascending: false });
+            if(data && data.length > 0) {
+                document.getElementById('item-list').innerHTML = data.map(p => {
+                    const optionHtml = p.option ? `<span class="item-option">${p.option}</span>` : '';
+                    return `
+                    <div class="item-row">
+                        <div class="item-main" onclick="window.open('${p.olive_url}', '_blank')">
+                            <div><span class="item-name">${p.name_zh}</span>${optionHtml}</div>
+                            <span class="item-price">${Number(p.price_nt).toLocaleString()}</span>
                         </div>
-                    `}).join('');
-                    feather.replace();
-                } else {
-                    document.getElementById('item-list').innerHTML = '<p style="text-align:center; color:#999; margin-top:40px;">目前尚無公開商品喔</p>';
-                }
-            } catch (err) {
-                console.error("Fetch Error:", err);
+                        <div class="qty-controls">
+                            <button class="qty-btn" onclick="updateQty('${p.id}', -1)"><i data-feather="minus" style="width:18px;"></i></button>
+                            <span class="qty-num" id="qty-${p.id}">0</span>
+                            <button class="qty-btn" onclick="updateQty('${p.id}', 1)"><i data-feather="plus" style="width:18px;"></i></button>
+                        </div>
+                    </div>
+                `}).join('');
+                feather.replace();
+            } else {
+                document.getElementById('item-list').innerHTML = '<p style="text-align:center; color:#999; margin-top:40px;">目前尚無公開商品喔</p>';
             }
         }
 
@@ -205,7 +207,6 @@
             if (!cart[id]) cart[id] = 0;
             cart[id] = Math.max(0, cart[id] + delta);
             document.getElementById(`qty-${id}`).innerText = cart[id];
-            
             let total = Object.values(cart).reduce((a, b) => a + b, 0);
             document.getElementById('cart-bar').style.display = total > 0 ? 'flex' : 'none';
             document.getElementById('cart-qty').innerText = total;
