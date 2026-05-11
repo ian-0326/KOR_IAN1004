@@ -15,7 +15,7 @@
         
         body { font-family: 'Noto Sans TC', sans-serif; background-color: var(--bg); margin: 0; padding: 0; color: var(--text); -webkit-font-smoothing: antialiased; }
 
-        /* 右上角添加按鈕 - 提高 Z-index 確保不被遮擋 */
+        /* 右上角添加按鈕 */
         .add-btn { 
             position: fixed; top: 20px; right: 20px; 
             width: 48px; height: 48px; background: var(--primary); 
@@ -24,12 +24,12 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.15); cursor: pointer; 
         }
 
-        /* 內容區塊設定 */
+        /* 內容區塊 */
         .page-content { display: none; padding: 0 16px 150px 16px; min-height: 100vh; box-sizing: border-box; }
         .page-content.active { display: block; }
 
-        /* 1. 上方留白區塊 - 預留空間給按鈕或橫幅 */
-        .top-spacer { height: 80px; width: 100%; }
+        /* 頂部留白空間：防止與添加按鈕重疊 */
+        .top-spacer { height: 85px; width: 100%; }
 
         /* 清單樣式 */
         .item-list { display: flex; flex-direction: column; gap: 12px; }
@@ -44,7 +44,7 @@
         .qty-btn { background: none; border: none; padding: 0; color: var(--sub); cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .qty-num { font-size: 16px; font-weight: 900; min-width: 20px; text-align: center; }
 
-        /* 購物車結算條 */
+        /* 購物車條 */
         .cart-bar { position: fixed; bottom: 90px; left: 16px; right: 16px; background: #191f28; color: #fff; padding: 18px 24px; border-radius: 20px; display: none; justify-content: space-between; align-items: center; z-index: 150; box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
         
         /* 底部導覽列 */
@@ -53,7 +53,7 @@
         .nav-item.active { color: var(--primary); }
         .nav-icon { width: 22px; height: 22px; }
 
-        /* 彈窗 */
+        /* 彈窗樣式 */
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 500; align-items: center; justify-content: center; padding: 20px; }
         .toss-card { background: #fff; border-radius: 28px; padding: 32px 24px; width: 100%; max-width: 340px; box-sizing: border-box; }
         input { width: 100%; padding: 16px; border: 1.5px solid #eee; border-radius: 14px; margin-bottom: 12px; font-size: 16px; outline: none; background: #f9f9f9; box-sizing: border-box; }
@@ -68,8 +68,9 @@
 
     <div id="main-app">
         <section id="page-shop" class="page-content active">
-            <div class="top-spacer"></div> <div id="item-list" class="item-list">
-                <p style="text-align: center; color: #999; margin-top: 40px;">連線資料讀取中...</p>
+            <div class="top-spacer"></div>
+            <div id="item-list" class="item-list">
+                <p style="text-align: center; color: #999; margin-top: 40px;">連線資料準備中...</p>
             </div>
         </section>
 
@@ -134,7 +135,7 @@
                 const profile = await liff.getProfile();
                 document.getElementById('user-info').innerHTML = `<b>帳號：</b>${profile.displayName}`;
                 fetchProducts();
-                feather.replace(); // 初始化圖示
+                feather.replace();
             } catch (e) { console.error(e); }
         }
 
@@ -145,14 +146,18 @@
             if(!n || !p || !u) return alert('請完整填寫資訊喔！');
 
             const { error } = await _supabase.from('products').insert({
-                name_zh: n, price_nt: p, olive_url: u, status: '待核准'
+                name_zh: n, 
+                price_nt: p, 
+                olive_url: u, 
+                is_active: false // 客戶新增預設關閉
             });
 
-            if(!error) { alert('登錄成功！審核後上架✈️'); location.reload(); }
+            if(!error) { alert('商品已登錄！審核後上架✈️'); location.reload(); }
+            else { alert('錯誤：' + error.message); }
         }
 
         async function fetchProducts() {
-            const { data } = await _supabase.from('products').select('*').eq('status', '可上架').order('created_at', { ascending: false });
+            const { data } = await _supabase.from('products').select('*').eq('is_active', true).order('created_at', { ascending: false });
             if(data && data.length > 0) {
                 document.getElementById('item-list').innerHTML = data.map(p => `
                     <div class="item-row">
@@ -167,9 +172,9 @@
                         </div>
                     </div>
                 `).join('');
-                feather.replace(); // 重新渲染列表內的圖示
+                feather.replace();
             } else {
-                document.getElementById('item-list').innerHTML = '<p style="text-align:center; color:#999; margin-top:40px;">目前尚無商品喔</p>';
+                document.getElementById('item-list').innerHTML = '<p style="text-align:center; color:#999; margin-top:40px;">目前尚無公開商品喔</p>';
             }
         }
 
