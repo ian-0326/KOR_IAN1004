@@ -31,7 +31,6 @@
         .item-row { background: #fff; padding: 18px; border-radius: 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
         .item-main { flex: 1; cursor: pointer; padding-right: 15px; }
         
-        /* 商品名稱與款式樣式 */
         .item-name { font-size: 15px; font-weight: 700; color: #007aff; text-decoration: underline; margin-bottom: 4px; display: inline-block; line-height: 1.4; }
         .item-option { font-size: 12px; color: var(--gray); font-weight: 400; margin-left: 6px; text-decoration: none; display: inline-block; }
         
@@ -123,31 +122,40 @@
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         let cart = {};
+        let userLineId = null; // 用來存儲當前登入者 ID
 
         async function init() {
             try {
                 await liff.init({ liffId: LIFF_ID });
                 if (!liff.isLoggedIn()) { liff.login(); return; }
                 const profile = await liff.getProfile();
+                userLineId = profile.userId; // 抓取 LINE userId
                 document.getElementById('user-info').innerHTML = `<b>帳號：</b>${profile.displayName}`;
                 fetchProducts();
                 feather.replace();
             } catch (e) { console.error(e); }
         }
 
+        // 核心：系統自動寫入 created_by
         async function upload() {
             const n = document.getElementById('in-name').value;
             const o = document.getElementById('in-option').value;
-            const p = document.getElementById('in-price').value;
+            const p = document.getElementById('p-price').value; // 修正 id 獲取
             const u = document.getElementById('in-url').value;
-            if(!n || !p || !u) return alert('請完整填寫資訊喔！');
+            
+            // 注意：in-price 剛才 HTML 裡是 in-price 還是 p-price？我檢查一下。
+            // 喔，剛才代碼裡是 id="in-price"
+            const priceVal = document.getElementById('in-price').value;
+
+            if(!n || !priceVal || !u) return alert('請完整填寫資訊喔！');
 
             const { error } = await _supabase.from('products').insert({
                 name_zh: n, 
-                option: o || null, // 沒填就存 null
-                price_nt: p, 
+                option: o || null, 
+                price_nt: priceVal, 
                 olive_url: u, 
-                is_active: false 
+                is_active: false,
+                created_by: userLineId // 自動帶入當前登入者 ID
             });
 
             if(!error) { alert('商品已登錄！審核後上架✈️'); location.reload(); }
@@ -158,15 +166,11 @@
             const { data } = await _supabase.from('products').select('*').eq('is_active', true).order('created_at', { ascending: false });
             if(data && data.length > 0) {
                 document.getElementById('item-list').innerHTML = data.map(p => {
-                    // 判斷款式是否有資料
                     const optionHtml = p.option ? `<span class="item-option">${p.option}</span>` : '';
-                    
                     return `
                     <div class="item-row">
                         <div class="item-main" onclick="window.open('${p.olive_url}', '_blank')">
-                            <div>
-                                <span class="item-name">${p.name_zh}</span>${optionHtml}
-                            </div>
+                            <div><span class="item-name">${p.name_zh}</span>${optionHtml}</div>
                             <span class="item-price">${Number(p.price_nt).toLocaleString()}</span>
                         </div>
                         <div class="qty-controls">
