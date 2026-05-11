@@ -32,7 +32,7 @@
         .item-main { flex: 1; cursor: pointer; padding-right: 15px; }
         
         .item-name { font-size: 15px; font-weight: 700; color: #007aff; text-decoration: underline; margin-bottom: 4px; display: inline-block; line-height: 1.4; }
-        .item-option { font-size: 12px; color: var(--gray); font-weight: 400; margin-left: 6px; text-decoration: none; display: inline-block; }
+        .item-option { font-size: 12px; color: var(--gray); font-weight: 400; margin-left: 6px; display: inline-block; }
         
         .item-price { color: var(--primary); font-weight: 900; font-size: 16px; display: block; margin-top: 2px; }
         .item-price::before { content: "NT$ "; font-size: 11px; }
@@ -122,67 +122,82 @@
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         let cart = {};
-        let userLineId = null; // 用來存儲當前登入者 ID
+        let userLineId = "unknown"; // 初始值設為 unknown 防止報錯
 
         async function init() {
             try {
                 await liff.init({ liffId: LIFF_ID });
                 if (!liff.isLoggedIn()) { liff.login(); return; }
+                
                 const profile = await liff.getProfile();
-                userLineId = profile.userId; // 抓取 LINE userId
+                userLineId = profile.userId; // 確保拿到 ID
+                
                 document.getElementById('user-info').innerHTML = `<b>帳號：</b>${profile.displayName}`;
                 fetchProducts();
                 feather.replace();
-            } catch (e) { console.error(e); }
+            } catch (e) { 
+                console.error("LIFF Init Error:", e);
+                alert("連線失敗，請重新開啟頁面");
+            }
         }
 
-        // 核心：系統自動寫入 created_by
         async function upload() {
             const n = document.getElementById('in-name').value;
             const o = document.getElementById('in-option').value;
-            const p = document.getElementById('p-price').value; // 修正 id 獲取
+            const p = document.getElementById('in-price').value;
             const u = document.getElementById('in-url').value;
             
-            // 注意：in-price 剛才 HTML 裡是 in-price 還是 p-price？我檢查一下。
-            // 喔，剛才代碼裡是 id="in-price"
-            const priceVal = document.getElementById('in-price').value;
+            if(!n || !p || !u) return alert('請完整填寫資訊喔！');
 
-            if(!n || !priceVal || !u) return alert('請完整填寫資訊喔！');
+            const btn = document.getElementById('sub-btn');
+            btn.innerText = "登錄中..."; btn.disabled = true;
 
+            // 執行寫入
             const { error } = await _supabase.from('products').insert({
                 name_zh: n, 
                 option: o || null, 
-                price_nt: priceVal, 
+                price_nt: p, 
                 olive_url: u, 
                 is_active: false,
-                created_by: userLineId // 自動帶入當前登入者 ID
+                created_by: userLineId // 自動帶入 ID
             });
 
-            if(!error) { alert('商品已登錄！審核後上架✈️'); location.reload(); }
-            else { alert('錯誤：' + error.message); }
+            if(!error) { 
+                alert('商品已登錄！審核後上架✈️'); 
+                location.reload(); 
+            } else { 
+                console.error("Upload Error:", error);
+                alert('登錄失敗：' + error.message);
+                btn.innerText = "確認登錄";
+                btn.disabled = false;
+            }
         }
 
         async function fetchProducts() {
-            const { data } = await _supabase.from('products').select('*').eq('is_active', true).order('created_at', { ascending: false });
-            if(data && data.length > 0) {
-                document.getElementById('item-list').innerHTML = data.map(p => {
-                    const optionHtml = p.option ? `<span class="item-option">${p.option}</span>` : '';
-                    return `
-                    <div class="item-row">
-                        <div class="item-main" onclick="window.open('${p.olive_url}', '_blank')">
-                            <div><span class="item-name">${p.name_zh}</span>${optionHtml}</div>
-                            <span class="item-price">${Number(p.price_nt).toLocaleString()}</span>
+            try {
+                const { data } = await _supabase.from('products').select('*').eq('is_active', true).order('created_at', { ascending: false });
+                if(data && data.length > 0) {
+                    document.getElementById('item-list').innerHTML = data.map(p => {
+                        const optionHtml = p.option ? `<span class="item-option">${p.option}</span>` : '';
+                        return `
+                        <div class="item-row">
+                            <div class="item-main" onclick="window.open('${p.olive_url}', '_blank')">
+                                <div><span class="item-name">${p.name_zh}</span>${optionHtml}</div>
+                                <span class="item-price">${Number(p.price_nt).toLocaleString()}</span>
+                            </div>
+                            <div class="qty-controls">
+                                <button class="qty-btn" onclick="updateQty('${p.id}', -1)"><i data-feather="minus" style="width:18px;"></i></button>
+                                <span class="qty-num" id="qty-${p.id}">0</span>
+                                <button class="qty-btn" onclick="updateQty('${p.id}', 1)"><i data-feather="plus" style="width:18px;"></i></button>
+                            </div>
                         </div>
-                        <div class="qty-controls">
-                            <button class="qty-btn" onclick="updateQty('${p.id}', -1)"><i data-feather="minus" style="width:18px;"></i></button>
-                            <span class="qty-num" id="qty-${p.id}">0</span>
-                            <button class="qty-btn" onclick="updateQty('${p.id}', 1)"><i data-feather="plus" style="width:18px;"></i></button>
-                        </div>
-                    </div>
-                `}).join('');
-                feather.replace();
-            } else {
-                document.getElementById('item-list').innerHTML = '<p style="text-align:center; color:#999; margin-top:40px;">目前尚無公開商品喔</p>';
+                    `}).join('');
+                    feather.replace();
+                } else {
+                    document.getElementById('item-list').innerHTML = '<p style="text-align:center; color:#999; margin-top:40px;">目前尚無公開商品喔</p>';
+                }
+            } catch (err) {
+                console.error("Fetch Error:", err);
             }
         }
 
