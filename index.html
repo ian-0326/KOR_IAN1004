@@ -4,54 +4,86 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>KOR.IAN | 韓國連線清單</title>
+    
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
     <style>
-        :root { --primary: #f7b500; --bg: #f2f4f6; --white: #ffffff; }
-        body { font-family: 'Noto Sans TC', sans-serif; background-color: var(--bg); margin: 0; padding: 0; color: #191f28; }
+        :root { --primary: #f7b500; --bg: #f2f4f6; --white: #ffffff; --text: #191f28; --sub: #4e5968; }
+        
+        body { font-family: 'Noto Sans TC', sans-serif; background-color: var(--bg); margin: 0; padding: 0; color: var(--text); -webkit-font-smoothing: antialiased; }
 
-        /* 介面設定 */
-        .add-btn { position: fixed; top: 20px; right: 20px; width: 48px; height: 48px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; z-index: 90; border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.1); font-size: 24px; cursor: pointer; }
-        .page-content { display: none; padding: 20px 16px 150px 16px; min-height: 100vh; box-sizing: border-box; }
+        /* 右上角添加按鈕 - 提高 Z-index 確保不被遮擋 */
+        .add-btn { 
+            position: fixed; top: 20px; right: 20px; 
+            width: 48px; height: 48px; background: var(--primary); 
+            border-radius: 50%; display: flex; align-items: center; justify-content: center; 
+            color: white; z-index: 200; border: none; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15); cursor: pointer; 
+        }
+
+        /* 內容區塊設定 */
+        .page-content { display: none; padding: 0 16px 150px 16px; min-height: 100vh; box-sizing: border-box; }
         .page-content.active { display: block; }
 
+        /* 1. 上方留白區塊 - 預留空間給按鈕或橫幅 */
+        .top-spacer { height: 80px; width: 100%; }
+
         /* 清單樣式 */
-        .item-list { display: flex; flex-direction: column; gap: 10px; }
-        .item-row { background: #fff; padding: 18px; border-radius: 18px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+        .item-list { display: flex; flex-direction: column; gap: 12px; }
+        .item-row { background: #fff; padding: 18px; border-radius: 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
         .item-main { flex: 1; cursor: pointer; padding-right: 15px; }
         .item-name { font-size: 15px; font-weight: 700; color: #007aff; text-decoration: underline; margin-bottom: 6px; display: block; line-height: 1.4; }
         .item-price { color: var(--primary); font-weight: 900; font-size: 16px; }
         .item-price::before { content: "NT$ "; font-size: 11px; }
 
-        /* 數量按鈕 */
-        .qty-controls { display: flex; align-items: center; gap: 12px; background: #f2f4f6; padding: 6px 14px; border-radius: 50px; }
-        .qty-btn { background: none; border: none; font-size: 22px; font-weight: 700; color: #4e5968; cursor: pointer; width: 24px; }
+        /* 數量控制 */
+        .qty-controls { display: flex; align-items: center; gap: 14px; background: #f2f4f6; padding: 6px 14px; border-radius: 50px; }
+        .qty-btn { background: none; border: none; padding: 0; color: var(--sub); cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .qty-num { font-size: 16px; font-weight: 900; min-width: 20px; text-align: center; }
 
         /* 購物車結算條 */
-        .cart-bar { position: fixed; bottom: 90px; left: 16px; right: 16px; background: #191f28; color: #fff; padding: 18px 24px; border-radius: 20px; display: none; justify-content: space-between; align-items: center; z-index: 95; box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
+        .cart-bar { position: fixed; bottom: 90px; left: 16px; right: 16px; background: #191f28; color: #fff; padding: 18px 24px; border-radius: 20px; display: none; justify-content: space-between; align-items: center; z-index: 150; box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
         
-        /* 底部選單 */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; display: flex; justify-content: space-around; padding: 12px 0 calc(15px + env(safe-area-inset-bottom)); border-top: 1px solid #eee; z-index: 100; }
-        .nav-item { color: #adb5bd; text-align: center; flex: 1; font-size: 11px; font-weight: 900; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        /* 底部導覽列 */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; padding: 12px 0 calc(15px + env(safe-area-inset-bottom)); border-top: 1px solid #e5e8eb; z-index: 100; }
+        .nav-item { color: #adb5bd; text-align: center; flex: 1; font-size: 11px; font-weight: 900; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; }
         .nav-item.active { color: var(--primary); }
+        .nav-icon { width: 22px; height: 22px; }
 
         /* 彈窗 */
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 500; align-items: center; justify-content: center; padding: 20px; }
-        .toss-card { background: #fff; border-radius: 24px; padding: 28px 24px; width: 100%; max-width: 340px; box-sizing: border-box; }
-        input { width: 100%; padding: 14px; border: 1.5px solid #eee; border-radius: 12px; margin-bottom: 12px; font-size: 16px; outline: none; background: #f9f9f9; box-sizing: border-box; }
-        .btn-main { background: var(--primary); color: #fff; border: none; padding: 16px; width: 100%; border-radius: 12px; font-weight: 700; font-size: 16px; cursor: pointer; }
+        .toss-card { background: #fff; border-radius: 28px; padding: 32px 24px; width: 100%; max-width: 340px; box-sizing: border-box; }
+        input { width: 100%; padding: 16px; border: 1.5px solid #eee; border-radius: 14px; margin-bottom: 12px; font-size: 16px; outline: none; background: #f9f9f9; box-sizing: border-box; }
+        .btn-main { background: var(--primary); color: #fff; border: none; padding: 16px; width: 100%; border-radius: 14px; font-weight: 700; font-size: 16px; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <button id="add-btn" class="add-btn" onclick="document.getElementById('add-modal').style.display='flex'">＋</button>
+    <button id="add-btn" class="add-btn" onclick="document.getElementById('add-modal').style.display='flex'">
+        <i data-feather="plus"></i>
+    </button>
 
     <div id="main-app">
         <section id="page-shop" class="page-content active">
-            <div id="item-list" class="item-list">
+            <div class="top-spacer"></div> <div id="item-list" class="item-list">
                 <p style="text-align: center; color: #999; margin-top: 40px;">連線資料讀取中...</p>
+            </div>
+        </section>
+
+        <section id="page-pop" class="page-content">
+            <div class="top-spacer"></div>
+            <div style="text-align: center; padding: 60px 20px; color: #999;">🪄 韓風 POP 專區準備中</div>
+        </section>
+
+        <section id="page-passport" class="page-content">
+            <div class="top-spacer"></div>
+            <div class="toss-card" style="margin: 0 auto; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+                <h3 style="margin:0 0 20px 0; font-size: 20px;">我的護照</h3>
+                <div id="user-info">連線中...</div>
+                <button class="btn-main" style="background:#f2f4f6; color:#adb5bd; margin-top:30px;" onclick="liff.logout(); location.reload();">登出帳號</button>
             </div>
         </section>
 
@@ -61,20 +93,29 @@
         </div>
 
         <nav class="bottom-nav">
-            <div class="nav-item active" id="nav-shop" onclick="switchPage('shop')"><span>弘大漫遊</span></div>
-            <div class="nav-item" id="nav-pop" onclick="switchPage('pop')"><span>韓風POP</span></div>
-            <div class="nav-item" id="nav-passport" onclick="switchPage('passport')"><span>我的護照</span></div>
+            <div class="nav-item active" id="nav-shop" onclick="switchPage('shop')">
+                <i class="nav-icon" data-feather="shopping-bag"></i>
+                <span>弘大漫遊</span>
+            </div>
+            <div class="nav-item" id="nav-pop" onclick="switchPage('pop')">
+                <i class="nav-icon" data-feather="zap"></i>
+                <span>韓風POP</span>
+            </div>
+            <div class="nav-item" id="nav-passport" onclick="switchPage('passport')">
+                <i class="nav-icon" data-feather="user"></i>
+                <span>我的護照</span>
+            </div>
         </nav>
     </div>
 
     <div id="add-modal" class="modal">
         <div class="toss-card">
-            <h2 style="margin:0 0 20px 0; font-weight: 900;">登錄導購清單</h2>
+            <h2 style="margin:0 0 24px 0; font-weight: 900; font-size: 22px;">登錄商品</h2>
             <input type="text" id="in-name" placeholder="商品中文名稱">
             <input type="number" id="in-price" placeholder="台幣售價 NT$">
-            <input type="url" id="in-url" placeholder="OliveYoung 網址">
+            <input type="url" id="in-url" placeholder="OliveYoung 導購網址">
             <button class="btn-main" id="sub-btn" onclick="upload()">確認登錄</button>
-            <button style="background:none; border:none; color:#999; margin-top:10px; width:100%; font-weight: 700;" onclick="document.getElementById('add-modal').style.display='none'">取消</button>
+            <button style="background:none; border:none; color:#999; margin-top:16px; width:100%; font-weight: 700;" onclick="document.getElementById('add-modal').style.display='none'">取消返回</button>
         </div>
     </div>
 
@@ -90,42 +131,28 @@
             try {
                 await liff.init({ liffId: LIFF_ID });
                 if (!liff.isLoggedIn()) { liff.login(); return; }
+                const profile = await liff.getProfile();
+                document.getElementById('user-info').innerHTML = `<b>帳號：</b>${profile.displayName}`;
                 fetchProducts();
+                feather.replace(); // 初始化圖示
             } catch (e) { console.error(e); }
         }
 
-        // 修正：新增商品邏輯
         async function upload() {
             const n = document.getElementById('in-name').value;
             const p = document.getElementById('in-price').value;
             const u = document.getElementById('in-url').value;
             if(!n || !p || !u) return alert('請完整填寫資訊喔！');
 
-            const btn = document.getElementById('sub-btn');
-            btn.innerText = "登錄中..."; btn.disabled = true;
-
             const { error } = await _supabase.from('products').insert({
                 name_zh: n, price_nt: p, olive_url: u, status: '待核准'
             });
 
-            if(!error) {
-                alert('商品已登錄！審核後就會顯示在清單中✈️');
-                location.reload();
-            } else {
-                alert('登錄失敗: ' + error.message);
-                btn.disabled = false;
-            }
+            if(!error) { alert('登錄成功！審核後上架✈️'); location.reload(); }
         }
 
-        // 修正：顯示商品邏輯
         async function fetchProducts() {
-            const { data, error } = await _supabase.from('products').select('*').eq('status', '可上架').order('created_at', { ascending: false });
-            
-            if(error) {
-                document.getElementById('item-list').innerHTML = '<p style="text-align:center; color:red;">讀取失敗，請檢查資料表名稱</p>';
-                return;
-            }
-
+            const { data } = await _supabase.from('products').select('*').eq('status', '可上架').order('created_at', { ascending: false });
             if(data && data.length > 0) {
                 document.getElementById('item-list').innerHTML = data.map(p => `
                     <div class="item-row">
@@ -134,14 +161,15 @@
                             <span class="item-price">${Number(p.price_nt).toLocaleString()}</span>
                         </div>
                         <div class="qty-controls">
-                            <button class="qty-btn" onclick="updateQty('${p.id}', -1)">-</button>
+                            <button class="qty-btn" onclick="updateQty('${p.id}', -1)"><i data-feather="minus" style="width:18px;"></i></button>
                             <span class="qty-num" id="qty-${p.id}">0</span>
-                            <button class="qty-btn" onclick="updateQty('${p.id}', 1)">+</button>
+                            <button class="qty-btn" onclick="updateQty('${p.id}', 1)"><i data-feather="plus" style="width:18px;"></i></button>
                         </div>
                     </div>
                 `).join('');
+                feather.replace(); // 重新渲染列表內的圖示
             } else {
-                document.getElementById('item-list').innerHTML = '<p style="text-align:center; color:#999; margin-top:40px;">目前尚無連線商品喔</p>';
+                document.getElementById('item-list').innerHTML = '<p style="text-align:center; color:#999; margin-top:40px;">目前尚無商品喔</p>';
             }
         }
 
