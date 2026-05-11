@@ -11,11 +11,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
     
     <style>
-        :root { --primary: #f7b500; --bg: #f2f4f6; --white: #ffffff; --text: #191f28; --sub: #4e5968; }
+        :root { --primary: #f7b500; --bg: #f2f4f6; --white: #ffffff; --text: #191f28; --sub: #4e5968; --gray: #8b95a1; }
         
         body { font-family: 'Noto Sans TC', sans-serif; background-color: var(--bg); margin: 0; padding: 0; color: var(--text); -webkit-font-smoothing: antialiased; }
 
-        /* 右上角添加按鈕 */
         .add-btn { 
             position: fixed; top: 20px; right: 20px; 
             width: 48px; height: 48px; background: var(--primary); 
@@ -24,36 +23,32 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.15); cursor: pointer; 
         }
 
-        /* 內容區塊 */
         .page-content { display: none; padding: 0 16px 150px 16px; min-height: 100vh; box-sizing: border-box; }
         .page-content.active { display: block; }
-
-        /* 頂部留白空間：防止與添加按鈕重疊 */
         .top-spacer { height: 85px; width: 100%; }
 
-        /* 清單樣式 */
         .item-list { display: flex; flex-direction: column; gap: 12px; }
         .item-row { background: #fff; padding: 18px; border-radius: 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
         .item-main { flex: 1; cursor: pointer; padding-right: 15px; }
-        .item-name { font-size: 15px; font-weight: 700; color: #007aff; text-decoration: underline; margin-bottom: 6px; display: block; line-height: 1.4; }
-        .item-price { color: var(--primary); font-weight: 900; font-size: 16px; }
+        
+        /* 商品名稱與款式樣式 */
+        .item-name { font-size: 15px; font-weight: 700; color: #007aff; text-decoration: underline; margin-bottom: 4px; display: inline-block; line-height: 1.4; }
+        .item-option { font-size: 12px; color: var(--gray); font-weight: 400; margin-left: 6px; text-decoration: none; display: inline-block; }
+        
+        .item-price { color: var(--primary); font-weight: 900; font-size: 16px; display: block; margin-top: 2px; }
         .item-price::before { content: "NT$ "; font-size: 11px; }
 
-        /* 數量控制 */
         .qty-controls { display: flex; align-items: center; gap: 14px; background: #f2f4f6; padding: 6px 14px; border-radius: 50px; }
         .qty-btn { background: none; border: none; padding: 0; color: var(--sub); cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .qty-num { font-size: 16px; font-weight: 900; min-width: 20px; text-align: center; }
 
-        /* 購物車條 */
         .cart-bar { position: fixed; bottom: 90px; left: 16px; right: 16px; background: #191f28; color: #fff; padding: 18px 24px; border-radius: 20px; display: none; justify-content: space-between; align-items: center; z-index: 150; box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
         
-        /* 底部導覽列 */
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; padding: 12px 0 calc(15px + env(safe-area-inset-bottom)); border-top: 1px solid #e5e8eb; z-index: 100; }
         .nav-item { color: #adb5bd; text-align: center; flex: 1; font-size: 11px; font-weight: 900; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; }
         .nav-item.active { color: var(--primary); }
         .nav-icon { width: 22px; height: 22px; }
 
-        /* 彈窗樣式 */
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 500; align-items: center; justify-content: center; padding: 20px; }
         .toss-card { background: #fff; border-radius: 28px; padding: 32px 24px; width: 100%; max-width: 340px; box-sizing: border-box; }
         input { width: 100%; padding: 16px; border: 1.5px solid #eee; border-radius: 14px; margin-bottom: 12px; font-size: 16px; outline: none; background: #f9f9f9; box-sizing: border-box; }
@@ -113,6 +108,7 @@
         <div class="toss-card">
             <h2 style="margin:0 0 24px 0; font-weight: 900; font-size: 22px;">登錄商品</h2>
             <input type="text" id="in-name" placeholder="商品中文名稱">
+            <input type="text" id="in-option" placeholder="商品款式 (如：粉色, 100ml / 選填)">
             <input type="number" id="in-price" placeholder="台幣售價 NT$">
             <input type="url" id="in-url" placeholder="OliveYoung 導購網址">
             <button class="btn-main" id="sub-btn" onclick="upload()">確認登錄</button>
@@ -141,15 +137,17 @@
 
         async function upload() {
             const n = document.getElementById('in-name').value;
+            const o = document.getElementById('in-option').value;
             const p = document.getElementById('in-price').value;
             const u = document.getElementById('in-url').value;
             if(!n || !p || !u) return alert('請完整填寫資訊喔！');
 
             const { error } = await _supabase.from('products').insert({
                 name_zh: n, 
+                option: o || null, // 沒填就存 null
                 price_nt: p, 
                 olive_url: u, 
-                is_active: false // 客戶新增預設關閉
+                is_active: false 
             });
 
             if(!error) { alert('商品已登錄！審核後上架✈️'); location.reload(); }
@@ -159,10 +157,16 @@
         async function fetchProducts() {
             const { data } = await _supabase.from('products').select('*').eq('is_active', true).order('created_at', { ascending: false });
             if(data && data.length > 0) {
-                document.getElementById('item-list').innerHTML = data.map(p => `
+                document.getElementById('item-list').innerHTML = data.map(p => {
+                    // 判斷款式是否有資料
+                    const optionHtml = p.option ? `<span class="item-option">${p.option}</span>` : '';
+                    
+                    return `
                     <div class="item-row">
                         <div class="item-main" onclick="window.open('${p.olive_url}', '_blank')">
-                            <span class="item-name">${p.name_zh}</span>
+                            <div>
+                                <span class="item-name">${p.name_zh}</span>${optionHtml}
+                            </div>
                             <span class="item-price">${Number(p.price_nt).toLocaleString()}</span>
                         </div>
                         <div class="qty-controls">
@@ -171,7 +175,7 @@
                             <button class="qty-btn" onclick="updateQty('${p.id}', 1)"><i data-feather="plus" style="width:18px;"></i></button>
                         </div>
                     </div>
-                `).join('');
+                `}).join('');
                 feather.replace();
             } else {
                 document.getElementById('item-list').innerHTML = '<p style="text-align:center; color:#999; margin-top:40px;">目前尚無公開商品喔</p>';
