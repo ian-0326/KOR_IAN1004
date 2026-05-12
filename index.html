@@ -11,7 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
     
     <style>
-        :root { --primary: #f7b500; --bg: #f2f4f6; --white: #ffffff; --text: #191f28; --sub: #4e5968; --gray: #8b95a1; }
+        :root { --primary: #f7b500; --bg: #f2f4f6; --white: #ffffff; --text: #191f28; --sub: #4e5968; --gray: #8b95a1; --error: #f44336; }
         
         body { font-family: 'Noto Sans TC', sans-serif; background-color: var(--bg); margin: 0; padding: 0; color: var(--text); -webkit-font-smoothing: antialiased; }
 
@@ -51,7 +51,12 @@
         /* 彈窗樣式 */
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 500; align-items: center; justify-content: center; padding: 20px; }
         .toss-card { background: #fff; border-radius: 28px; padding: 32px 24px; width: 100%; max-width: 340px; box-sizing: border-box; position: relative; }
-        input { width: 100%; padding: 16px; border: 1.5px solid #eee; border-radius: 14px; margin-bottom: 12px; font-size: 16px; outline: none; background: #f9f9f9; box-sizing: border-box; }
+        
+        .input-group { margin-bottom: 12px; position: relative; }
+        input { width: 100%; padding: 16px; border: 1.5px solid #eee; border-radius: 14px; font-size: 16px; outline: none; background: #f9f9f9; box-sizing: border-box; transition: border-color 0.2s; }
+        input.error { border-color: var(--error); }
+        .error-msg { color: var(--error); font-size: 11px; font-weight: 700; margin-top: 4px; display: none; }
+        
         .btn-main { background: var(--primary); color: #fff; border: none; padding: 16px; width: 100%; border-radius: 14px; font-weight: 700; font-size: 16px; cursor: pointer; margin-top: 10px; }
     </style>
 </head>
@@ -106,12 +111,27 @@
 
     <div id="add-modal" class="modal">
         <div class="toss-card" id="modal-card">
-            <h2 style="margin:0 0 24px 0; font-weight: 900; font-size: 22px;">登錄商品</h2>
-            <input type="text" id="in-name" placeholder="商品名稱">
-            <input type="text" id="in-option" placeholder="商品款式 (選填)">
-            <input type="number" id="in-price" placeholder="台幣售價 NT$">
-            <input type="url" id="in-url" placeholder="商品來源網址">
-            <button class="btn-main" id="sub-btn" onclick="upload()">確認登錄</button>
+            <h2 id="modal-title" style="margin:0 0 24px 0; font-weight: 900; font-size: 22px;">登錄商品</h2>
+            <p id="modal-subtitle" style="display:none; color:var(--sub); font-size:14px; margin-top:-16px; margin-bottom:24px; line-height:1.6;">商品將在核對無誤後顯示於頁面上</p>
+            
+            <div id="form-body">
+                <div class="input-group">
+                    <input type="text" id="in-name" placeholder="商品名稱" oninput="clearError('in-name')">
+                    <div class="error-msg" id="err-in-name">必填</div>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="in-option" placeholder="商品款式 (選填)">
+                </div>
+                <div class="input-group">
+                    <input type="number" id="in-price" placeholder="台幣售價 NT$" oninput="clearError('in-price')">
+                    <div class="error-msg" id="err-in-price">必填</div>
+                </div>
+                <div class="input-group">
+                    <input type="url" id="in-url" placeholder="商品來源網址" oninput="clearError('in-url')">
+                    <div class="error-msg" id="err-in-url">必填</div>
+                </div>
+                <button class="btn-main" id="sub-btn" onclick="upload()">確認登錄</button>
+            </div>
         </div>
     </div>
 
@@ -136,12 +156,19 @@
             } catch (e) { console.error(e); }
         }
 
-        // 彈窗邏輯
         function openModal() {
+            // 重置彈窗狀態
+            document.getElementById('modal-title').innerText = "登錄商品";
+            document.getElementById('modal-subtitle').style.display = 'none';
+            document.getElementById('form-body').style.display = 'block';
             document.getElementById('add-modal').style.display = 'flex';
         }
 
-        // 點擊背景關閉彈窗
+        function clearError(id) {
+            document.getElementById(id).classList.remove('error');
+            document.getElementById('err-' + id).style.display = 'none';
+        }
+
         window.onclick = function(event) {
             const modal = document.getElementById('add-modal');
             if (event.target == modal) {
@@ -150,13 +177,24 @@
         }
 
         async function upload() {
+            const fields = ['in-name', 'in-price', 'in-url'];
+            let hasError = false;
+
+            fields.forEach(id => {
+                const el = document.getElementById(id);
+                if (!el.value.trim()) {
+                    el.classList.add('error');
+                    document.getElementById('err-' + id).style.display = 'block';
+                    hasError = true;
+                }
+            });
+
+            if (hasError) return;
+
             const n = document.getElementById('in-name').value.trim();
             const o = document.getElementById('in-option').value.trim();
             const p = document.getElementById('in-price').value.trim();
             const u = document.getElementById('in-url').value.trim();
-            
-            // 除了款式(o)以外，其他皆為必填
-            if(!n || !p || !u) return alert('除了款式以外，其他欄位都是必填的喔！');
 
             const btn = document.getElementById('sub-btn');
             btn.innerText = "登錄中..."; btn.disabled = true;
@@ -171,8 +209,15 @@
             });
 
             if(!error) { 
-                alert('商品已登錄！審核後上架✈️'); 
-                location.reload(); 
+                // 成功：隱藏表單並顯示成功訊息
+                document.getElementById('form-body').style.display = 'none';
+                document.getElementById('modal-title').innerText = "商品已登錄";
+                document.getElementById('modal-subtitle').style.display = 'block';
+                
+                // 延遲後重整頁面並關閉彈窗
+                setTimeout(() => {
+                    location.reload(); 
+                }, 2000);
             } else { 
                 alert('登錄失敗：' + error.message);
                 btn.innerText = "確認登錄"; btn.disabled = false;
