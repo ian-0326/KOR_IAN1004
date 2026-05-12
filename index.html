@@ -7,7 +7,7 @@
     
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.0/feather.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
     
     <style>
@@ -30,7 +30,6 @@
         .page-content.active { display: block; }
         .top-spacer { height: 85px; width: 100%; }
 
-        /* 分類滑動選單 */
         .category-wrapper {
             position: sticky; top: 0; background: var(--bg);
             margin: 0 -16px 20px -16px; padding: 10px 16px;
@@ -48,7 +47,6 @@
         }
         .cat-pill.active { background: var(--primary); color: #fff; box-shadow: 0 4px 12px rgba(247, 181, 0, 0.3); }
 
-        /* 清單樣式 */
         .item-list { display: flex; flex-direction: column; gap: 12px; }
         .item-row { background: #fff; padding: 18px; border-radius: 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
         .item-main { flex: 1; cursor: pointer; padding-right: 15px; }
@@ -57,12 +55,10 @@
         .item-price { color: var(--primary); font-weight: 900; font-size: 16px; display: block; margin-top: 2px; }
         .item-price::before { content: "NT$ "; font-size: 11px; }
 
-        /* 數量控制 */
         .qty-controls { display: flex; align-items: center; gap: 14px; background: #f2f4f6; padding: 6px 14px; border-radius: 50px; touch-action: manipulation; }
         .qty-btn { background: none; border: none; padding: 0; color: var(--sub); cursor: pointer; display: flex; align-items: center; justify-content: center; touch-action: manipulation; -webkit-user-select: none; }
         .qty-num { font-size: 16px; font-weight: 900; min-width: 20px; text-align: center; }
 
-        /* 購物車條 */
         .cart-bar { 
             position: fixed; bottom: 90px; left: 16px; right: 16px; 
             background: #191f28; color: #fff; padding: 18px 24px; 
@@ -71,25 +67,20 @@
             cursor: pointer;
         }
         
-        /* 底部導覽列 */
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; padding: 12px 0 calc(15px + env(safe-area-inset-bottom)); border-top: 1px solid #e5e8eb; z-index: 200; }
         .nav-item { color: #adb5bd; text-align: center; flex: 1; font-size: 11px; font-weight: 900; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; }
         .nav-item.active { color: var(--primary); }
         .nav-icon { width: 22px; height: 22px; }
 
-        /* 彈窗樣式 */
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 500; align-items: center; justify-content: center; padding: 20px; }
         .toss-card { background: #fff; border-radius: 28px; padding: 32px 24px; width: 100%; max-width: 340px; box-sizing: border-box; }
         #modal-title { text-align: center; margin: 0 0 24px 0; font-weight: 900; font-size: 22px; }
         
-        .input-group { margin-bottom: 12px; }
-        input, select { width: 100%; padding: 16px; border: 1.5px solid #eee; border-radius: 14px; font-size: 16px; outline: none; background: #f9f9f9; box-sizing: border-box; -webkit-appearance: none; }
+        input, select { width: 100%; padding: 16px; border: 1.5px solid #eee; border-radius: 14px; font-size: 16px; outline: none; background: #f9f9f9; box-sizing: border-box; -webkit-appearance: none; margin-bottom: 12px; }
         .btn-main { background: var(--primary); color: #fff; border: none; padding: 16px; width: 100%; border-radius: 14px; font-weight: 700; font-size: 16px; cursor: pointer; margin-top: 10px; }
 
-        /* 結帳清單特有樣式 */
         .checkout-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f2f4f6; }
-        .checkout-info { flex: 1; }
-        .checkout-name { font-size: 14px; font-weight: 700; }
+        .checkout-name { font-size: 14px; font-weight: 700; flex: 1; }
         .checkout-qty { color: var(--primary); font-weight: 900; margin-left: 8px; }
     </style>
 </head>
@@ -117,8 +108,20 @@
                 <div class="cat-pill" onclick="filterCategory('食品（含保健）', this)">食品（含保健）</div>
                 <div class="cat-pill" onclick="filterCategory('其他', this)">其他</div>
             </div>
-            <div id="item-list" class="item-list">
-                <p style="text-align: center; color: #999; margin-top: 40px;">連線資料準備中...</p>
+            <div id="item-list" class="item-list"></div>
+        </section>
+
+        <section id="page-pop" class="page-content">
+            <div class="top-spacer"></div>
+            <div style="text-align: center; padding: 60px 20px; color: #999;">🪄 韓風 POP 專區準備中</div>
+        </section>
+
+        <section id="page-passport" class="page-content">
+            <div class="top-spacer"></div>
+            <div class="toss-card" style="margin: 0 auto; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+                <h3 style="text-align: center; margin:0 0 20px 0; font-size: 20px;">我的護照</h3>
+                <div id="user-info" style="text-align: center;">載入中...</div>
+                <button class="btn-main" style="background:#f2f4f6; color:#adb5bd; margin-top:30px;" onclick="liff.logout(); location.reload();">登出帳號</button>
             </div>
         </section>
 
@@ -138,11 +141,11 @@
         <div class="toss-card" onclick="event.stopPropagation()">
             <h2 id="modal-title">登錄商品</h2>
             <div id="form-body">
-                <div class="input-group"><select id="in-cat"><option value="">請選擇類別</option><option value="化妝水">化妝水</option><option value="精華液">精華液</option><option value="乳液">乳液</option><option value="面膜棉片">面膜棉片</option><option value="洗臉洗澡">洗臉洗澡</option><option value="美髮護髮">美髮護髮</option><option value="彩妝遮瑕">彩妝遮瑕</option><option value="口腔護理">口腔護理</option><option value="防曬">防曬</option><option value="藥膏藥品">藥膏藥品</option><option value="食品（含保健）">食品（含保健）</option><option value="其他">其他</option></select></div>
-                <div class="input-group"><input type="text" id="in-name" placeholder="商品名稱"></div>
-                <div class="input-group"><input type="text" id="in-option" placeholder="商品款式 (選填)"></div>
-                <div class="input-group"><input type="number" id="in-price" placeholder="台幣售價 NT$"></div>
-                <div class="input-group"><input type="url" id="in-url" placeholder="商品來源網址"></div>
+                <select id="in-cat"><option value="">請選擇類別</option><option value="化妝水">化妝水</option><option value="精華液">精華液</option><option value="乳液">乳液</option><option value="面膜棉片">面膜棉片</option><option value="洗臉洗澡">洗臉洗澡</option><option value="美髮護髮">美髮護髮</option><option value="彩妝遮瑕">彩妝遮瑕</option><option value="口腔護理">口腔護理</option><option value="防曬">防曬</option><option value="藥膏藥品">藥膏藥品</option><option value="食品（含保健）">食品（含保健）</option><option value="其他">其他</option></select>
+                <input type="text" id="in-name" placeholder="商品名稱">
+                <input type="text" id="in-option" placeholder="商品款式 (選填)">
+                <input type="number" id="in-price" placeholder="台幣售價 NT$">
+                <input type="url" id="in-url" placeholder="商品來源網址">
                 <button class="btn-main" onclick="upload()">確認登錄</button>
             </div>
         </div>
@@ -169,14 +172,19 @@
 
         async function init() {
             try {
+                // 初始化 LIFF
                 await liff.init({ liffId: LIFF_ID });
                 if (!liff.isLoggedIn()) { liff.login(); return; }
                 const profile = await liff.getProfile();
                 userLineId = profile.userId;
-                document.getElementById('user-info').innerHTML = `<div style="text-align: center;"><b>帳號：</b>${profile.displayName}</div>`;
-                fetchProducts();
-                feather.replace();
-            } catch (e) { console.error(e); }
+                document.getElementById('user-info').innerHTML = `<b>帳號：</b>${profile.displayName}`;
+                
+                // 抓取資料
+                await fetchProducts();
+                
+                // 安全初始化圖示
+                if (typeof feather !== 'undefined') { feather.replace(); }
+            } catch (e) { console.error("Init Error:", e); }
         }
 
         function openModal() { document.getElementById('add-modal').style.display = 'flex'; }
@@ -197,12 +205,24 @@
         }
 
         async function fetchProducts() {
-            const { data } = await _supabase.from('products').select('*').eq('is_active', true).order('created_at', { ascending: false });
-            if(data) { allProducts = data; renderProducts(allProducts); }
+            try {
+                const { data, error } = await _supabase.from('products').select('*').eq('is_active', true).order('created_at', { ascending: false });
+                if (error) throw error;
+                allProducts = data || [];
+                renderProducts(allProducts);
+            } catch (err) {
+                console.error("Fetch Error:", err);
+                document.getElementById('item-list').innerHTML = '<p style="text-align:center; color:#999;">暫時無法讀取資料</p>';
+            }
         }
 
         function renderProducts(products) {
-            document.getElementById('item-list').innerHTML = products.map(p => `
+            const container = document.getElementById('item-list');
+            if (products.length === 0) {
+                container.innerHTML = '<p style="text-align:center; color:#999; margin-top:40px;">目前此類別尚無商品</p>';
+                return;
+            }
+            container.innerHTML = products.map(p => `
                 <div class="item-row">
                     <div class="item-main" onclick="window.open('${p.olive_url}', '_blank')">
                         <div><span class="item-name">${p.name_zh}</span>${p.option ? `<span class="item-option">${p.option}</span>` : ''}</div>
@@ -215,7 +235,7 @@
                     </div>
                 </div>
             `).join('');
-            feather.replace();
+            if (typeof feather !== 'undefined') { feather.replace(); }
         }
 
         function updateQty(id, delta) {
@@ -236,14 +256,14 @@
             Object.keys(cart).forEach(id => {
                 if (cart[id].qty > 0) {
                     html += `<div class="checkout-item">
-                        <div class="checkout-info"><div class="checkout-name">${cart[id].name}</div></div>
+                        <div class="checkout-name">${cart[id].name}</div>
                         <div class="checkout-qty">x ${cart[id].qty}</div>
                     </div>`;
                     totalAmount += cart[id].price * cart[id].qty;
                 }
             });
             list.innerHTML = html || '<p style="text-align:center; color:#999;">清單空空如也</p>';
-            document.getElementById('checkout-total').innerText = `預估總額：NT$ ${totalAmount.toLocaleString()}`;
+            document.getElementById('checkout-total').innerText = `預算：NT$ ${totalAmount.toLocaleString()}`;
             document.getElementById('checkout-modal').style.display = 'flex';
         }
 
@@ -256,8 +276,7 @@
                     hasItems = true;
                 }
             });
-            if (!hasItems) return alert("請先選擇商品");
-            
+            if (!hasItems) return;
             message += "\n請幫我確認以上清單，謝謝！";
 
             try {
@@ -265,10 +284,9 @@
                     await liff.sendMessages([{ type: 'text', text: message }]);
                     liff.closeWindow();
                 } else {
-                    // 瀏覽器模式則用開新視窗分享或直接彈出
-                    alert("訂單內容已生成：\n\n" + message);
+                    alert("訂單內容：\n" + message);
                 }
-            } catch (e) { alert("傳送失敗：" + e); }
+            } catch (e) { console.error(e); }
         }
 
         function filterCategory(cat, el) {
@@ -283,6 +301,7 @@
             document.getElementById('page-' + p).classList.add('active');
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             document.getElementById('nav-' + p).classList.add('active');
+            document.getElementById('add-btn').style.display = (p === 'shop') ? 'flex' : 'none';
         }
 
         window.onload = init;
