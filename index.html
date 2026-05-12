@@ -19,7 +19,6 @@
             touch-action: pan-x pan-y;
         }
 
-        /* 右上角添加按鈕 */
         .add-btn { 
             position: fixed; top: 20px; right: 20px; width: 48px; height: 48px; 
             background: var(--primary); border-radius: 50%; display: flex; 
@@ -31,7 +30,6 @@
         .page-content.active { display: block; }
         .top-spacer { height: 85px; width: 100%; }
 
-        /* 分類選單 */
         .category-wrapper {
             position: sticky; top: 0; background: var(--bg);
             margin: 0 -16px 20px -16px; padding: 10px 16px;
@@ -45,7 +43,6 @@
         }
         .cat-pill.active { background: var(--primary); color: #fff; }
 
-        /* 商品行樣式 */
         .item-row { background: #fff; padding: 18px; border-radius: 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 8px rgba(0,0,0,0.04); margin-bottom: 12px; }
         .item-main { flex: 1; cursor: pointer; }
         .item-name { font-size: 15px; font-weight: 700; color: #007aff; text-decoration: underline; }
@@ -56,7 +53,6 @@
         .qty-btn { background: none; border: none; padding: 0; cursor: pointer; display: flex; }
         .qty-num { font-size: 16px; font-weight: 900; min-width: 20px; text-align: center; }
 
-        /* 購物車懸浮條 */
         .cart-bar { 
             position: fixed; bottom: 90px; left: 16px; right: 16px; 
             background: #191f28; color: #fff; padding: 18px 24px; 
@@ -64,62 +60,48 @@
             align-items: center; z-index: 250; box-shadow: 0 8px 24px rgba(0,0,0,0.2); cursor: pointer;
         }
 
-        /* 筆記本樣式設計 */
+        /* 筆記本/清單頁面樣式修正 */
         .notebook-page {
             background: #fff;
-            background-image: linear-gradient(#e1e9f0 1px, transparent 1px);
-            background-size: 100% 32px; /* 模擬行高 */
-            position: relative;
-            padding: 40px 20px 40px 50px;
-            border-radius: 4px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            min-height: 70vh;
-            line-height: 32px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            min-height: 50vh;
+            padding: 30px 20px;
+            margin-top: 10px;
         }
-        /* 筆記本紅線 */
-        .notebook-page::before {
-            content: "";
-            position: absolute;
-            top: 0; left: 40px; bottom: 0;
-            width: 2px;
-            background: #ffadad;
-        }
-
         .notebook-header { 
-            border-bottom: 2px solid #333; 
-            margin-bottom: 20px; 
-            padding-bottom: 10px;
-            display: flex;
-            align-items: center;
+            text-align: center;
+            border-bottom: 2px solid #191f28;
+            padding-bottom: 15px;
+            margin-bottom: 10px;
         }
-        .notebook-title { 
-            font-size: 24px; 
-            font-weight: 900; 
-            color: #333; 
-            flex: 1;
+        .notebook-title { font-size: 22px; font-weight: 900; color: #191f28; letter-spacing: 1px; }
+
+        /* 商品項目 - 虛線區間置中設計 */
+        .checkout-item { 
+            display: flex; 
+            flex-direction: column; /* 垂直堆疊資訊 */
+            align-items: center;    /* 水平置中 */
+            justify-content: center; /* 垂直置中 */
+            padding: 25px 0; 
+            border-bottom: 1px dashed #d1d8e0; /* 灰虛線 */
             text-align: center;
         }
+        .checkout-item:last-child { border-bottom: 1px dashed #d1d8e0; }
 
-        .checkout-item { 
-            display: flex; justify-content: space-between; align-items: center; 
-            padding: 8px 0; 
-            border-bottom: 1px solid transparent; /* 隱藏底線，利用背景格線 */
-            min-height: 64px;
-        }
-        .co-info { line-height: 1.4; flex: 1; }
-        .co-name { font-size: 16px; font-weight: 700; color: #222; }
-        .co-details { font-size: 12px; color: var(--gray); display: block; }
+        .co-name { font-size: 17px; font-weight: 700; color: #191f28; display: block; margin-bottom: 4px; }
+        .co-details { font-size: 13px; color: var(--gray); display: block; margin-bottom: 12px; }
         
+        /* 結帳頁面的數量控制按鈕 */
         .co-qty-box { 
-            display: flex; align-items: center; gap: 12px; 
-            background: #f8f9fa; border: 1px solid #ddd; 
-            padding: 4px 12px; border-radius: 8px; 
-            margin-left: 10px;
+            display: flex; align-items: center; gap: 20px; 
+            background: #f8f9fa; border: 1px solid #eee; 
+            padding: 8px 20px; border-radius: 50px; 
         }
-        .co-qty-btn { background: none; border: none; font-size: 18px; font-weight: 900; color: #555; cursor: pointer; }
-        .co-qty-num { font-size: 16px; font-weight: 900; color: var(--primary); min-width: 20px; text-align: center; }
+        .co-qty-btn { background: none; border: none; font-size: 20px; font-weight: 900; color: var(--sub); cursor: pointer; }
+        .co-qty-num { font-size: 18px; font-weight: 900; color: var(--primary); min-width: 24px; text-align: center; }
 
-        /* 底部按鈕區 */
+        /* 底部總計區 */
         .summary-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; padding: 20px 24px calc(20px + env(safe-area-inset-bottom)); border-top: 1px solid #eee; z-index: 400; }
         .total-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .total-price { font-size: 24px; font-weight: 900; color: var(--text); }
@@ -181,7 +163,7 @@
             
             <div class="notebook-page">
                 <div class="notebook-header">
-                    <div class="notebook-title">Shopping List</div>
+                    <div class="notebook-title">代購清單</div>
                 </div>
                 <div id="checkout-container">
                     </div>
@@ -210,7 +192,7 @@
 
     <div id="add-modal" class="modal" onclick="closeModal('add-modal')">
         <div class="toss-card" onclick="event.stopPropagation()">
-            <h2 id="modal-title">登錄商品</h2>
+            <h2 id="modal-title" style="text-align:center;">登錄商品</h2>
             <div id="form-body">
                 <select id="in-cat"><option value="">請選擇類別</option><option value="化妝水">化妝水</option><option value="精華液">精華液</option><option value="乳液">乳液</option><option value="面膜棉片">面膜棉片</option><option value="洗臉洗澡">洗臉洗澡</option><option value="美髮護髮">美髮護髮</option><option value="彩妝遮瑕">彩妝遮瑕</option><option value="口腔護理">口腔護理</option><option value="防曬">防曬</option><option value="藥膏藥品">藥膏藥品</option><option value="食品（含保健）">食品（含保健）</option><option value="其他">其他</option></select>
                 <input type="text" id="in-name" placeholder="商品名稱">
@@ -312,11 +294,10 @@
                 if(item.qty > 0) {
                     html += `
                         <div class="checkout-item">
-                            <div class="co-info">
-                                <span class="co-name">${item.name}</span>
-                                ${item.option ? `<span class="co-details">${item.option}</span>` : ''}
-                                <span class="co-details">NT$ ${Number(item.price).toLocaleString()}</span>
-                            </div>
+                            <span class="co-name">${item.name}</span>
+                            <span class="co-details">
+                                ${item.option ? `${item.option} | ` : ''}NT$ ${Number(item.price).toLocaleString()}
+                            </span>
                             <div class="co-qty-box">
                                 <button class="co-qty-btn" onclick="updateQty('${item.id}', -1)">-</button>
                                 <span class="co-qty-num">${item.qty}</span>
@@ -328,12 +309,12 @@
                 }
             });
             
-            container.innerHTML = html || '<p style="text-align:center; color:#999; padding: 40px 0;">筆記本上還沒寫下任何東西...</p>';
+            container.innerHTML = html || '<p style="text-align:center; color:#999; padding: 40px 0;">清單上目前沒有商品喔</p>';
             document.getElementById('grand-total').innerText = `NT$ ${grandTotal.toLocaleString()}`;
         }
 
         async function sendOrder() {
-            let message = "📝 【KOR.IAN 筆記本代購預約單】\n\n";
+            let message = "📝 【KOR.IAN 代購預約單】\n\n";
             let hasItems = false;
             Object.values(cart).forEach(item => {
                 if (item.qty > 0) {
@@ -342,13 +323,13 @@
                 }
             });
             if (!hasItems) return alert("清單是空的喔");
-            message += "\n請幫我確認以上清單，謝謝！";
+            message += "\n請幫我確認以上預約內容，謝謝！";
 
             try {
                 if (liff.isInClient()) {
                     await liff.sendMessages([{ type: 'text', text: message }]);
                     liff.closeWindow();
-                } else { alert("已生成內容：\n" + message); }
+                } else { alert("訂單已生成：\n" + message); }
             } catch (e) { alert("傳送失敗"); }
         }
 
