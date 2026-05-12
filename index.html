@@ -8,7 +8,7 @@
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.0/feather.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
     
     <style>
         :root { --primary: #f7b500; --bg: #f2f4f6; --white: #ffffff; --text: #191f28; --sub: #4e5968; --gray: #8b95a1; --error: #f44336; }
@@ -19,7 +19,6 @@
             touch-action: pan-x pan-y;
         }
 
-        /* 右上角添加按鈕 */
         .add-btn { 
             position: fixed; top: 20px; right: 20px; width: 48px; height: 48px; 
             background: var(--primary); border-radius: 50%; display: flex; 
@@ -65,26 +64,43 @@
             align-items: center; z-index: 250; box-shadow: 0 8px 24px rgba(0,0,0,0.2); cursor: pointer;
         }
 
-        /* 結帳頁面標題與返回鍵 */
-        .checkout-header { display: flex; align-items: center; padding: 20px 0; position: relative; }
-        .back-btn { background: none; border: none; padding: 10px 0; cursor: pointer; color: var(--text); }
-        .checkout-title { flex: 1; text-align: center; font-weight: 900; font-size: 20px; margin-right: 24px; }
+        /* 羊皮紙結帳頁面風格 */
+        .parchment {
+            background-color: #f4e4bc;
+            background-image: radial-gradient(circle at 50% 50%, #fdf5e6 0%, #f4e4bc 100%);
+            border-radius: 4px;
+            padding: 30px 20px;
+            position: relative;
+            box-shadow: 2px 5px 15px rgba(0,0,0,0.2), inset 0 0 50px rgba(139,69,19,0.1);
+            min-height: 60vh;
+            border: 1px solid #d2b48c;
+            font-family: 'Noto Serif TC', serif;
+        }
+        /* 捲軸邊緣裝飾 */
+        .parchment::before, .parchment::after {
+            content: ""; position: absolute; left: 0; right: 0; height: 10px;
+            background: #d2b48c; filter: blur(2px); opacity: 0.3;
+        }
+        .parchment::before { top: 0; } .parchment::after { bottom: 0; }
 
-        /* 結帳清單明細樣式 */
-        .checkout-card { background: #fff; border-radius: 24px; padding: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); margin-bottom: 20px; }
-        .checkout-item { display: flex; justify-content: space-between; align-items: flex-start; padding: 15px 0; border-bottom: 1px solid #f2f4f6; }
-        .checkout-item:last-child { border-bottom: none; }
-        .checkout-info { flex: 1; }
-        .co-name { font-size: 15px; font-weight: 700; margin-bottom: 4px; display: block; }
-        .co-option { font-size: 12px; color: var(--gray); display: block; }
-        .co-price { font-size: 13px; color: var(--sub); margin-top: 4px; display: block; }
-        .co-qty { font-weight: 900; color: var(--primary); font-size: 16px; }
+        .checkout-header { display: flex; align-items: center; padding: 10px 0 20px 0; border-bottom: 2px solid #8b4513; margin-bottom: 20px; }
+        .checkout-title { flex: 1; text-align: center; font-weight: 900; font-size: 22px; color: #5d4037; letter-spacing: 2px; }
 
-        /* 底部總計區 */
+        .checkout-item { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 15px 0; border-bottom: 1px dashed rgba(139,69,19,0.3); 
+        }
+        .co-name { font-size: 16px; font-weight: 700; color: #3e2723; }
+        .co-details { font-size: 12px; color: #795548; margin-top: 2px; }
+        
+        /* 結帳頁面的數量控制 (小一點以符合風格) */
+        .co-qty-box { display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.4); padding: 4px 10px; border-radius: 4px; border: 1px solid #d2b48c; }
+        .co-qty-btn { background: none; border: none; font-size: 18px; color: #5d4037; font-weight: bold; cursor: pointer; }
+
+        /* 總計與按鈕 */
         .summary-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; padding: 20px 24px calc(20px + env(safe-area-inset-bottom)); border-top: 1px solid #eee; z-index: 400; }
         .total-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .total-label { font-weight: 700; color: var(--sub); }
-        .total-price { font-size: 22px; font-weight: 900; color: var(--primary); }
+        .total-price { font-size: 24px; font-weight: 900; color: #8b4513; }
 
         /* 通用底部選單 */
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; padding: 12px 0 calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid #e5e8eb; z-index: 200; }
@@ -96,6 +112,7 @@
         .toss-card { background: #fff; border-radius: 28px; padding: 32px 24px; width: 100%; max-width: 340px; box-sizing: border-box; }
         input, select { width: 100%; padding: 16px; border: 1.5px solid #eee; border-radius: 14px; font-size: 16px; outline: none; background: #f9f9f9; box-sizing: border-box; -webkit-appearance: none; margin-bottom: 12px; }
         .btn-main { background: var(--primary); color: #fff; border: none; padding: 16px; width: 100%; border-radius: 14px; font-weight: 700; font-size: 16px; cursor: pointer; }
+        .btn-order { background: #5d4037; } /* 結帳頁按鈕顏色深一點 */
     </style>
 </head>
 <body>
@@ -137,26 +154,31 @@
             </div>
         </section>
 
-        <section id="page-checkout" class="page-content" style="padding-bottom: 200px;">
-            <div class="checkout-header">
+        <section id="page-checkout" class="page-content" style="padding-bottom: 220px; background-color: var(--bg);">
+            <div class="checkout-header" style="border:none;">
                 <button class="back-btn" onclick="switchPage('shop')"><i data-feather="chevron-left"></i></button>
-                <div class="checkout-title">待購清單</div>
             </div>
-            <div id="checkout-container" class="checkout-card">
+            
+            <div class="parchment">
+                <div class="checkout-header">
+                    <div class="checkout-title">PURCHASE LIST</div>
                 </div>
+                <div id="checkout-container">
+                    </div>
+            </div>
             
             <div class="summary-bar">
                 <div class="total-row">
-                    <span class="total-label">預計採購總額</span>
+                    <span class="total-label" style="font-family:'Noto Serif TC';">預計金幣總額</span>
                     <span class="total-price" id="grand-total">NT$ 0</span>
                 </div>
-                <button class="btn-main" onclick="sendOrder()">確認下單 (傳送 LINE)</button>
+                <button class="btn-main btn-order" onclick="sendOrder()">傳送羊皮紙訂單</button>
             </div>
         </section>
 
         <div id="cart-bar" class="cart-bar" onclick="switchPage('checkout')">
             <span>已選 <span id="cart-qty" style="color:var(--primary); font-weight:900;">0</span> 件商品</span>
-            <span style="font-weight:900;">查看清單 →</span>
+            <span style="font-weight:900;">查看羊皮紙清單 →</span>
         </div>
 
         <nav class="bottom-nav" id="bottom-nav">
@@ -248,17 +270,19 @@
 
         function updateQty(id, delta) {
             const product = allProducts.find(p => p.id === id);
-            if (!cart[id]) cart[id] = { name: product.name_zh, option: product.option, price: product.price_nt, qty: 0 };
+            if (!cart[id]) cart[id] = { id: product.id, name: product.name_zh, option: product.option, price: product.price_nt, qty: 0 };
             cart[id].qty = Math.max(0, cart[id].qty + delta);
             
+            // 同步商店頁面顯示
             const qtyEl = document.getElementById(`qty-${id}`);
             if(qtyEl) qtyEl.innerText = cart[id].qty;
             
+            // 更新底部購物車條
             let totalQty = Object.values(cart).reduce((a, b) => a + b.qty, 0);
             document.getElementById('cart-bar').style.display = totalQty > 0 ? 'flex' : 'none';
             document.getElementById('cart-qty').innerText = totalQty;
             
-            // 如果人在結帳頁面，同步更新
+            // 如果在結帳頁，重刷清單
             if(document.getElementById('page-checkout').classList.contains('active')) {
                 renderCheckoutList();
             }
@@ -274,39 +298,45 @@
                     html += `
                         <div class="checkout-item">
                             <div class="checkout-info">
-                                <span class="checkout-name">${item.name}</span>
-                                ${item.option ? `<span class="co-option">${item.option}</span>` : ''}
-                                <span class="co-price">單價 NT$ ${Number(item.price).toLocaleString()}</span>
+                                <span class="co-name">${item.name}</span>
+                                ${item.option ? `<span class="co-details">款式：${item.option}</span>` : ''}
+                                <span class="co-details">單價：NT$ ${Number(item.price).toLocaleString()}</span>
                             </div>
-                            <div class="co-qty">x ${item.qty}</div>
+                            <div class="co-qty-box">
+                                <button class="co-qty-btn" onclick="updateQty('${item.id}', -1)">-</button>
+                                <span class="co-qty">${item.qty}</span>
+                                <button class="co-qty-btn" onclick="updateQty('${item.id}', 1)">+</button>
+                            </div>
                         </div>
                     `;
                     grandTotal += item.price * item.qty;
                 }
             });
             
-            container.innerHTML = html || '<p style="text-align:center; color:#999; padding: 40px 0;">清單內還沒有商品喔</p>';
+            container.innerHTML = html || '<p style="text-align:center; color:#795548; padding: 40px 0;">羊皮紙上還沒有任何紀錄...</p>';
             document.getElementById('grand-total').innerText = `NT$ ${grandTotal.toLocaleString()}`;
         }
 
         async function sendOrder() {
-            let message = "✈️ 【KOR.IAN 韓國代購預約單】\n\n";
+            let message = "📜 【KOR.IAN 羊皮紙代購預約單】\n";
+            message += "----------------------------\n";
             let hasItems = false;
             Object.values(cart).forEach(item => {
                 if (item.qty > 0) {
-                    message += `▪️ ${item.name}${item.option ? ' ('+item.option+')' : ''}\n   數量：${item.qty}\n`;
+                    message += `◆ ${item.name}${item.option ? ' ('+item.option+')' : ''}\n   [ 數量：${item.qty} ]\n`;
                     hasItems = true;
                 }
             });
-            if (!hasItems) return alert("請先選擇商品");
-            message += "\n請幫我確認以上清單，謝謝！";
+            if (!hasItems) return alert("羊皮紙上沒有任何東西喔");
+            message += "----------------------------\n";
+            message += "願此清單順利送達，請幫我確認內容，謝謝！";
 
             try {
                 if (liff.isInClient()) {
                     await liff.sendMessages([{ type: 'text', text: message }]);
                     liff.closeWindow();
                 } else {
-                    alert("訂單已生成：\n" + message);
+                    alert("羊皮紙內容已生成：\n" + message);
                 }
             } catch (e) { alert("傳送失敗：" + e); }
         }
@@ -322,27 +352,22 @@
             document.querySelectorAll('.page-content').forEach(e => e.classList.remove('active'));
             document.getElementById('page-' + p).classList.add('active');
             
-            // 處理底部導覽列與按鈕隱藏
             const nav = document.getElementById('bottom-nav');
             const addBtn = document.getElementById('add-btn');
             const cartBar = document.getElementById('cart-bar');
 
             if (p === 'checkout') {
-                nav.style.display = 'none';      // 進入結帳頁隱藏底部選單
-                addBtn.style.display = 'none';   // 隱藏新增按鈕
-                cartBar.style.display = 'none'; // 隱藏原本的購物車條
-                renderCheckoutList();            // 渲染清單內容
+                nav.style.display = 'none';
+                addBtn.style.display = 'none';
+                cartBar.style.display = 'none';
+                renderCheckoutList();
             } else {
                 nav.style.display = 'flex';
                 addBtn.style.display = (p === 'shop') ? 'flex' : 'none';
-                // 如果購物車有東西且在商店頁面，重新顯示購物車條
                 let totalQty = Object.values(cart).reduce((a, b) => a + b.qty, 0);
                 cartBar.style.display = (p === 'shop' && totalQty > 0) ? 'flex' : 'none';
-                
-                // 更新底部導覽按鈕狀態
                 document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-                const targetNav = document.getElementById('nav-' + p);
-                if(targetNav) targetNav.classList.add('active');
+                if(document.getElementById('nav-' + p)) document.getElementById('nav-' + p).classList.add('active');
             }
             feather.replace();
         }
