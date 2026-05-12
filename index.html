@@ -15,19 +15,22 @@
         
         body { font-family: 'Noto Sans TC', sans-serif; background-color: var(--bg); margin: 0; padding: 0; color: var(--text); -webkit-font-smoothing: antialiased; }
 
+        /* 右上角添加按鈕 - 保持最高層級 */
         .add-btn { 
             position: fixed; top: 20px; right: 20px; 
             width: 48px; height: 48px; background: var(--primary); 
             border-radius: 50%; display: flex; align-items: center; justify-content: center; 
-            color: white; z-index: 200; border: none; 
+            color: white; z-index: 300; border: none; 
             box-shadow: 0 4px 12px rgba(0,0,0,0.15); cursor: pointer; 
         }
 
         .page-content { display: none; padding: 0 16px 150px 16px; min-height: 100vh; box-sizing: border-box; }
         .page-content.active { display: block; }
-        .top-spacer { height: 20px; width: 100%; }
 
-        /* 分類滑動選單樣式 */
+        /* 1. 頂部留白：給新增按鈕預留空間 */
+        .top-spacer { height: 85px; width: 100%; }
+
+        /* 2. 分類滑動選單：移動到新增按鈕下方 */
         .category-wrapper {
             position: sticky; top: 0; background: var(--bg);
             margin: 0 -16px 20px -16px; padding: 10px 16px;
@@ -35,11 +38,13 @@
             scrollbar-width: none; -ms-overflow-style: none; z-index: 100;
         }
         .category-wrapper::-webkit-scrollbar { display: none; }
+        
         .cat-pill {
             white-space: nowrap; padding: 10px 20px;
             background: #fff; border-radius: 50px;
             font-size: 14px; font-weight: 700; color: var(--sub);
             box-shadow: 0 2px 6px rgba(0,0,0,0.05); transition: all 0.3s;
+            flex-shrink: 0;
         }
         .cat-pill.active {
             background: var(--primary); color: #fff;
@@ -59,17 +64,16 @@
         .qty-btn { background: none; border: none; padding: 0; color: var(--sub); cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .qty-num { font-size: 16px; font-weight: 900; min-width: 20px; text-align: center; }
 
-        .cart-bar { position: fixed; bottom: 90px; left: 16px; right: 16px; background: #191f28; color: #fff; padding: 18px 24px; border-radius: 20px; display: none; justify-content: space-between; align-items: center; z-index: 150; box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
+        .cart-bar { position: fixed; bottom: 90px; left: 16px; right: 16px; background: #191f28; color: #fff; padding: 18px 24px; border-radius: 20px; display: none; justify-content: space-between; align-items: center; z-index: 250; box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
         
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; padding: 12px 0 calc(15px + env(safe-area-inset-bottom)); border-top: 1px solid #e5e8eb; z-index: 100; }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; padding: 12px 0 calc(15px + env(safe-area-inset-bottom)); border-top: 1px solid #e5e8eb; z-index: 200; }
         .nav-item { color: #adb5bd; text-align: center; flex: 1; font-size: 11px; font-weight: 900; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; }
         .nav-item.active { color: var(--primary); }
         .nav-icon { width: 22px; height: 22px; }
 
-        /* 彈窗修正 */
+        /* 彈窗樣式 */
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 500; align-items: center; justify-content: center; padding: 20px; }
         .toss-card { background: #fff; border-radius: 28px; padding: 32px 24px; width: 100%; max-width: 340px; box-sizing: border-box; }
-        
         #modal-title { text-align: center; margin: 0 0 24px 0; font-weight: 900; font-size: 22px; }
         #modal-subtitle { text-align: center; color: var(--sub); font-size: 14px; margin: -16px 0 24px 0; line-height: 1.6; display: none; }
         
@@ -90,6 +94,7 @@
     <div id="main-app">
         <section id="page-shop" class="page-content active">
             <div class="top-spacer"></div>
+            
             <div class="category-wrapper" id="category-bar">
                 <div class="cat-pill active" onclick="filterCategory('全部', this)">全部</div>
                 <div class="cat-pill" onclick="filterCategory('化妝水', this)">化妝水</div>
@@ -295,12 +300,9 @@
         }
 
         function filterCategory(cat, el) {
-            // 處理按鈕視覺滑動與樣式
             document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
             el.classList.add('active');
             el.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-
-            // 執行過濾
             if (cat === '全部') {
                 renderProducts(allProducts);
             } else {
