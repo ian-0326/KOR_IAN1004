@@ -8,24 +8,24 @@
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.0/feather.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
     
     <style>
         :root { --primary: #f7b500; --bg: #f2f4f6; --white: #ffffff; --text: #191f28; --sub: #4e5968; --gray: #adb5bd; --error: #f44336; --line: #ebebeb; }
         
         body { font-family: 'Noto Sans TC', sans-serif; background-color: var(--bg); margin: 0; padding: 0; color: var(--text); -webkit-font-smoothing: antialiased; touch-action: manipulation; }
 
-        /* 通用：頂部導覽列樣式 (返回鍵 + 標題) */
+        /* 通用：頂部導覽列 */
         .nav-header { display: flex; align-items: center; padding: 15px 0; background: var(--bg); position: sticky; top: 0; z-index: 100; }
         .back-btn { background: none; border: none; padding: 10px; cursor: pointer; color: var(--text); display: flex; align-items: center; }
-        .page-title { flex: 1; text-align: center; font-weight: 900; font-size: 18px; margin-right: 44px; } /* 44px 是為了補償返回鍵寬度以達成真正置中 */
+        .page-title { flex: 1; text-align: center; font-weight: 900; font-size: 18px; margin-right: 44px; }
 
         /* 內容區塊 */
-        .page-content { display: none; padding: 0 16px 220px 16px; min-height: 100vh; box-sizing: border-box; }
+        .page-content { display: none; padding: 0 16px 280px 16px; min-height: 100vh; box-sizing: border-box; }
         .page-content.active { display: block; }
         .top-spacer { height: 85px; width: 100%; }
 
-        /* 商店頁面：分類與商品 */
+        /* 商店頁面樣式 */
         .category-wrapper { position: sticky; top: 0; background: var(--bg); margin: 0 -16px 20px -16px; padding: 10px 16px; overflow-x: auto; display: flex; gap: 8px; scrollbar-width: none; z-index: 90; }
         .category-wrapper::-webkit-scrollbar { display: none; }
         .cat-pill { white-space: nowrap; padding: 10px 20px; background: #fff; border-radius: 50px; font-size: 14px; font-weight: 700; color: var(--sub); box-shadow: 0 2px 6px rgba(0,0,0,0.05); flex-shrink: 0; }
@@ -37,21 +37,20 @@
         .item-option { font-size: 12px; color: var(--gray); margin-left: 6px; }
         .item-price { color: var(--primary); font-weight: 900; font-size: 16px; display: block; }
 
-        /* 核心校正：代購清單與取件頁面 (白底簡約筆記本感) */
+        /* 清單與區塊設定 */
         .white-section { background: #fff; border-radius: 28px; padding: 24px 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); margin-top: 10px; }
-        
         .list-item { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-bottom: 1px dashed var(--line); }
         .list-item:last-child { border-bottom: none; }
         .list-left { flex: 1; text-align: left; }
         .list-name { font-size: 16px; font-weight: 700; color: var(--text); display: block; }
         .list-sub { font-size: 12px; color: var(--gray); display: block; margin-top: 4px; }
         
-        /* 數量按鈕 (校正為簡約橢圓型) */
         .qty-box { display: flex; align-items: center; gap: 12px; background: #f8f9fa; border: 1px solid #eee; padding: 6px 14px; border-radius: 50px; }
         .qty-btn { background: none; border: none; padding: 0; color: var(--sub); cursor: pointer; display: flex; align-items: center; }
         .qty-val { font-size: 16px; font-weight: 900; color: var(--primary); min-width: 20px; text-align: center; }
 
-        /* 取件表單校正 */
+        /* 表單樣式 */
+        .form-group { margin-bottom: 16px; }
         .form-label { display: block; font-size: 14px; font-weight: 700; margin-bottom: 8px; color: var(--sub); padding-left: 4px; }
         .input-style { width: 100%; padding: 16px; border: 1.5px solid #f2f2f2; border-radius: 16px; font-size: 15px; outline: none; background: #f9f9f9; box-sizing: border-box; transition: all 0.2s; }
         .input-style:focus { border-color: var(--primary); background: #fff; }
@@ -62,14 +61,13 @@
         .radio-btn.active { border-color: var(--primary); background: #fffdf5; color: var(--primary); }
         .hint-box { font-size: 12px; color: var(--primary); background: #fffdf0; padding: 12px; border-radius: 14px; margin-top: 10px; border: 1px solid #ffeeba; line-height: 1.5; }
 
-        /* 底部固定總計區 (Toss 風格) */
-        .sticky-summary { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; padding: 20px 24px calc(20px + env(safe-area-inset-bottom)); border-top: 1px solid #eee; z-index: 400; box-shadow: 0 -10px 30px rgba(0,0,0,0.05); }
+        /* 底部固定區域 */
+        .sticky-summary { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; padding: 20px 24px calc(25px + env(safe-area-inset-bottom)); border-top: 1px solid #eee; z-index: 400; box-shadow: 0 -10px 30px rgba(0,0,0,0.05); }
         .sum-row { display: flex; justify-content: space-between; font-size: 14px; color: var(--sub); margin-bottom: 6px; }
         .sum-total-row { display: flex; justify-content: space-between; align-items: center; margin: 12px 0 18px 0; padding-top: 12px; border-top: 1px solid #f2f4f6; }
         .sum-total-val { font-size: 22px; font-weight: 900; color: var(--text); }
         .btn-action { background: var(--primary); color: #fff; border: none; padding: 18px; width: 100%; border-radius: 18px; font-weight: 700; font-size: 16px; cursor: pointer; box-shadow: 0 8px 20px rgba(247, 181, 0, 0.2); }
 
-        /* 其它組件 */
         .add-btn { position: fixed; top: 20px; right: 20px; width: 48px; height: 48px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; z-index: 300; border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
         .cart-bar { position: fixed; bottom: 95px; left: 16px; right: 16px; background: #191f28; color: #fff; padding: 18px 24px; border-radius: 20px; display: none; justify-content: space-between; align-items: center; z-index: 250; box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; padding: 12px 0 calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid #e5e8eb; z-index: 200; }
@@ -110,14 +108,13 @@
                 <button class="back-btn" onclick="switchPage('shop')"><i data-feather="chevron-left"></i></button>
                 <div class="page-title">代購清單</div>
             </div>
-            <div class="white-section" id="checkout-container">
-                </div>
+            <div class="white-section" id="checkout-container"></div>
             <div class="sticky-summary">
                 <div class="sum-total-row">
                     <span style="font-weight:900;">清單總計</span>
                     <span class="sum-total-val" id="checkout-grand-total">NT$ 0</span>
                 </div>
-                <button class="btn-action" onclick="switchPage('shipping')">填寫取件資料</button>
+                <button class="btn-action" onclick="switchPage('shipping')">填寫資料</button>
             </div>
         </section>
 
@@ -143,8 +140,8 @@
                     </div>
                     <div id="hint-face" class="hint-box">面交僅限台中大雅、梧棲、沙鹿區，選擇面交請記得到LINE@上做溝通喔！</div>
                     <div id="form-711" style="display:none; margin-top:15px;">
-                        <input type="text" id="ship-store" class="input-style" placeholder="取件門市名稱" style="margin-bottom:10px;">
-                        <input type="text" id="ship-code" class="input-style" placeholder="六碼門市代碼">
+                        <input type="text" id="ship-store" class="input-style" placeholder="取件門市" style="margin-bottom:10px;">
+                        <input type="text" id="ship-code" class="input-style" placeholder="門市代碼">
                     </div>
                 </div>
                 <div class="list-item" style="border-top: 1px solid #f2f4f6; margin-top: 20px; padding-top: 20px;">
@@ -165,29 +162,15 @@
                     <span style="font-weight:900;">匯款總金額</span>
                     <span class="sum-total-val" id="sum-total">NT$ 0</span>
                 </div>
-                <button class="btn-action" onclick="confirmOrder()">確認下單並傳送</button>
+                <button class="btn-action" onclick="confirmOrder()">確認下單</button>
             </div>
         </section>
 
-        <section id="page-pop" class="page-content">
-            <div class="top-spacer"></div>
-            <div style="text-align: center; padding: 60px 20px; color: #999;">🪄 韓風 POP 專區準備中</div>
-        </section>
+        <section id="page-pop" class="page-content"><div class="top-spacer"></div><div style="text-align: center; padding: 60px 20px; color: #999;">🪄 韓風 POP 專區準備中</div></section>
+        <section id="page-passport" class="page-content"><div class="top-spacer"></div><div class="white-section" style="text-align: center;"><h3 style="margin-bottom:20px;">我的護照</h3><div id="user-info" style="font-weight: 700; color: var(--primary);">載入中...</div><button class="btn-action" style="background:#f2f4f6; color:#adb5bd; margin-top:30px; box-shadow:none;" onclick="liff.logout(); location.reload();">登出帳號</button></div></section>
 
-        <section id="page-passport" class="page-content">
-            <div class="top-spacer"></div>
-            <div class="white-section" style="text-align: center;">
-                <h3 style="margin-bottom:20px;">我的護照</h3>
-                <div id="user-info" style="font-weight: 700; color: var(--primary);">載入中...</div>
-                <button class="btn-action" style="background:#f2f4f6; color:#adb5bd; margin-top:30px; box-shadow:none;" onclick="liff.logout(); location.reload();">登出帳號</button>
-            </div>
-        </section>
-
-        <div id="cart-bar" class="cart-bar" onclick="switchPage('checkout')">
-            <span>已選 <span id="cart-qty" style="color:var(--primary); font-weight:900;">0</span> 件商品</span>
-            <span style="font-weight:900;">查看清單 →</span>
-        </div>
-
+        <div id="cart-bar" class="cart-bar" onclick="switchPage('checkout')"><span>已選 <span id="cart-qty" style="color:var(--primary); font-weight:900;">0</span> 件商品</span><span style="font-weight:900;">查看清單 →</span></div>
+        
         <nav class="bottom-nav" id="bottom-nav">
             <div class="nav-item active" id="nav-shop" onclick="switchPage('shop')"><i data-feather="shopping-bag"></i><span>弘大漫遊</span></div>
             <div class="nav-item" id="nav-pop" onclick="switchPage('pop')"><i data-feather="zap"></i><span>韓風POP</span></div>
@@ -244,7 +227,7 @@
                     <div class="qty-box">
                         <button class="qty-btn" onclick="updateQty('${p.id}', -1)"><i data-feather="minus" style="width:16px;"></i></button>
                         <span class="qty-val" id="qty-${p.id}">${cart[p.id] ? cart[p.id].qty : 0}</span>
-                        <button class="qty-btn" onclick="updateQty('${p.id}', 1)"><i data-feather="plus" style="width:16px;"></i></button>
+                        <button class="qty-btn" onclick="updateQty('${p.id}', 1)"><i data-feather="plus" style="width:18px;"></i></button>
                     </div>
                 </div>
             `).join('');
@@ -316,12 +299,14 @@
             f.forEach(id => { const el = document.getElementById(id); if(!el.value.trim()) { el.classList.add('error'); valid = false; }});
             if(!valid) return;
 
-            let msg = `✈️ 【KOR.IAN 訂單成立】\n--------------------\n👤 姓名：${document.getElementById('ship-name').value}\n📞 電話：${document.getElementById('ship-tel').value}\n📦 方式：${shipMethod === '711' ? '7-11 ('+document.getElementById('ship-store').value+')' : '面交'}\n--------------------\n`;
+            let msg = `✈️ 【KOR.IAN 訂單成立】\n👤 姓名：${document.getElementById('ship-name').value}\n📞 電話：${document.getElementById('ship-tel').value}\n📦 方式：${shipMethod === '711' ? '7-11 ('+document.getElementById('ship-store').value+')' : '面交'}\n--------------------\n`;
             Object.values(cart).forEach(i => { if(i.qty > 0) msg += `▪️ ${i.name} x ${i.qty}\n`; });
             msg += `📦 包材 x ${packingQty}\n--------------------\n💰 匯款金額：${document.getElementById('sum-total').innerText}`;
 
-            if (liff.isInClient()) { await liff.sendMessages([{ type: 'text', text: msg }]); liff.closeWindow(); }
-            else { alert(msg); }
+            try {
+                if (liff.isInClient()) { await liff.sendMessages([{ type: 'text', text: msg }]); liff.closeWindow(); }
+                else { alert(msg); }
+            } catch (e) { console.error(e); }
         }
 
         function switchPage(p) {
@@ -338,7 +323,7 @@
         function filterCategory(cat, el) {
             document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
             el.classList.add('active');
-            el.scrollIntoView({ behavior: 'smooth', inline: 'center' });
+            el.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
             renderProducts(cat === '全部' ? allProducts : allProducts.filter(p => p.category === cat));
         }
 
