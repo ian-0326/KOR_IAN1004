@@ -27,6 +27,7 @@
         .page-content.active { display: block; }
         .top-spacer { height: 85px; width: 100%; }
 
+        /* 清單樣式 */
         .item-list { display: flex; flex-direction: column; gap: 12px; }
         .item-row { background: #fff; padding: 18px; border-radius: 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
         .item-main { flex: 1; cursor: pointer; padding-right: 15px; }
@@ -48,14 +49,18 @@
         .nav-item.active { color: var(--primary); }
         .nav-icon { width: 22px; height: 22px; }
 
-        /* 彈窗樣式 */
+        /* 彈窗樣式修正 */
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 500; align-items: center; justify-content: center; padding: 20px; }
         .toss-card { background: #fff; border-radius: 28px; padding: 32px 24px; width: 100%; max-width: 340px; box-sizing: border-box; position: relative; }
+        
+        /* 置中文字修正 */
+        #modal-title { text-align: center; margin: 0 0 24px 0; font-weight: 900; font-size: 22px; }
+        #modal-subtitle { text-align: center; color: var(--sub); font-size: 14px; margin: -16px 0 24px 0; line-height: 1.6; display: none; }
         
         .input-group { margin-bottom: 12px; position: relative; }
         input { width: 100%; padding: 16px; border: 1.5px solid #eee; border-radius: 14px; font-size: 16px; outline: none; background: #f9f9f9; box-sizing: border-box; transition: border-color 0.2s; }
         input.error { border-color: var(--error); }
-        .error-msg { color: var(--error); font-size: 11px; font-weight: 700; margin-top: 4px; display: none; }
+        .error-msg { color: var(--error); font-size: 11px; font-weight: 700; margin-top: 4px; display: none; text-align: left; }
         
         .btn-main { background: var(--primary); color: #fff; border: none; padding: 16px; width: 100%; border-radius: 14px; font-weight: 700; font-size: 16px; cursor: pointer; margin-top: 10px; }
     </style>
@@ -82,7 +87,7 @@
         <section id="page-passport" class="page-content">
             <div class="top-spacer"></div>
             <div class="toss-card" style="margin: 0 auto; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
-                <h3 style="margin:0 0 20px 0; font-size: 20px;">我的護照</h3>
+                <h3 style="text-align: center; margin:0 0 20px 0; font-size: 20px;">我的護照</h3>
                 <div id="user-info">連線中...</div>
                 <button class="btn-main" style="background:#f2f4f6; color:#adb5bd; margin-top:30px;" onclick="liff.logout(); location.reload();">登出帳號</button>
             </div>
@@ -109,10 +114,10 @@
         </nav>
     </div>
 
-    <div id="add-modal" class="modal">
-        <div class="toss-card" id="modal-card">
-            <h2 id="modal-title" style="margin:0 0 24px 0; font-weight: 900; font-size: 22px;">登錄商品</h2>
-            <p id="modal-subtitle" style="display:none; color:var(--sub); font-size:14px; margin-top:-16px; margin-bottom:24px; line-height:1.6;">商品將在核對無誤後顯示於頁面上</p>
+    <div id="add-modal" class="modal" onclick="handleOutsideClick(event)">
+        <div class="toss-card" onclick="event.stopPropagation()">
+            <h2 id="modal-title">登錄商品</h2>
+            <p id="modal-subtitle">商品將在核對無誤後顯示於頁面上</p>
             
             <div id="form-body">
                 <div class="input-group">
@@ -150,30 +155,29 @@
                 if (!liff.isLoggedIn()) { liff.login(); return; }
                 const profile = await liff.getProfile();
                 userLineId = profile.userId;
-                document.getElementById('user-info').innerHTML = `<b>帳號：</b>${profile.displayName}`;
+                document.getElementById('user-info').innerHTML = `<div style="text-align: center;"><b>帳號：</b>${profile.displayName}</div>`;
                 fetchProducts();
                 feather.replace();
             } catch (e) { console.error(e); }
         }
 
         function openModal() {
-            // 重置彈窗狀態
+            // 重置彈窗
             document.getElementById('modal-title').innerText = "登錄商品";
+            document.getElementById('modal-title').style.textAlign = "center";
             document.getElementById('modal-subtitle').style.display = 'none';
             document.getElementById('form-body').style.display = 'block';
             document.getElementById('add-modal').style.display = 'flex';
         }
 
+        // 修正點擊外部關閉邏輯
+        function handleOutsideClick(e) {
+            document.getElementById('add-modal').style.display = 'none';
+        }
+
         function clearError(id) {
             document.getElementById(id).classList.remove('error');
             document.getElementById('err-' + id).style.display = 'none';
-        }
-
-        window.onclick = function(event) {
-            const modal = document.getElementById('add-modal');
-            if (event.target == modal) {
-                modal.style.display = 'none';
-            }
         }
 
         async function upload() {
@@ -209,15 +213,10 @@
             });
 
             if(!error) { 
-                // 成功：隱藏表單並顯示成功訊息
                 document.getElementById('form-body').style.display = 'none';
                 document.getElementById('modal-title').innerText = "商品已登錄";
                 document.getElementById('modal-subtitle').style.display = 'block';
-                
-                // 延遲後重整頁面並關閉彈窗
-                setTimeout(() => {
-                    location.reload(); 
-                }, 2000);
+                setTimeout(() => { location.reload(); }, 2000);
             } else { 
                 alert('登錄失敗：' + error.message);
                 btn.innerText = "確認登錄"; btn.disabled = false;
