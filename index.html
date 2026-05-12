@@ -60,7 +60,7 @@
             align-items: center; z-index: 250; box-shadow: 0 8px 24px rgba(0,0,0,0.2); cursor: pointer;
         }
 
-        /* 筆記本/清單頁面樣式修正 */
+        /* 代購清單頁面樣式 */
         .notebook-page {
             background: #fff;
             border-radius: 12px;
@@ -77,31 +77,31 @@
         }
         .notebook-title { font-size: 22px; font-weight: 900; color: #191f28; letter-spacing: 1px; }
 
-        /* 商品項目 - 虛線區間置中設計 */
+        /* 商品項目 - 左右對齊設計 */
         .checkout-item { 
             display: flex; 
-            flex-direction: column; /* 垂直堆疊資訊 */
-            align-items: center;    /* 水平置中 */
-            justify-content: center; /* 垂直置中 */
-            padding: 25px 0; 
-            border-bottom: 1px dashed #d1d8e0; /* 灰虛線 */
-            text-align: center;
+            flex-direction: row; 
+            align-items: center;    
+            justify-content: space-between; 
+            padding: 20px 0; 
+            border-bottom: 1px dashed #d1d8e0; 
         }
         .checkout-item:last-child { border-bottom: 1px dashed #d1d8e0; }
 
-        .co-name { font-size: 17px; font-weight: 700; color: #191f28; display: block; margin-bottom: 4px; }
-        .co-details { font-size: 13px; color: var(--gray); display: block; margin-bottom: 12px; }
+        .co-left { flex: 1; text-align: left; padding-right: 10px; }
+        .co-name { font-size: 16px; font-weight: 700; color: #191f28; display: block; margin-bottom: 2px; }
+        .co-details { font-size: 12px; color: var(--gray); display: block; }
         
-        /* 結帳頁面的數量控制按鈕 */
+        .co-right { text-align: right; }
         .co-qty-box { 
-            display: flex; align-items: center; gap: 20px; 
+            display: flex; align-items: center; gap: 12px; 
             background: #f8f9fa; border: 1px solid #eee; 
-            padding: 8px 20px; border-radius: 50px; 
+            padding: 6px 12px; border-radius: 50px; 
         }
-        .co-qty-btn { background: none; border: none; font-size: 20px; font-weight: 900; color: var(--sub); cursor: pointer; }
-        .co-qty-num { font-size: 18px; font-weight: 900; color: var(--primary); min-width: 24px; text-align: center; }
+        .co-qty-btn { background: none; border: none; font-size: 18px; font-weight: 900; color: var(--sub); cursor: pointer; }
+        .co-qty-num { font-size: 16px; font-weight: 900; color: var(--primary); min-width: 20px; text-align: center; }
 
-        /* 底部總計區 */
+        /* 總計與按鈕 */
         .summary-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; padding: 20px 24px calc(20px + env(safe-area-inset-bottom)); border-top: 1px solid #eee; z-index: 400; }
         .total-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .total-price { font-size: 24px; font-weight: 900; color: var(--text); }
@@ -165,8 +165,7 @@
                 <div class="notebook-header">
                     <div class="notebook-title">代購清單</div>
                 </div>
-                <div id="checkout-container">
-                    </div>
+                <div id="checkout-container"></div>
             </div>
             
             <div class="summary-bar">
@@ -234,7 +233,6 @@
             const p = document.getElementById('in-price').value.trim();
             const u = document.getElementById('in-url').value.trim();
             if(!n || !p || !u) return alert('請填寫必填欄位');
-
             const { error } = await _supabase.from('products').insert({
                 category: document.getElementById('in-cat').value,
                 name_zh: n, option: document.getElementById('in-option').value.trim() || null,
@@ -274,14 +272,11 @@
             const product = allProducts.find(p => p.id === id);
             if (!cart[id]) cart[id] = { id: product.id, name: product.name_zh, option: product.option, price: product.price_nt, qty: 0 };
             cart[id].qty = Math.max(0, cart[id].qty + delta);
-            
             const qtyEl = document.getElementById(`qty-${id}`);
             if(qtyEl) qtyEl.innerText = cart[id].qty;
-            
             let totalQty = Object.values(cart).reduce((a, b) => a + b.qty, 0);
             document.getElementById('cart-bar').style.display = (totalQty > 0) ? 'flex' : 'none';
             document.getElementById('cart-qty').innerText = totalQty;
-            
             if(document.getElementById('page-checkout').classList.contains('active')) renderCheckoutList();
         }
 
@@ -289,26 +284,26 @@
             const container = document.getElementById('checkout-container');
             let html = '';
             let grandTotal = 0;
-            
             Object.values(cart).forEach(item => {
                 if(item.qty > 0) {
                     html += `
                         <div class="checkout-item">
-                            <span class="co-name">${item.name}</span>
-                            <span class="co-details">
-                                ${item.option ? `${item.option} | ` : ''}NT$ ${Number(item.price).toLocaleString()}
-                            </span>
-                            <div class="co-qty-box">
-                                <button class="co-qty-btn" onclick="updateQty('${item.id}', -1)">-</button>
-                                <span class="co-qty-num">${item.qty}</span>
-                                <button class="co-qty-btn" onclick="updateQty('${item.id}', 1)">+</button>
+                            <div class="co-left">
+                                <span class="co-name">${item.name}</span>
+                                <span class="co-details">${item.option ? item.option + ' | ' : ''}NT$ ${Number(item.price).toLocaleString()}</span>
+                            </div>
+                            <div class="co-right">
+                                <div class="co-qty-box">
+                                    <button class="co-qty-btn" onclick="updateQty('${item.id}', -1)">-</button>
+                                    <span class="co-qty-num">${item.qty}</span>
+                                    <button class="co-qty-btn" onclick="updateQty('${item.id}', 1)">+</button>
+                                </div>
                             </div>
                         </div>
                     `;
                     grandTotal += item.price * item.qty;
                 }
             });
-            
             container.innerHTML = html || '<p style="text-align:center; color:#999; padding: 40px 0;">清單上目前沒有商品喔</p>';
             document.getElementById('grand-total').innerText = `NT$ ${grandTotal.toLocaleString()}`;
         }
@@ -324,12 +319,11 @@
             });
             if (!hasItems) return alert("清單是空的喔");
             message += "\n請幫我確認以上預約內容，謝謝！";
-
             try {
                 if (liff.isInClient()) {
                     await liff.sendMessages([{ type: 'text', text: message }]);
                     liff.closeWindow();
-                } else { alert("訂單已生成：\n" + message); }
+                } else { alert("已生成：\n" + message); }
             } catch (e) { alert("傳送失敗"); }
         }
 
@@ -343,11 +337,9 @@
         function switchPage(p) {
             document.querySelectorAll('.page-content').forEach(e => e.classList.remove('active'));
             document.getElementById('page-' + p).classList.add('active');
-            
             const nav = document.getElementById('bottom-nav');
             const addBtn = document.getElementById('add-btn');
             const cartBar = document.getElementById('cart-bar');
-
             if (p === 'checkout') {
                 nav.style.display = 'none';
                 addBtn.style.display = 'none';
