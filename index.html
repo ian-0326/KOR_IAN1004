@@ -8,11 +8,10 @@
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.0/feather.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
     
     <style>
-        :root { --primary: #28b0eb; --bg: #f2f4f6; --white: #ffffff; --text: #191f28; --sub: #4e5968; --gray: #adb5bd; --error: #f44336; }
+        :root { --primary: #28b0eb; --pink: #ff85a2; --bg: #f2f4f6; --white: #ffffff; --text: #191f28; --sub: #4e5968; --gray: #adb5bd; --error: #f44336; }
         body { font-family: 'Noto Sans TC', sans-serif; background-color: var(--bg); margin: 0; padding: 0; color: var(--text); -webkit-font-smoothing: antialiased; touch-action: manipulation; }
         body.modal-open { overflow: hidden; position: fixed; width: 100%; }
 
@@ -43,6 +42,7 @@
         .list-n { font-size: 15px; font-weight: 900; color: #000; }
         .list-p { font-size: 13px; color: var(--primary); display: block; font-weight: 900; margin-top: 2px; }
 
+        /* 彈窗樣式 */
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 500; align-items: center; justify-content: center; padding: 20px; }
         .modal-card { background: #fff; border-radius: 36px; padding: 24px 20px 28px 20px; width: 100%; max-width: 360px; max-height: 85vh; box-sizing: border-box; display: flex; flex-direction: column; box-shadow: 0 15px 50px rgba(0,0,0,0.2); }
         .modal-body { overflow-y: auto; flex-grow: 1; width: 100%; padding-top: 10px; }
@@ -52,11 +52,13 @@
         .input-box { width: calc(100% - 24px); padding: 12px 20px; border: none; border-radius: 18px; font-size: 15px; outline: none; background: #f2f4f6; box-sizing: border-box; transition: 0.2s; }
         .input-box.error { background: #fff5f5; box-shadow: 0 0 0 2px var(--error); }
         
-        /* 姓名與性別排版修正 */
         .row-flex { display: flex; width: calc(100% - 24px); gap: 10px; align-items: flex-end; }
         .gender-group { display: flex; gap: 8px; margin-bottom: 3px; }
-        .gender-btn { width: 42px; height: 42px; border-radius: 50%; border: none; background: #f2f4f6; color: var(--gray); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; font-size: 18px; }
-        .gender-btn.active { background: var(--primary); color: white; box-shadow: 0 4px 10px rgba(40, 176, 235, 0.3); }
+        
+        /* 修正：性別按鈕樣式 */
+        .gender-btn { width: 44px; height: 44px; border-radius: 50%; border: none; background: #f2f4f6; color: var(--gray); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; font-size: 15px; font-weight: 900; }
+        .gender-btn.active-m { background: var(--primary); color: white; box-shadow: 0 4px 10px rgba(40, 176, 235, 0.3); }
+        .gender-btn.active-f { background: var(--pink); color: white; box-shadow: 0 4px 10px rgba(255, 133, 162, 0.3); }
 
         .birth-row { display: flex; width: calc(100% - 24px); gap: 8px; }
         .birth-row select { flex: 1; }
@@ -111,19 +113,19 @@
 
     <div id="register-modal" class="modal">
         <div class="modal-card">
-            <div style="text-align: center; margin-bottom: 20px;"><h2 style="font-weight:900; margin:0; font-size: 20px;">加入會員</h2></div>
+            <div style="text-align: center; margin-bottom: 20px;"><h2 style="font-weight:900; margin:0; font-size: 20px;">報到櫃檯</h2></div>
             <div class="modal-body">
                 <div class="form-item">
                     <div class="row-flex">
                         <div style="flex:1;">
                             <label class="form-label">真實姓名<span class="req-tag" id="tag-reg-name">*必填</span></label>
-                            <input type="text" id="reg-name" class="input-box" style="width:100%;" placeholder="姓名" oninput="clearError(this)">
+                            <input type="text" id="reg-name" class="input-box" style="width:100%;" placeholder="您的姓名" oninput="clearError(this)">
                         </div>
                         <div style="width:auto; text-align:center;">
                             <label class="form-label">性別</label>
                             <div class="gender-group">
-                                <button class="gender-btn" id="g-male" onclick="setGender('M')"><i class="fa-solid fa-user"></i></button>
-                                <button class="gender-btn" id="g-female" onclick="setGender('F')"><i class="fa-solid fa-user-dress"></i></button>
+                                <button class="gender-btn" id="g-male" onclick="setGender('M')">男</button>
+                                <button class="gender-btn" id="g-female" onclick="setGender('F')">女</button>
                             </div>
                         </div>
                     </div>
@@ -148,13 +150,15 @@
                     <input type="email" id="reg-email" class="input-box" placeholder="example@mail.com">
                 </div>
             </div>
-            <div class="modal-footer"><button class="btn-main" onclick="handleRegister()">完成加入</button></div>
+            <div class="modal-footer"><button class="btn-main" onclick="handleRegister()">登機報到</button></div>
         </div>
     </div>
 
     <script>
         const LIFF_ID = '2009405888-D5absVA3';
-        const _supabase = supabase.createClient('https://ivpctyqlrkjstfsoweeh.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml2cGN0eXFscmtqc3Rmc293ZWVoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTk1MTksImV4cCI6MjA4ODc3NTUxOX0.DYgzhaTH3_5NFwv009ZfZAshfUnCW2PeTuNcJ9feyMU');
+        const SUPABASE_URL = 'https://ivpctyqlrkjstfsoweeh.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml2cGN0eXFscmtqc3Rmc293ZWVoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTk1MTksImV4cCI6MjA4ODc3NTUxOX0.DYgzhaTH3_5NFwv009ZfZAshfUnCW2PeTuNcJ9feyMU';
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         let userLineId = "unknown", userData = null, selectedGender = "";
 
         async function init() {
@@ -183,10 +187,17 @@
             sd.innerHTML = '<option value="">日</option>' + Array.from({length: 31}, (_, i) => `<option value="${(i+1).toString().padStart(2,'0')}">${i+1}</option>`).join('');
         }
 
+        // 修正：性別切換與變色邏輯
         function setGender(g) {
             selectedGender = g;
-            document.getElementById('g-male').classList.toggle('active', g === 'M');
-            document.getElementById('g-female').classList.toggle('active', g === 'F');
+            const maleBtn = document.getElementById('g-male');
+            const femaleBtn = document.getElementById('g-female');
+            
+            maleBtn.classList.remove('active-m');
+            femaleBtn.classList.remove('active-f');
+            
+            if (g === 'M') maleBtn.classList.add('active-m');
+            if (g === 'F') femaleBtn.classList.add('active-f');
         }
 
         async function handleRegister() {
@@ -195,14 +206,12 @@
             let valid = true;
             if(!name.value.trim()){ name.classList.add('error'); document.getElementById('tag-reg-name').style.display='inline'; valid=false; }
             if(!/^09\d{8}$/.test(tel.value)){ tel.classList.add('error'); document.getElementById('tag-reg-tel').style.display='inline'; valid=false; }
-            if(!by.value || !bm.value || !bd.value){ 
-                [by,bm,bd].forEach(s => s.classList.add('error'));
-                document.getElementById('tag-reg-birth').style.display='inline'; valid=false; 
-            }
+            if(!by.value || !bm.value || !bd.value){ [by,bm,bd].forEach(s => s.classList.add('error')); document.getElementById('tag-reg-birth').style.display='inline'; valid=false; }
             if(!valid) return;
+
             const fullBirth = `${by.value}-${bm.value}-${bd.value}`;
             const { error } = await _supabase.from('profiles').insert({ user_id: userLineId, full_name: name.value.trim(), phone: tel.value.trim(), birthday: fullBirth, gender: selectedGender, email: email.value.trim() });
-            if(!error) location.reload(); else alert("註冊失敗：" + error.message);
+            if(!error) location.reload(); else alert("報到失敗：" + error.message);
         }
 
         function renderUserProfile() {
@@ -220,15 +229,13 @@
 
         function clearError(el) { 
             el.classList.remove('error'); 
-            const tag = document.getElementById('tag-'+el.id.replace(/-[ymd]$/,'')); 
+            const baseId = el.id.startsWith('reg-birth') ? 'reg-birth' : el.id;
+            const tag = document.getElementById('tag-' + baseId);
             if(tag) tag.style.display='none'; 
             if(el.id.startsWith('reg-birth')){
                 ['y','m','d'].forEach(suffix => document.getElementById('reg-birth-'+suffix).classList.remove('error'));
-                document.getElementById('tag-reg-birth').style.display='none';
             }
         }
-        function openAddModal() { document.body.classList.add('modal-open'); document.getElementById('add-modal').style.display='flex'; }
-        function closeModal(id) { document.body.classList.remove('modal-open'); document.getElementById(id).style.display='none'; }
         window.onload = init;
     </script>
 </body>
