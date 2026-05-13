@@ -60,19 +60,17 @@
         .expand-toggle { color: var(--gray); display: flex; align-items: center; transition: 0.3s; }
         .bottom-summary.expanded .expand-toggle { transform: rotate(180deg); }
         .btn-main { background: var(--primary); color: #fff; border: none; padding: 18px; width: 100%; border-radius: 20px; font-weight: 700; font-size: 17px; cursor: pointer; }
+        .btn-main:disabled { background: var(--gray); opacity: 0.7; cursor: not-allowed; }
 
-        /* 彈窗樣式 */
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 500; align-items: center; justify-content: center; padding: 20px; }
         .modal-card { background: #fff; border-radius: 36px; padding: 40px 24px; width: 100%; max-width: 360px; box-sizing: border-box; text-align: center; }
         .check-circle { width: 64px; height: 64px; background: #feeeb3; color: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px auto; }
         
-        /* 訂單明細內容修正 */
         .order-id-label { font-size: 11px; color: var(--gray); font-weight: 700; margin-top: -5px; margin-bottom: 20px; display: block; }
         .modal-section { text-align: left; margin-bottom: 20px; padding: 16px; background: #f8f9fa; border-radius: 24px; }
         .modal-section-title { font-size: 12px; font-weight: 900; color: var(--gray); margin-bottom: 12px; display: block; }
         .detail-item { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 14px; }
-        .detail-val { font-weight: 700; text-align: right; flex: 1; margin-left: 20px; word-break: break-all; }
-        /* 商品一行一個 */
+        .detail-val { font-weight: 700; text-align: right; flex: 1; margin-left: 20px; }
         .item-list-display { text-align: right; line-height: 1.6; color: var(--text); font-weight: 700; }
 
         .add-btn { position: fixed; top: 20px; right: 20px; width: 48px; height: 48px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; z-index: 300; border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
@@ -132,7 +130,7 @@
             <div class="bottom-summary" id="shipping-summary">
                 <div class="summary-details"><div class="row-sm"><span>代購商品小計</span><span id="sum-items">NT$ 0</span></div><div class="row-sm"><span>物流運費</span><span id="sum-shipping">NT$ 0</span></div><div class="row-sm"><span>包材費用</span><span id="sum-packing">NT$ 10</span></div></div>
                 <div class="row-lg" onclick="toggleSummary()"><span>匯款總金額</span><div style="display:flex; align-items:center; gap:8px;"><span class="price-lg" id="sum-total">NT$ 0</span><div class="expand-toggle"><i data-feather="chevron-up"></i></div></div></div>
-                <button class="btn-main" onclick="submitFinalOrder()">確認下單</button>
+                <button class="btn-main" id="confirm-submit-btn" onclick="submitFinalOrder()">確認下單</button>
             </div>
         </section>
 
@@ -157,8 +155,7 @@
 
             <div class="modal-section">
                 <span class="modal-section-title">訂購商品</span>
-                <div id="m-items-container" class="item-list-display">
-                    </div>
+                <div id="m-items-container" class="item-list-display"></div>
                 <div class="detail-item" style="margin-top:15px; border-top:1px solid #eee; padding-top:12px;">
                     <div class="detail-lbl" style="color:var(--text); font-weight:900;">匯款金額</div>
                     <div class="detail-val" id="m-total" style="color:var(--primary); font-size:18px; font-weight:900;"></div>
@@ -168,6 +165,10 @@
             <p style="font-size: 12px; color: var(--gray); margin-bottom: 20px; line-height: 1.5;">請截圖此畫面回傳至 LINE@<br>核對金額無誤後即可進行匯款。</p>
             <button class="btn-main" onclick="location.reload()">我知道了</button>
         </div>
+    </div>
+
+    <div id="add-modal" class="modal" onclick="closeModal('add-modal')">
+        <div class="modal-card" onclick="event.stopPropagation()"><h2 style="margin-bottom:24px;">登錄商品</h2><select id="in-cat" class="input-box" style="margin-bottom:12px;"><option value="">類別</option><option value="化妝水">化妝水</option><option value="精華液">精華液</option><option value="乳液">乳液</option><option value="面膜棉片">面膜棉片</option><option value="洗臉洗澡">洗臉洗澡</option><option value="美髮護髮">美髮護髮</option><option value="彩妝遮瑕">彩妝遮瑕</option><option value="口腔護理">口腔護理</option><option value="防曬">防曬</option><option value="藥膏藥品">藥膏藥品</option><option value="食品（含保健）">食品（含保健）</option><option value="其他">其他</option></select><input type="text" id="in-name" class="input-box" placeholder="名稱" style="margin-bottom:12px;"><input type="number" id="in-price" class="input-box" placeholder="價格" style="margin-bottom:12px;"><input type="url" id="in-url" class="input-box" placeholder="網址" style="margin-bottom:20px;"><button class="btn-main" onclick="upload()">確認登錄</button></div>
     </div>
 
     <script>
@@ -199,7 +200,7 @@
             document.getElementById('item-list').innerHTML = products.map(p => `
                 <div class="item-card">
                     <div class="item-main" onclick="window.open('${p.olive_url}', '_blank')"><div><span class="item-name">${p.name_zh}</span></div><span class="item-price">NT$ ${Number(p.price_nt).toLocaleString()}</span></div>
-                    <div class="qty-ctrl"><button class="qty-btn" onclick="updateQty('${p.id}', -1)"><i data-feather="minus" style="width:18px;"></i></button><span class="qty-num" id="qty-${p.id}">${cart[p.id] ? cart[p.id].qty : 0}</span><button class="qty-btn" onclick="updateQty('${p.id}', 1)"><i data-feather="plus" style="width:18px;"></i></button></div>
+                    <div class="qty-ctrl"><button class="qty-btn" onclick="updateQty('${p.id}', -1)"><i data-feather="minus" style="width:16px;"></i></button><span class="qty-num" id="qty-${p.id}">${cart[p.id] ? cart[p.id].qty : 0}</span><button class="qty-btn" onclick="updateQty('${p.id}', 1)"><i data-feather="plus" style="width:18px;"></i></button></div>
                 </div>
             `).join('');
             feather.replace();
@@ -207,7 +208,7 @@
 
         function updateQty(id, delta) {
             const p = allProducts.find(x => x.id === id);
-            if (!cart[id]) cart[id] = { id: p.id, name: p.name_zh, option: p.option, price: p.price_nt, qty: 0 };
+            if (!cart[id]) cart[id] = { id: p.id, name: p.name_zh, price: p.price_nt, qty: 0 };
             cart[id].qty = Math.max(0, cart[id].qty + delta);
             if(document.getElementById(`qty-${id}`)) document.getElementById(`qty-${id}`).innerText = cart[id].qty;
             let t = Object.values(cart).reduce((s, i) => s + i.qty, 0);
@@ -221,7 +222,7 @@
             let html = '', total = 0;
             Object.values(cart).forEach(item => {
                 if(item.qty > 0) {
-                    html += `<div class="list-row"><div class="list-left"><span class="list-n">${item.name}</span><span class="list-s">${item.option || ''} | NT$ ${item.price}</span></div><div class="qty-ctrl"><button class="qty-btn" onclick="updateQty('${item.id}', -1)"><i data-feather="minus" style="width:16px;"></i></button><span class="qty-num">${item.qty}</span><button class="qty-btn" onclick="updateQty('${item.id}', 1)"><i data-feather="plus" style="width:16px;"></i></button></div></div>`;
+                    html += `<div class="list-row"><div class="list-left"><span class="list-n">${item.name}</span><span class="list-s">NT$ ${item.price}</span></div><div class="qty-ctrl"><button class="qty-btn" onclick="updateQty('${item.id}', -1)"><i data-feather="minus" style="width:16px;"></i></button><span class="qty-num">${item.qty}</span><button class="qty-btn" onclick="updateQty('${item.id}', 1)"><i data-feather="plus" style="width:16px;"></i></button></div></div>`;
                     total += item.price * item.qty;
                 }
             });
@@ -258,8 +259,11 @@
             if(tag) tag.style.display = 'none';
         }
 
-        // 修改：增加 products order_count 累加功能與編號顯示
+        // 修改：增加防重複寫入與穩定加總邏輯
         async function submitFinalOrder() {
+            const btn = document.getElementById('confirm-submit-btn');
+            if(btn.disabled) return; // 雙重保險
+
             const name = document.getElementById('ship-name');
             const tel = document.getElementById('ship-tel');
             const store = document.getElementById('ship-store');
@@ -275,31 +279,35 @@
             }
             if(!isValid) return window.scrollTo({ top: 0, behavior: 'smooth' });
 
-            // 商品明細分行處理 (顯示用)
+            // 1. 立即禁用按鈕，防止第二次點擊
+            btn.disabled = true;
+            btn.innerText = "下單處理中...";
+
             let itemsDisplay = Object.values(cart).filter(i => i.qty > 0).map(i => `<div>${i.name} × ${i.qty}</div>`).join('');
             itemsDisplay += `<div>包材紙箱 × ${packingQty}</div>`;
-
             let methodLabel = shipMethod === 'face' ? '面交' : `7-11 取件 (${store.value} / ${code.value})`;
 
-            // 1. 寫入 orders 資料表，獲取回傳的 ID
-            const { data: orderData, error: orderError } = await _supabase.from('orders').insert({
-                items_summary: Object.values(cart).filter(i => i.qty > 0).map(i => `${i.name}*${i.qty}`).join(', '), 
-                user_id: userLineId, customer_name: name.value, customer_tel: tel.value,
-                shipping_method: methodLabel, total_amount: document.getElementById('sum-total').innerText
-            }).select();
+            try {
+                // 2. 寫入 orders 資料表
+                const { data: orderData, error: orderError } = await _supabase.from('orders').insert({
+                    items_summary: Object.values(cart).filter(i => i.qty > 0).map(i => `${i.name}*${i.qty}`).join(', '), 
+                    user_id: userLineId, customer_name: name.value, customer_tel: tel.value,
+                    shipping_method: methodLabel, total_amount: document.getElementById('sum-total').innerText
+                }).select();
 
-            if(!orderError) {
-                // 2. 自動累加 products 資料表中的 order_count
+                if(orderError) throw orderError;
+
+                // 3. 穩定累加 products 的 order_count
                 for (const item of Object.values(cart)) {
                     if (item.qty > 0) {
-                        await _supabase.rpc('increment_order_count', { row_id: item.id, inc_val: item.qty });
-                        // 如果 RPC 不行，就直接寫更新 logic:
-                        const { data: currentProd } = await _supabase.from('products').select('order_count').eq('id', item.id).single();
-                        await _supabase.from('products').update({ order_count: (currentProd.order_count || 0) + item.qty }).eq('id', item.id);
+                        // 先讀取，再加總，最後更新 (確保 order_count 正確加總)
+                        const { data: pData } = await _supabase.from('products').select('order_count').eq('id', item.id).single();
+                        const newCount = (pData.order_count || 0) + item.qty;
+                        await _supabase.from('products').update({ order_count: newCount }).eq('id', item.id);
                     }
                 }
 
-                // 3. 顯示成功明細彈窗
+                // 4. 顯示成功明細彈窗
                 const orderId = orderData[0].id;
                 document.getElementById('m-order-id').innerText = "編號: " + orderId.slice(-10).toUpperCase();
                 document.getElementById('m-items-container').innerHTML = itemsDisplay;
@@ -308,7 +316,19 @@
                 document.getElementById('m-method').innerText = methodLabel;
                 document.getElementById('m-total').innerText = document.getElementById('sum-total').innerText;
                 document.getElementById('order-detail-modal').style.display = 'flex';
+                
+                // LINE 訊息同步
+                if (liff.isInClient()) {
+                    const msg = `✈️ 【KOR.IAN 訂單成功】\n姓名：${name.value}\n總額：${document.getElementById('sum-total').innerText}\n編號：${orderId.slice(-10).toUpperCase()}`;
+                    await liff.sendMessages([{ type: 'text', text: msg }]);
+                }
                 feather.replace();
+
+            } catch (err) {
+                alert("抱歉，下單過程發生錯誤，請稍後再試。");
+                btn.disabled = false;
+                btn.innerText = "確認下單";
+                console.error(err);
             }
         }
 
