@@ -24,6 +24,10 @@
         .page-content.active { display: block; }
         .top-spacer { height: 85px; width: 100%; }
 
+        /* 修正：Logo 樣式 */
+        .logo-container { padding: 20px 16px 10px 16px; display: flex; align-items: flex-start; }
+        .page-logo { height: 45px; width: auto; object-fit: contain; }
+
         .category-wrapper { position: sticky; top: 0; background: var(--bg); margin: 0 -16px 20px -16px; padding: 10px 16px; overflow-x: auto; display: flex; gap: 8px; scrollbar-width: none; z-index: 90; }
         .cat-pill { white-space: nowrap; padding: 10px 20px; background: #fff; border-radius: 50px; font-size: 14px; font-weight: 700; color: var(--sub); box-shadow: 0 2px 6px rgba(0,0,0,0.05); flex-shrink: 0; }
         .cat-pill.active { background: var(--primary); color: #fff; box-shadow: 0 4px 12px rgba(247, 181, 0, 0.3); }
@@ -59,7 +63,7 @@
         .ship-btn { flex: 1; padding: 16px; background: #f2f4f6; border-radius: 20px; text-align: center; font-weight: 700; color: var(--sub); cursor: pointer; }
         .ship-btn.active { background: var(--primary); color: #fff; }
 
-        .bottom-summary { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; padding: 10px 24px calc(20px + env(safe-area-inset-bottom)); border-top: 1px solid #eee; z-index: 400; box-shadow: 0 -10px 30px rgba(0,0,0,0.05); transition: 0.3s; }
+        .bottom-summary { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; padding: 10px 24px calc(20px + env(safe-area-inset-bottom)); border-top: 1px solid #eee; z-index: 400; box-shadow: 0 -10px 30px rgba(0,0,0,0.05); }
         .summary-details { max-height: 0; overflow: hidden; transition: 0.3s; opacity: 0; }
         .bottom-summary.expanded .summary-details { max-height: 200px; opacity: 1; margin-top: 10px; padding-bottom: 10px; }
         .row-sm { display: flex; justify-content: space-between; font-size: 14px; color: var(--sub); margin-bottom: 8px; }
@@ -84,13 +88,7 @@
         .order-item-qty { text-align: right; font-weight: 900; color: var(--primary); white-space: nowrap; }
         .detail-item { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; }
         .detail-val { font-weight: 700; text-align: right; flex: 1; margin-left: 20px; word-break: break-all; }
-
-        /* 修正：複製按鈕樣式 */
-        .copy-btn { 
-            background: #eee; border: none; padding: 4px 8px; border-radius: 8px; 
-            font-size: 10px; color: var(--sub); cursor: pointer; margin-left: 8px;
-            display: inline-flex; align-items: center; gap: 4px; vertical-align: middle;
-        }
+        .copy-btn { background: #eee; border: none; padding: 4px 8px; border-radius: 8px; font-size: 10px; color: var(--sub); cursor: pointer; margin-left: 8px; display: inline-flex; align-items: center; gap: 4px; vertical-align: middle; }
 
         .add-btn { position: fixed; top: 20px; right: 20px; width: 48px; height: 48px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; z-index: 300; border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.15); cursor: pointer; }
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; padding: 12px 0 calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid #e5e8eb; z-index: 200; }
@@ -105,7 +103,10 @@
 
     <div id="main-app">
         <section id="page-shop" class="page-content active">
-            <div class="top-spacer"></div>
+            <div class="logo-container">
+                <img src="https://raw.githubusercontent.com/ian-0326/KOR_IAN1004/main/KORIAN.png" alt="KOR.IAN Logo" class="page-logo">
+            </div>
+            
             <div class="category-wrapper" id="category-bar">
                 <div class="cat-pill active" onclick="filterCategory('全部', this)">全部</div>
                 <div class="cat-pill" onclick="filterCategory('化妝水', this)">化妝水</div>
@@ -167,12 +168,8 @@
         <div class="modal-card">
             <div class="modal-header">
                 <h2 style="font-weight:900; margin:0; font-size: 22px;">訂單明細</h2>
-                <div>
-                    <span class="order-id-label" id="m-order-id" style="display:inline-block;">編號: --------</span>
-                    <button id="copy-btn" class="copy-btn" onclick="copyOrderId()"><i data-feather="copy" style="width:12px;"></i>複製</button>
-                </div>
+                <div><span class="order-id-label" id="m-order-id" style="display:inline-block;">編號: --------</span><button id="copy-btn" class="copy-btn" onclick="copyOrderId()"><i data-feather="copy" style="width:12px;"></i>複製</button></div>
             </div>
-            
             <div class="modal-body">
                 <div class="modal-section">
                     <span class="modal-section-title">收件資訊</span>
@@ -180,14 +177,10 @@
                     <div class="detail-item"><div>聯絡電話</div><div class="detail-val" id="m-tel"></div></div>
                     <div class="detail-item"><div>取件方式</div><div class="detail-val" id="m-method"></div></div>
                 </div>
-
                 <div class="modal-section">
                     <span class="modal-section-title">訂購商品</span>
                     <div id="m-items-container"></div>
-                    <div class="detail-item" style="margin-top:15px; border-top:1px solid #eee; padding-top:12px;">
-                        <div style="font-weight:900; color:var(--text);">匯款金額</div>
-                        <div class="detail-val" id="m-total" style="color:var(--primary); font-size:18px; font-weight:900;"></div>
-                    </div>
+                    <div class="detail-item" style="margin-top:15px; border-top:1px solid #eee; padding-top:12px;"><div style="font-weight:900; color:var(--text);">匯款金額</div><div class="detail-val" id="m-total" style="color:var(--primary); font-size:18px; font-weight:900;"></div></div>
                 </div>
                 <p style="font-size: 12px; color: var(--gray); text-align: center; line-height: 1.5; margin: 10px 0;">請截圖此畫面回傳至 LINE@<br>核對金額無誤後即可進行匯款。</p>
             </div>
@@ -237,20 +230,7 @@
         function clearError(el) { el.classList.remove('error'); const tag=document.getElementById('tag-'+el.id); if(tag) tag.style.display='none'; if(el.tagName === 'TEXTAREA') autoGrow(el); }
         function initTextareas() { const ts = document.querySelectorAll('textarea.input-box'); ts.forEach(t => { t.style.height = '48px'; }); }
         function autoGrow(element) { element.style.height = '48px'; if (element.scrollHeight > 48) { element.style.height = (element.scrollHeight) + "px"; } }
-
-        // 修正：複製訂單編號函式
-        async function copyOrderId() {
-            try {
-                await navigator.clipboard.writeText(currentRawOrderId);
-                const btn = document.getElementById('copy-btn');
-                btn.innerHTML = '<i data-feather="check" style="width:12px;"></i>已複製';
-                feather.replace();
-                setTimeout(() => {
-                    btn.innerHTML = '<i data-feather="copy" style="width:12px;"></i>複製';
-                    feather.replace();
-                }, 2000);
-            } catch (err) { console.error('無法複製', err); }
-        }
+        async function copyOrderId() { try { await navigator.clipboard.writeText(currentRawOrderId); const btn = document.getElementById('copy-btn'); btn.innerHTML = '<i data-feather="check" style="width:12px;"></i>已複製'; feather.replace(); setTimeout(() => { btn.innerHTML = '<i data-feather="copy" style="width:12px;"></i>複製'; feather.replace(); }, 2000); } catch (err) { console.error('無法複製', err); } }
 
         async function upload() {
             const btn = document.getElementById('btn-upload');
@@ -278,7 +258,7 @@
             if(!isValid) return; btn.disabled=true; btn.innerText="下單中...";
             let itemsStr = Object.values(cart).filter(i=>i.qty>0).map(i=>`${i.name}*${i.qty}`).join(', ');
             
-            // 修正：明細過濾掉包材
+            // 修正：過濾包材
             let itemsDisplay = Object.values(cart).filter(i => i.qty > 0).map(i => `
                 <div class="order-item-row">
                     <div class="order-item-name">${i.name} ${i.option ? '('+i.option+')' : ''}</div>
@@ -293,16 +273,11 @@
                 const { data, error } = await _supabase.from('orders').insert({ items_summary: itemsStr, user_id: userLineId, customer_name: name.value, customer_tel: tel.value, shipping_method: finalMethod, shipping_store: finalStore, packing_qty: packingQty, total_amount: document.getElementById('sum-total').innerText }).select();
                 if(error) throw error;
                 for(let i of Object.values(cart)){ if(i.qty>0) await _supabase.rpc('increment_order_count',{row_id:i.id, inc_val:parseInt(i.qty)}); }
-                
-                const oid = data[0].id;
-                currentRawOrderId = oid.slice(-10).toUpperCase(); // 存儲供複製用
+                const oid = data[0].id; currentRawOrderId = oid.slice(-10).toUpperCase();
                 document.getElementById('m-order-id').innerText="編號: " + currentRawOrderId;
                 document.getElementById('m-items-container').innerHTML = itemsDisplay;
-                document.getElementById('m-name').innerText=name.value; 
-                document.getElementById('m-tel').innerText=tel.value; 
-                document.getElementById('m-method').innerText = `${finalMethod} ${shipMethod==='711' ? finalStore : ''}`;
-                document.getElementById('m-total').innerText=document.getElementById('sum-total').innerText; 
-                document.getElementById('order-detail-modal').style.display='flex';
+                document.getElementById('m-name').innerText=name.value; document.getElementById('m-tel').innerText=tel.value; document.getElementById('m-method').innerText = `${finalMethod} ${shipMethod==='711' ? finalStore : ''}`;
+                document.getElementById('m-total').innerText=document.getElementById('sum-total').innerText; document.getElementById('order-detail-modal').style.display='flex';
             } catch(e){ alert("失敗："+e.message); btn.disabled=false; btn.innerText="確認下單"; }
         }
 
