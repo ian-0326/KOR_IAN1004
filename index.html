@@ -39,33 +39,43 @@
         .card-box { background: #fff; border-radius: 32px; padding: 15px 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); margin-top: 10px; }
         .list-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f2f4f6; }
         .list-row:last-child { border-bottom: none; }
-        .list-left { flex: 1; padding-right: 15px; }
         .list-n { font-size: 15px; font-weight: 900; color: #000; display: inline-block; }
         .list-s { font-size: 11px; color: var(--gray); display: inline-block; margin-left: 6px; }
         .list-p { font-size: 13px; color: var(--primary); display: block; font-weight: 900; margin-top: 2px; }
 
-        .form-item { margin-bottom: 12px; }
-        .form-label { display: flex; align-items: center; font-size: 14px; font-weight: 700; margin-bottom: 6px; color: var(--sub); padding-left: 4px; }
+        .form-item { margin-bottom: 12px; width: 100%; display: flex; flex-direction: column; align-items: center; }
+        .form-label { width: calc(100% - 24px); display: flex; align-items: center; font-size: 14px; font-weight: 700; margin-bottom: 6px; color: var(--sub); }
         .req-tag { color: var(--error); font-size: 12px; margin-left: 6px; font-weight: 400; display: none; }
         
-        /* 基礎輸入框樣式 */
-        .input-box { width: 100%; padding: 12px 16px; border: none; border-radius: 18px; font-size: 15px; outline: none; background: #f2f4f6; box-sizing: border-box; transition: 0.2s; }
+        /* 修正：輸入框左右縮窄，並增加 Padding 避免遮擋 */
+        .input-box { 
+            width: calc(100% - 24px); /* 左右縮窄 */
+            padding: 12px 20px; 
+            border: none; 
+            border-radius: 18px; 
+            font-size: 15px; 
+            outline: none; 
+            background: #f2f4f6; 
+            box-sizing: border-box; 
+            transition: 0.2s; 
+            display: block;
+        }
         .input-box:focus { background: #fff; box-shadow: 0 0 0 2px var(--primary); }
         .input-box.error { background: #fff5f5; box-shadow: 0 0 0 2px var(--error); }
 
-        /* 修正：針對多行文字框手動增加左右 Padding */
         textarea.input-box {
-            padding-left: 20px !important;
-            padding-right: 20px !important;
+            padding-top: 14px;
+            padding-bottom: 14px;
             resize: none;
-            overflow-y: hidden; /* 隱藏滑動條避免計算法失誤 */
+            overflow-y: hidden;
+            min-height: 48px;
         }
 
-        .ship-group { display: flex; gap: 12px; }
+        .ship-group { display: flex; gap: 12px; width: calc(100% - 24px); }
         .ship-btn { flex: 1; padding: 16px; background: #f2f4f6; border-radius: 20px; text-align: center; font-weight: 700; color: var(--sub); cursor: pointer; }
         .ship-btn.active { background: var(--primary); color: #fff; }
 
-        .bottom-summary { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; padding: 10px 24px calc(20px + env(safe-area-inset-bottom)); border-top: 1px solid #eee; z-index: 400; box-shadow: 0 -10px 30px rgba(0,0,0,0.05); }
+        .bottom-summary { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; padding: 10px 24px calc(20px + env(safe-area-inset-bottom)); border-top: 1px solid #eee; z-index: 400; box-shadow: 0 -10px 30px rgba(0,0,0,0.05); transition: 0.3s; }
         .summary-details { max-height: 0; overflow: hidden; transition: 0.3s; opacity: 0; }
         .bottom-summary.expanded .summary-details { max-height: 200px; opacity: 1; margin-top: 10px; padding-bottom: 10px; }
         .row-sm { display: flex; justify-content: space-between; font-size: 14px; color: var(--sub); margin-bottom: 8px; }
@@ -75,19 +85,18 @@
         .btn-main:disabled { background: var(--gray); opacity: 0.7; }
 
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 500; align-items: center; justify-content: center; padding: 20px; }
-        .modal-card { background: #fff; border-radius: 36px; padding: 24px 24px 28px 24px; width: 100%; max-width: 360px; max-height: 85vh; box-sizing: border-box; display: flex; flex-direction: column; box-shadow: 0 15px 50px rgba(0,0,0,0.2); }
+        .modal-card { background: #fff; border-radius: 36px; padding: 24px 20px 28px 20px; width: 100%; max-width: 360px; max-height: 85vh; box-sizing: border-box; display: flex; flex-direction: column; box-shadow: 0 15px 50px rgba(0,0,0,0.2); }
         .modal-header { text-align: center; margin-bottom: 15px; flex-shrink: 0; }
-        .modal-body { overflow-y: auto; flex-grow: 1; padding-right: 4px; margin-bottom: 15px; }
+        .modal-body { overflow-y: auto; flex-grow: 1; padding-right: 0; margin-bottom: 15px; width: 100%; }
         .modal-body::-webkit-scrollbar { width: 4px; }
         .modal-body::-webkit-scrollbar-thumb { background: #eee; border-radius: 10px; }
-        .modal-footer { flex-shrink: 0; }
-        .modal-section { text-align: left; margin-bottom: 16px; padding: 16px; background: #f8f9fa; border-radius: 24px; }
+        .modal-footer { flex-shrink: 0; display: flex; justify-content: center; width: 100%; }
+        .modal-footer .btn-main { width: calc(100% - 24px); }
 
         .add-btn { position: fixed; top: 20px; right: 20px; width: 48px; height: 48px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; z-index: 300; border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.15); cursor: pointer; }
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; padding: 12px 0 calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid #e5e8eb; z-index: 200; }
         .nav-item { color: #adb5bd; text-align: center; flex: 1; font-size: 11px; font-weight: 900; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; }
         .nav-item.active { color: var(--primary); }
-        .success-state { text-align: center; padding: 10px 0; }
     </style>
 </head>
 <body>
@@ -118,22 +127,19 @@
         <section id="page-checkout" class="page-content">
             <div class="nav-header"><button class="back-btn" onclick="switchPage('shop')"><i data-feather="chevron-left"></i></button><div class="page-title">代購清單</div></div>
             <div class="card-box" id="checkout-container"></div>
-            <div class="bottom-summary">
-                <div class="row-lg" style="cursor:default; padding: 5px 0;"><span>清單總計</span><span class="price-lg" id="checkout-grand-total">NT$ 0</span></div>
-                <button class="btn-main" onclick="switchPage('shipping')">填寫資料</button>
-            </div>
+            <div class="bottom-summary"><div class="row-lg" style="cursor:default; padding: 5px 0;"><span>清單總計</span><span class="price-lg" id="checkout-grand-total">NT$ 0</span></div><button class="btn-main" onclick="switchPage('shipping')">填寫資料</button></div>
         </section>
 
         <section id="page-shipping" class="page-content">
             <div class="nav-header"><button class="back-btn" onclick="switchPage('checkout')"><i data-feather="chevron-left"></i></button><div class="page-title">取件資料</div></div>
             <div class="card-box">
                 <div class="form-item"><label class="form-label">取件姓名<span class="req-tag" id="tag-ship-name">*必填</span></label><input type="text" id="ship-name" class="input-box" placeholder="收件人姓名" oninput="clearError(this)"></div>
-                <div class="form-item"><label class="form-label">聯絡電話<span class="req-tag" id="tag-ship-tel">*必填</span></label><input type="tel" id="ship-tel" class="input-box" placeholder="09xxxxxxxx" maxlength="10" oninput="clearError(this)"><div style="font-size:12px; color:var(--error); margin-top:8px; line-height:1.5;">*請提供正確的取件人資訊，資料有誤導致無法取件概不負責。</div></div>
+                <div class="form-item"><label class="form-label">聯絡電話<span class="req-tag" id="tag-ship-tel">*必填</span></label><input type="tel" id="ship-tel" class="input-box" placeholder="09xxxxxxxx" maxlength="10" oninput="clearError(this)"></div>
                 <div class="form-item">
                     <label class="form-label">配送方式</label>
                     <div class="ship-group"><div class="ship-btn active" id="btn-face" onclick="setShipping('face')">面交</div><div class="ship-btn" id="btn-711" onclick="setShipping('711')">7-11 取件</div></div>
-                    <div id="hint-face" style="font-size:12px; color:var(--primary); margin-top:12px;">面交僅限台中大雅、梧棲、沙鹿區。</div>
-                    <div id="form-711" style="display:none; margin-top:15px;">
+                    <div id="hint-face" style="font-size:12px; color:var(--primary); margin-top:12px; width:calc(100% - 24px);">面交僅限台中大雅、梧棲、沙鹿區。</div>
+                    <div id="form-711" style="display:none; margin-top:15px; width:100%;">
                         <div class="form-item"><label class="form-label">取件門市<span class="req-tag" id="tag-ship-store">*必填</span></label><input type="text" id="ship-store" class="input-box" placeholder="取件門市" oninput="clearError(this)"></div>
                         <div class="form-item"><label class="form-label">門市代碼<span class="req-tag" id="tag-ship-code">*必填</span></label><input type="text" id="ship-code" class="input-box" placeholder="門市代碼" oninput="clearError(this)"></div>
                     </div>
@@ -180,10 +186,8 @@
                 <div class="modal-header"><h2 style="font-weight:900; margin:0; font-size: 20px;">新增商品</h2></div>
                 <div class="modal-body">
                     <div class="form-item"><label class="form-label">選擇類別<span class="req-tag" id="tag-in-cat">*必填</span></label><select id="in-cat" class="input-box" onchange="clearError(this)"><option value="">請選擇</option><option value="化妝水">化妝水</option><option value="精華液">精華液</option><option value="乳液">乳液</option><option value="面膜棉片">面膜棉片</option><option value="洗臉洗澡">洗臉洗澡</option><option value="美髮護髮">美髮護髮</option><option value="彩妝遮瑕">彩妝遮瑕</option><option value="口腔護理">口腔護理</option><option value="防曬">防曬</option><option value="藥膏藥品">藥膏藥品</option><option value="食品（含保健）">食品（含保健）</option><option value="其他">其他</option></select></div>
-                    
                     <div class="form-item"><label class="form-label">商品名稱<span class="req-tag" id="tag-in-name">*必填</span></label><textarea id="in-name" class="input-box" placeholder="例如：Torriden 面膜" oninput="clearError(this)"></textarea></div>
                     <div class="form-item"><label class="form-label">款式規格</label><textarea id="in-option" class="input-box" placeholder="例如：藍色保濕型" oninput="autoGrow(this)"></textarea></div>
-                    
                     <div class="form-item"><label class="form-label">價格 NT$<span class="req-tag" id="tag-in-price">*必填</span></label><input type="number" id="in-price" class="input-box" placeholder="金額" oninput="clearError(this)"></div>
                     <div class="form-item"><label class="form-label">來源網址<span class="req-tag" id="tag-in-url">*必填</span></label><input type="url" id="in-url" class="input-box" placeholder="請輸入網址" oninput="clearError(this)"></div>
                 </div>
@@ -218,8 +222,8 @@
         function calculateFinal() { let it=Object.values(cart).reduce((s,i)=>s+(i.price*i.qty),0); let sf=shipMethod==='711'?(80*packingQty):0; let pf=packingQty*10; document.getElementById('sum-items').innerText=`NT$ ${it.toLocaleString()}`; document.getElementById('sum-shipping').innerText=`NT$ ${sf.toLocaleString()}`; document.getElementById('sum-packing').innerText=`NT$ ${pf.toLocaleString()}`; document.getElementById('sum-total').innerText=`NT$ ${(it+sf+pf).toLocaleString()}`; }
         function clearError(el) { el.classList.remove('error'); const tag=document.getElementById('tag-'+el.id); if(tag) tag.style.display='none'; if(el.tagName === 'TEXTAREA') autoGrow(el); }
 
-        function initTextareas() { const ts = document.querySelectorAll('textarea.input-box'); ts.forEach(t => { t.setAttribute('rows', '1'); t.style.height = '43px'; }); }
-        function autoGrow(element) { element.style.height = '43px'; if (element.scrollHeight > 43) { element.style.height = (element.scrollHeight) + "px"; } }
+        function initTextareas() { const ts = document.querySelectorAll('textarea.input-box'); ts.forEach(t => { t.style.height = '48px'; }); }
+        function autoGrow(element) { element.style.height = '48px'; if (element.scrollHeight > 48) { element.style.height = (element.scrollHeight) + "px"; } }
 
         async function upload() {
             const btn = document.getElementById('btn-upload');
@@ -236,7 +240,8 @@
             const { error } = await _supabase.from('products').insert({ category: cat.value, name_zh: name.value.trim(), option: opt.value.trim()||"", price_nt: price.value, olive_url: url.value.trim(), is_active: false, created_by: userLineId });
             if(!error) { 
                 document.getElementById('add-modal-content').style.display = 'none';
-                document.getElementById('add-modal-success').style.display = 'block';
+                document.getElementById('add-modal-success').style.display = 'flex';
+                document.getElementById('add-modal-success').style.flexDirection = 'column';
                 feather.replace();
             } else { 
                 alert('失敗：'+error.message); btn.disabled=false; btn.innerText="確認登錄"; 
@@ -266,7 +271,7 @@
         function openAddModal() { 
             document.getElementById('add-modal-content').style.display = 'flex';
             document.getElementById('add-modal-success').style.display = 'none';
-            initTextareas(); // 重新初始化 textarea
+            initTextareas(); 
             document.getElementById('add-modal').style.display='flex'; 
         }
         function closeModal(id) { document.getElementById(id).style.display='none'; }
