@@ -15,7 +15,6 @@
         body { font-family: 'Noto Sans TC', sans-serif; background-color: var(--bg); margin: 0; padding: 0; color: var(--text); -webkit-font-smoothing: antialiased; touch-action: manipulation; }
         body.modal-open { overflow: hidden; position: fixed; width: 100%; }
 
-        /* 導覽與固定區塊 */
         .fixed-header { position: sticky; top: 0; background: var(--bg); z-index: 110; padding: 20px 16px 10px 16px; display: flex; justify-content: space-between; align-items: center; }
         .page-logo { height: 45px; width: auto; object-fit: contain; }
         .add-btn { width: 44px; height: 44px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; border: none; box-shadow: 0 4px 12px rgba(40, 176, 235, 0.2); cursor: pointer; }
@@ -25,9 +24,8 @@
         
         .category-wrapper { position: sticky; top: 75px; background: var(--bg); margin: 0 -16px 20px -16px; padding: 10px 16px; overflow-x: auto; display: flex; gap: 8px; scrollbar-width: none; z-index: 90; }
         .cat-pill { white-space: nowrap; padding: 10px 20px; background: #fff; border-radius: 50px; font-size: 14px; font-weight: 700; color: var(--sub); box-shadow: 0 2px 6px rgba(0,0,0,0.05); flex-shrink: 0; }
-        .cat-pill.active { background: var(--primary); color: #fff; box-shadow: 0 4px 12px rgba(40, 176, 235, 0.3); }
+        .cat-pill.active { background: var(--primary); color: #fff; }
 
-        /* 卡片設計 */
         .item-card { background: #fff; padding: 20px; border-radius: 28px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 12px rgba(0,0,0,0.04); margin-bottom: 12px; }
         .item-main { flex: 1; cursor: pointer; }
         .item-name { font-size: 16px; font-weight: 700; color: var(--text); display: inline-block; margin-bottom: 4px; }
@@ -44,21 +42,23 @@
         .list-n { font-size: 15px; font-weight: 900; color: #000; }
         .list-p { font-size: 13px; color: var(--primary); display: block; font-weight: 900; margin-top: 2px; }
 
-        /* 表單與彈窗 */
+        /* 彈窗樣式 */
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 500; align-items: center; justify-content: center; padding: 20px; }
-        .modal-card { background: #fff; border-radius: 36px; padding: 24px 20px 28px 20px; width: 100%; max-width: 360px; max-height: 85vh; box-sizing: border-box; display: flex; flex-direction: column; }
-        .modal-body { overflow-y: auto; flex-grow: 1; width: 100%; }
+        .modal-card { background: #fff; border-radius: 36px; padding: 24px 20px 28px 20px; width: 100%; max-width: 360px; max-height: 85vh; box-sizing: border-box; display: flex; flex-direction: column; box-shadow: 0 15px 50px rgba(0,0,0,0.2); }
+        .modal-body { overflow-y: auto; flex-grow: 1; width: 100%; padding-top: 10px; }
         .form-item { margin-bottom: 12px; width: 100%; display: flex; flex-direction: column; align-items: center; }
         .form-label { width: calc(100% - 24px); font-size: 14px; font-weight: 700; margin-bottom: 6px; color: var(--sub); display: flex; align-items: center; }
         .req-tag { color: var(--error); font-size: 12px; margin-left: 6px; display: none; }
-        .input-box { width: calc(100% - 24px); padding: 12px 20px; border: none; border-radius: 18px; font-size: 15px; outline: none; background: #f2f4f6; box-sizing: border-box; }
+        .input-box { width: calc(100% - 24px); padding: 12px 20px; border: none; border-radius: 18px; font-size: 15px; outline: none; background: #f2f4f6; box-sizing: border-box; transition: 0.2s; }
         .input-box.error { background: #fff5f5; box-shadow: 0 0 0 2px var(--error); }
-        textarea.input-box { resize: none; min-height: 48px; }
+        
+        /* 姓名與性別排版 */
+        .row-flex { display: flex; width: calc(100% - 24px); gap: 10px; align-items: flex-end; }
+        .gender-group { display: flex; gap: 8px; margin-bottom: 3px; }
+        .gender-btn { width: 42px; height: 42px; border-radius: 50%; border: none; background: #f2f4f6; color: var(--gray); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
+        .gender-btn.active { background: var(--primary); color: white; box-shadow: 0 4px 10px rgba(40, 176, 235, 0.3); }
 
         .btn-main { background: var(--primary); color: #fff; border: none; padding: 18px; width: 100%; border-radius: 20px; font-weight: 700; font-size: 17px; cursor: pointer; }
-        .btn-main:disabled { background: var(--gray); opacity: 0.7; }
-
-        .bottom-summary { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; padding: 10px 24px calc(20px + env(safe-area-inset-bottom)); border-top: 1px solid #eee; z-index: 400; box-shadow: 0 -10px 30px rgba(0,0,0,0.05); }
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; padding: 12px 0 calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid #e5e8eb; z-index: 200; }
         .nav-item { color: #adb5bd; text-align: center; flex: 1; font-size: 11px; font-weight: 900; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; }
         .nav-item.active { color: var(--primary); }
@@ -100,14 +100,6 @@
             </div>
         </section>
 
-        <section id="page-checkout" class="page-content">
-            <div class="nav-header"><button class="back-btn" onclick="switchPage('shop')"><i data-feather="chevron-left"></i></button><div class="page-title">代購清單</div></div>
-            <div class="card-box" id="checkout-container"></div>
-            <div class="bottom-summary"><div class="row-lg" style="padding: 5px 0;"><span>清單總計</span><span class="price-lg" id="checkout-grand-total">NT$ 0</span></div><button class="btn-main" onclick="switchPage('shipping')">填寫資料</button></div>
-        </section>
-
-        <div id="cart-bar" style="display:none; position:fixed; bottom:95px; left:16px; right:16px; background:#191f28; color:#fff; padding:18px 24px; border-radius:20px; justify-content:space-between; align-items:center; z-index:250; cursor:pointer;" onclick="switchPage('checkout')"><span>已選 <span id="cart-qty" style="color:var(--primary); font-weight:900;">0</span> 件商品</span><span style="font-weight:900;">查看清單 →</span></div>
-        
         <nav class="bottom-nav">
             <div class="nav-item" id="nav-shop" onclick="switchPage('shop')"><i data-feather="shopping-bag"></i><span>弘大漫遊</span></div>
             <div class="nav-item" id="nav-passport" onclick="switchPage('passport')"><i data-feather="user"></i><span>我的護照</span></div>
@@ -116,32 +108,40 @@
 
     <div id="register-modal" class="modal">
         <div class="modal-card">
-            <div class="modal-header"><h2 style="font-weight:900; margin:0; font-size: 20px;">加入會員</h2><p style="font-size:12px; color:var(--gray); margin-top:5px;">請填寫基本資料以開啟代購服務</p></div>
+            <div style="text-align: center; margin-bottom: 20px;"><h2 style="font-weight:900; margin:0; font-size: 20px;">加入會員</h2></div>
             <div class="modal-body">
-                <div class="form-item"><label class="form-label">真實姓名<span class="req-tag" id="tag-reg-name">*必填</span></label><input type="text" id="reg-name" class="input-box" placeholder="您的姓名" oninput="clearError(this)"></div>
-                <div class="form-item"><label class="form-label">聯絡電話<span class="req-tag" id="tag-reg-tel">*必填</span></label><input type="tel" id="reg-tel" class="input-box" placeholder="09xxxxxxxx" maxlength="10" oninput="clearError(this)"></div>
-            </div>
-            <div class="modal-footer"><button class="btn-main" id="btn-register" onclick="handleRegister()">完成加入</button></div>
-        </div>
-    </div>
-
-    <div id="add-modal" class="modal" onclick="closeModal('add-modal')">
-        <div class="modal-card" onclick="event.stopPropagation()">
-            <div id="add-modal-content">
-                <div class="modal-body" style="padding-top:10px;">
-                    <div class="form-item"><label class="form-label">選擇類別<span class="req-tag" id="tag-in-cat">*必填</span></label><select id="in-cat" class="input-box" onchange="clearError(this)"><option value="">請選擇</option><option value="化妝水">化妝水</option><option value="精華液">精華液</option><option value="乳液">乳液</option><option value="面膜棉片">面膜棉片</option><option value="洗臉洗澡">洗臉洗澡</option><option value="美髮護髮">美髮護髮</option><option value="彩妝遮瑕">彩妝遮瑕</option><option value="口腔護理">口腔護理</option><option value="防曬">防曬</option><option value="藥膏藥品">藥膏藥品</option><option value="食品（含保健）">食品（含保健）</option><option value="其他">其他</option></select></div>
-                    <div class="form-item"><label class="form-label">商品名稱<span class="req-tag" id="tag-in-name">*必填</span></label><textarea id="in-name" class="input-box" placeholder="名稱" oninput="clearError(this)"></textarea></div>
-                    <div class="form-item"><label class="form-label">款式規格</label><textarea id="in-option" class="input-box" placeholder="款式" oninput="autoGrow(this)"></textarea></div>
-                    <div class="form-item"><label class="form-label">價格 NT$<span class="req-tag" id="tag-in-price">*必填</span></label><input type="number" id="in-price" class="input-box" placeholder="金額" oninput="clearError(this)"></div>
-                    <div class="form-item"><label class="form-label">來源網址<span class="req-tag" id="tag-in-url">*必填</span></label><input type="url" id="in-url" class="input-box" placeholder="網址" oninput="clearError(this)"></div>
+                <div class="form-item">
+                    <div class="row-flex">
+                        <div style="flex:1;">
+                            <label class="form-label">真實姓名<span class="req-tag" id="tag-reg-name">*必填</span></label>
+                            <input type="text" id="reg-name" class="input-box" style="width:100%;" placeholder="姓名" oninput="clearError(this)">
+                        </div>
+                        <div style="width:auto; text-align:center;">
+                            <label class="form-label">性別</label>
+                            <div class="gender-group">
+                                <button class="gender-btn" id="g-male" onclick="setGender('M')"><i data-feather="user"></i></button>
+                                <button class="gender-btn" id="g-female" onclick="setGender('F')"><i data-feather="user-plus"></i></button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="modal-footer"><button class="btn-main" id="btn-upload" onclick="upload()">確認登錄</button></div>
+
+                <div class="form-item">
+                    <label class="form-label">聯絡電話<span class="req-tag" id="tag-reg-tel">*必填</span></label>
+                    <input type="tel" id="reg-tel" class="input-box" placeholder="09xxxxxxxx" maxlength="10" oninput="clearError(this)">
+                </div>
+
+                <div class="form-item">
+                    <label class="form-label">出生日期<span class="req-tag" id="tag-reg-birth">*必填</span></label>
+                    <input type="date" id="reg-birth" class="input-box" onchange="clearError(this)">
+                </div>
+
+                <div class="form-item">
+                    <label class="form-label">電子信箱</label>
+                    <input type="email" id="reg-email" class="input-box" placeholder="example@mail.com">
+                </div>
             </div>
-            <div id="add-modal-success" style="display:none; text-align:center;">
-                <div style="width:60px; height:60px; background:rgba(40, 176, 235, 0.15); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:20px auto;"><i data-feather="check" style="color:var(--primary);"></i></div>
-                <h2 style="font-weight:900;">登錄成功</h2><p style="font-size:14px; color:var(--sub); line-height:1.6; margin-bottom:30px;">待核對沒問題後將上架</p>
-                <button class="btn-main" onclick="location.reload()">我知道了</button>
-            </div>
+            <div class="modal-footer"><button class="btn-main" onclick="handleRegister()">完成加入</button></div>
         </div>
     </div>
 
@@ -150,52 +150,52 @@
         const SUPABASE_URL = 'https://ivpctyqlrkjstfsoweeh.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml2cGN0eXFscmtqc3Rmc293ZWVoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTk1MTksImV4cCI6MjA4ODc3NTUxOX0.DYgzhaTH3_5NFwv009ZfZAshfUnCW2PeTuNcJ9feyMU';
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        let cart = {}, allProducts = [], userLineId = "unknown", userData = null;
+        let userLineId = "unknown", userData = null, selectedGender = "";
 
-        // 初始化：強制 LINE 登入牆
         async function init() {
             try {
                 await liff.init({ liffId: LIFF_ID });
-                if (!liff.isLoggedIn()) {
-                    liff.login();
-                    return;
-                }
+                if (!liff.isLoggedIn()) { liff.login(); return; }
                 const profile = await liff.getProfile();
                 userLineId = profile.userId;
 
-                // 檢查是否為現有會員
-                const { data, error } = await _supabase.from('profiles').select('*').eq('user_id', userLineId).single();
-                
+                const { data } = await _supabase.from('profiles').select('*').eq('user_id', userLineId).single();
                 if (data) {
                     userData = data;
                     renderUserProfile();
-                    switchPage('passport'); // 已是會員，直接進入我的護照
+                    switchPage('passport');
                 } else {
-                    openRegisterModal(); // 新會員，跳出加入會員
+                    document.body.classList.add('modal-open');
+                    document.getElementById('register-modal').style.display = 'flex';
                 }
-
-                await fetchProducts();
                 feather.replace();
             } catch (e) { console.error(e); }
         }
 
-        function openRegisterModal() {
-            document.body.classList.add('modal-open');
-            document.getElementById('register-modal').style.display = 'flex';
+        function setGender(g) {
+            selectedGender = g;
+            document.getElementById('g-male').classList.toggle('active', g === 'M');
+            document.getElementById('g-female').classList.toggle('active', g === 'F');
         }
 
         async function handleRegister() {
-            const name = document.getElementById('reg-name');
-            const tel = document.getElementById('reg-tel');
+            const name = document.getElementById('reg-name'), tel = document.getElementById('reg-tel'), birth = document.getElementById('reg-birth'), email = document.getElementById('reg-email');
             let valid = true;
             if(!name.value.trim()){ name.classList.add('error'); document.getElementById('tag-reg-name').style.display='inline'; valid=false; }
             if(!/^09\d{8}$/.test(tel.value)){ tel.classList.add('error'); document.getElementById('tag-reg-tel').style.display='inline'; valid=false; }
+            if(!birth.value){ birth.classList.add('error'); document.getElementById('tag-reg-birth').style.display='inline'; valid=false; }
             if(!valid) return;
 
-            const { error } = await _supabase.from('profiles').insert({ user_id: userLineId, full_name: name.value.trim(), phone: tel.value.trim() });
-            if(!error) {
-                location.reload(); // 註冊成功重新整理進入護照頁
-            } else { alert("註冊失敗：" + error.message); }
+            const { error } = await _supabase.from('profiles').insert({ 
+                user_id: userLineId, 
+                full_name: name.value.trim(), 
+                phone: tel.value.trim(),
+                birthday: birth.value,
+                gender: selectedGender,
+                email: email.value.trim()
+            });
+
+            if(!error) location.reload(); else alert("註冊失敗：" + error.message);
         }
 
         function renderUserProfile() {
@@ -203,57 +203,15 @@
             document.getElementById('user-phone').innerText = userData.phone;
         }
 
-        async function fetchProducts() {
-            const { data } = await _supabase.from('products').select('*').eq('is_active', true);
-            if(data) {
-                allProducts = data.sort((a,b)=>(b.order_count||0)-(a.order_count||0));
-                renderProducts(allProducts);
-            }
-        }
-
-        function renderProducts(ps) {
-            document.getElementById('item-list').innerHTML = ps.map(p => `
-                <div class="item-card">
-                    <div class="item-main" onclick="window.open('${p.olive_url}','_blank')">
-                        <div><span class="item-name">${p.name_zh}</span>${p.option ? `<span class="item-option">${p.option}</span>`:''}</div>
-                        <span class="item-price">NT$ ${Number(p.price_nt).toLocaleString()}</span>
-                    </div>
-                    <div class="qty-ctrl">
-                        <button class="qty-btn" onclick="updateQty('${p.id}',-1)"><i data-feather="minus" style="width:18px;"></i></button>
-                        <span class="qty-num" id="qty-${p.id}">${cart[p.id]?cart[p.id].qty:0}</span>
-                        <button class="qty-btn" onclick="updateQty('${p.id}',1)"><i data-feather="plus" style="width:18px;"></i></button>
-                    </div>
-                </div>
-            `).join('');
-            feather.replace();
-        }
-
         function switchPage(p) {
             document.querySelectorAll('.page-content').forEach(e=>e.classList.remove('active'));
             document.getElementById('page-'+p).classList.add('active');
             document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
             if(document.getElementById('nav-'+p)) document.getElementById('nav-'+p).classList.add('active');
-            
-            let t = Object.values(cart).reduce((s,i)=>s+i.qty,0);
-            document.getElementById('cart-bar').style.display=(t>0&&p==='shop')?'flex':'none';
-            window.scrollTo(0,0); feather.replace();
-        }
-
-        function updateQty(id, d) {
-            const p = allProducts.find(x=>x.id===id);
-            if(!cart[id]) cart[id]={id:p.id, name:p.name_zh, option:p.option, price:p.price_nt, qty:0};
-            cart[id].qty=Math.max(0, cart[id].qty+d);
-            if(document.getElementById(`qty-${id}`)) document.getElementById(`qty-${id}`).innerText=cart[id].qty;
-            let t = Object.values(cart).reduce((s,i)=>s+i.qty,0);
-            document.getElementById('cart-bar').style.display=(t>0&&document.getElementById('page-shop').classList.contains('active'))?'flex':'none';
-            document.getElementById('cart-qty').innerText=t;
+            feather.replace();
         }
 
         function clearError(el) { el.classList.remove('error'); const tag=document.getElementById('tag-'+el.id); if(tag) tag.style.display='none'; }
-        function openAddModal() { document.body.classList.add('modal-open'); document.getElementById('add-modal').style.display='flex'; }
-        function closeModal(id) { document.body.classList.remove('modal-open'); document.getElementById(id).style.display='none'; }
-        function autoGrow(e) { e.style.height='48px'; if(e.scrollHeight>48) e.style.height=e.scrollHeight+'px'; }
-
         window.onload = init;
     </script>
 </body>
