@@ -8,6 +8,7 @@
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.0/feather.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
     
     <style>
@@ -42,7 +43,6 @@
         .list-n { font-size: 15px; font-weight: 900; color: #000; }
         .list-p { font-size: 13px; color: var(--primary); display: block; font-weight: 900; margin-top: 2px; }
 
-        /* 彈窗與表單樣式 */
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 500; align-items: center; justify-content: center; padding: 20px; }
         .modal-card { background: #fff; border-radius: 36px; padding: 24px 20px 28px 20px; width: 100%; max-width: 360px; max-height: 85vh; box-sizing: border-box; display: flex; flex-direction: column; box-shadow: 0 15px 50px rgba(0,0,0,0.2); }
         .modal-body { overflow-y: auto; flex-grow: 1; width: 100%; padding-top: 10px; }
@@ -52,13 +52,12 @@
         .input-box { width: calc(100% - 24px); padding: 12px 20px; border: none; border-radius: 18px; font-size: 15px; outline: none; background: #f2f4f6; box-sizing: border-box; transition: 0.2s; }
         .input-box.error { background: #fff5f5; box-shadow: 0 0 0 2px var(--error); }
         
-        /* 姓名與性別排版 */
+        /* 姓名與性別排版修正 */
         .row-flex { display: flex; width: calc(100% - 24px); gap: 10px; align-items: flex-end; }
         .gender-group { display: flex; gap: 8px; margin-bottom: 3px; }
-        .gender-btn { width: 42px; height: 42px; border-radius: 50%; border: none; background: #f2f4f6; color: var(--gray); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
+        .gender-btn { width: 42px; height: 42px; border-radius: 50%; border: none; background: #f2f4f6; color: var(--gray); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; font-size: 18px; }
         .gender-btn.active { background: var(--primary); color: white; box-shadow: 0 4px 10px rgba(40, 176, 235, 0.3); }
 
-        /* 修正：出生日期一行三欄下拉 */
         .birth-row { display: flex; width: calc(100% - 24px); gap: 8px; }
         .birth-row select { flex: 1; }
 
@@ -123,8 +122,8 @@
                         <div style="width:auto; text-align:center;">
                             <label class="form-label">性別</label>
                             <div class="gender-group">
-                                <button class="gender-btn" id="g-male" onclick="setGender('M')"><i data-feather="plus-square"></i></button>
-                                <button class="gender-btn" id="g-female" onclick="setGender('F')"><i data-feather="heart"></i></button>
+                                <button class="gender-btn" id="g-male" onclick="setGender('M')"><i class="fa-solid fa-user"></i></button>
+                                <button class="gender-btn" id="g-female" onclick="setGender('F')"><i class="fa-solid fa-user-dress"></i></button>
                             </div>
                         </div>
                     </div>
@@ -155,9 +154,7 @@
 
     <script>
         const LIFF_ID = '2009405888-D5absVA3';
-        const SUPABASE_URL = 'https://ivpctyqlrkjstfsoweeh.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml2cGN0eXFscmtqc3Rmc293ZWVoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTk1MTksImV4cCI6MjA4ODc3NTUxOX0.DYgzhaTH3_5NFwv009ZfZAshfUnCW2PeTuNcJ9feyMU';
-        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const _supabase = supabase.createClient('https://ivpctyqlrkjstfsoweeh.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml2cGN0eXFscmtqc3Rmc293ZWVoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTk1MTksImV4cCI6MjA4ODc3NTUxOX0.DYgzhaTH3_5NFwv009ZfZAshfUnCW2PeTuNcJ9feyMU');
         let userLineId = "unknown", userData = null, selectedGender = "";
 
         async function init() {
@@ -179,7 +176,6 @@
             } catch (e) { console.error(e); }
         }
 
-        // 修正：初始化生日下拉選單數據
         function initBirthSelects() {
             const sy = document.getElementById('reg-birth-y'), sm = document.getElementById('reg-birth-m'), sd = document.getElementById('reg-birth-d');
             sy.innerHTML = '<option value="">年</option>' + Array.from({length: 87}, (_, i) => `<option value="${1940+i}">${1940+i}</option>`).reverse().join('');
@@ -196,7 +192,6 @@
         async function handleRegister() {
             const name = document.getElementById('reg-name'), tel = document.getElementById('reg-tel'), email = document.getElementById('reg-email');
             const by = document.getElementById('reg-birth-y'), bm = document.getElementById('reg-birth-m'), bd = document.getElementById('reg-birth-d');
-            
             let valid = true;
             if(!name.value.trim()){ name.classList.add('error'); document.getElementById('tag-reg-name').style.display='inline'; valid=false; }
             if(!/^09\d{8}$/.test(tel.value)){ tel.classList.add('error'); document.getElementById('tag-reg-tel').style.display='inline'; valid=false; }
@@ -205,13 +200,8 @@
                 document.getElementById('tag-reg-birth').style.display='inline'; valid=false; 
             }
             if(!valid) return;
-
             const fullBirth = `${by.value}-${bm.value}-${bd.value}`;
-            const { error } = await _supabase.from('profiles').insert({ 
-                user_id: userLineId, full_name: name.value.trim(), phone: tel.value.trim(),
-                birthday: fullBirth, gender: selectedGender, email: email.value.trim()
-            });
-
+            const { error } = await _supabase.from('profiles').insert({ user_id: userLineId, full_name: name.value.trim(), phone: tel.value.trim(), birthday: fullBirth, gender: selectedGender, email: email.value.trim() });
             if(!error) location.reload(); else alert("註冊失敗：" + error.message);
         }
 
@@ -237,6 +227,8 @@
                 document.getElementById('tag-reg-birth').style.display='none';
             }
         }
+        function openAddModal() { document.body.classList.add('modal-open'); document.getElementById('add-modal').style.display='flex'; }
+        function closeModal(id) { document.body.classList.remove('modal-open'); document.getElementById(id).style.display='none'; }
         window.onload = init;
     </script>
 </body>
