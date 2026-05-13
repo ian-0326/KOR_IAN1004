@@ -39,6 +39,7 @@
         .card-box { background: #fff; border-radius: 32px; padding: 15px 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); margin-top: 10px; }
         .list-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f2f4f6; }
         .list-row:last-child { border-bottom: none; }
+        .list-left { flex: 1; padding-right: 15px; }
         .list-n { font-size: 15px; font-weight: 900; color: #000; display: inline-block; }
         .list-s { font-size: 11px; color: var(--gray); display: inline-block; margin-left: 6px; }
         .list-p { font-size: 13px; color: var(--primary); display: block; font-weight: 900; margin-top: 2px; }
@@ -46,15 +47,25 @@
         .form-item { margin-bottom: 12px; }
         .form-label { display: flex; align-items: center; font-size: 14px; font-weight: 700; margin-bottom: 6px; color: var(--sub); padding-left: 4px; }
         .req-tag { color: var(--error); font-size: 12px; margin-left: 6px; font-weight: 400; display: none; }
+        
+        /* 基礎輸入框樣式 */
         .input-box { width: 100%; padding: 12px 16px; border: none; border-radius: 18px; font-size: 15px; outline: none; background: #f2f4f6; box-sizing: border-box; transition: 0.2s; }
         .input-box:focus { background: #fff; box-shadow: 0 0 0 2px var(--primary); }
         .input-box.error { background: #fff5f5; box-shadow: 0 0 0 2px var(--error); }
+
+        /* 修正：針對多行文字框手動增加左右 Padding */
+        textarea.input-box {
+            padding-left: 20px !important;
+            padding-right: 20px !important;
+            resize: none;
+            overflow-y: hidden; /* 隱藏滑動條避免計算法失誤 */
+        }
 
         .ship-group { display: flex; gap: 12px; }
         .ship-btn { flex: 1; padding: 16px; background: #f2f4f6; border-radius: 20px; text-align: center; font-weight: 700; color: var(--sub); cursor: pointer; }
         .ship-btn.active { background: var(--primary); color: #fff; }
 
-        .bottom-summary { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; padding: 10px 24px calc(20px + env(safe-area-inset-bottom)); border-top: 1px solid #eee; z-index: 400; box-shadow: 0 -10px 30px rgba(0,0,0,0.05); transition: 0.3s; }
+        .bottom-summary { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; padding: 10px 24px calc(20px + env(safe-area-inset-bottom)); border-top: 1px solid #eee; z-index: 400; box-shadow: 0 -10px 30px rgba(0,0,0,0.05); }
         .summary-details { max-height: 0; overflow: hidden; transition: 0.3s; opacity: 0; }
         .bottom-summary.expanded .summary-details { max-height: 200px; opacity: 1; margin-top: 10px; padding-bottom: 10px; }
         .row-sm { display: flex; justify-content: space-between; font-size: 14px; color: var(--sub); margin-bottom: 8px; }
@@ -63,20 +74,8 @@
         .btn-main { background: var(--primary); color: #fff; border: none; padding: 18px; width: 100%; border-radius: 20px; font-weight: 700; font-size: 17px; cursor: pointer; }
         .btn-main:disabled { background: var(--gray); opacity: 0.7; }
 
-        /* 修正：彈窗溢出 BUG */
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 500; align-items: center; justify-content: center; padding: 20px; }
-        .modal-card { 
-            background: #fff; 
-            border-radius: 36px; 
-            padding: 24px 24px 28px 24px; /* 重新分配 Padding */
-            width: 100%; 
-            max-width: 360px; 
-            max-height: 85vh; 
-            box-sizing: border-box; 
-            display: flex; 
-            flex-direction: column; 
-            box-shadow: 0 15px 50px rgba(0,0,0,0.2);
-        }
+        .modal-card { background: #fff; border-radius: 36px; padding: 24px 24px 28px 24px; width: 100%; max-width: 360px; max-height: 85vh; box-sizing: border-box; display: flex; flex-direction: column; box-shadow: 0 15px 50px rgba(0,0,0,0.2); }
         .modal-header { text-align: center; margin-bottom: 15px; flex-shrink: 0; }
         .modal-body { overflow-y: auto; flex-grow: 1; padding-right: 4px; margin-bottom: 15px; }
         .modal-body::-webkit-scrollbar { width: 4px; }
@@ -181,8 +180,10 @@
                 <div class="modal-header"><h2 style="font-weight:900; margin:0; font-size: 20px;">新增商品</h2></div>
                 <div class="modal-body">
                     <div class="form-item"><label class="form-label">選擇類別<span class="req-tag" id="tag-in-cat">*必填</span></label><select id="in-cat" class="input-box" onchange="clearError(this)"><option value="">請選擇</option><option value="化妝水">化妝水</option><option value="精華液">精華液</option><option value="乳液">乳液</option><option value="面膜棉片">面膜棉片</option><option value="洗臉洗澡">洗臉洗澡</option><option value="美髮護髮">美髮護髮</option><option value="彩妝遮瑕">彩妝遮瑕</option><option value="口腔護理">口腔護理</option><option value="防曬">防曬</option><option value="藥膏藥品">藥膏藥品</option><option value="食品（含保健）">食品（含保健）</option><option value="其他">其他</option></select></div>
-                    <div class="form-item"><label class="form-label">商品名稱<span class="req-tag" id="tag-in-name">*必填</span></label><input type="text" id="in-name" class="input-box" placeholder="例如：Torriden 面膜" oninput="clearError(this)"></div>
-                    <div class="form-item"><label class="form-label">款式規格</label><input type="text" id="in-option" class="input-box" placeholder="例如：藍色保濕型"></div>
+                    
+                    <div class="form-item"><label class="form-label">商品名稱<span class="req-tag" id="tag-in-name">*必填</span></label><textarea id="in-name" class="input-box" placeholder="例如：Torriden 面膜" oninput="clearError(this)"></textarea></div>
+                    <div class="form-item"><label class="form-label">款式規格</label><textarea id="in-option" class="input-box" placeholder="例如：藍色保濕型" oninput="autoGrow(this)"></textarea></div>
+                    
                     <div class="form-item"><label class="form-label">價格 NT$<span class="req-tag" id="tag-in-price">*必填</span></label><input type="number" id="in-price" class="input-box" placeholder="金額" oninput="clearError(this)"></div>
                     <div class="form-item"><label class="form-label">來源網址<span class="req-tag" id="tag-in-url">*必填</span></label><input type="url" id="in-url" class="input-box" placeholder="請輸入網址" oninput="clearError(this)"></div>
                 </div>
@@ -204,7 +205,7 @@
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         let cart = {}, allProducts = [], userLineId = "unknown", shipMethod = 'face', packingQty = 1;
 
-        async function init() { try { await fetchProducts(); await liff.init({ liffId: LIFF_ID }); if (!liff.isLoggedIn()) { liff.login(); return; } const p = await liff.getProfile(); userLineId = p.userId; document.getElementById('user-info').innerText = p.displayName; feather.replace(); } catch (e) { console.error(e); } }
+        async function init() { try { await fetchProducts(); await liff.init({ liffId: LIFF_ID }); if (!liff.isLoggedIn()) { liff.login(); return; } const p = await liff.getProfile(); userLineId = p.userId; document.getElementById('user-info').innerText = p.displayName; feather.replace(); initTextareas(); } catch (e) { console.error(e); } }
         async function fetchProducts() { const { data } = await _supabase.from('products').select('*').eq('is_active', true); if(data) { allProducts = sortSmartly(data); renderProducts(allProducts); } }
         function sortSmartly(ps) { let s = [...ps].sort((a,b)=>(b.order_count||0)-(a.order_count||0)); let res = [], ids = new Set(); for(let p of s){ if(ids.has(p.id)) continue; res.push(p); ids.add(p.id); let prefix = p.name_zh.substring(0,4); let sibs = s.filter(x=>!ids.has(x.id)&&x.name_zh.startsWith(prefix)); sibs.forEach(x=>{res.push(x); ids.add(x.id);}); } return res; }
         function renderProducts(ps) { document.getElementById('item-list').innerHTML = ps.map(p => `<div class="item-card"><div class="item-main" onclick="window.open('${p.olive_url}','_blank')"><div><span class="item-name">${p.name_zh}</span>${p.option ? `<span class="item-option">${p.option}</span>`:''}</div><span class="item-price">NT$ ${Number(p.price_nt).toLocaleString()}</span></div><div class="qty-ctrl"><button class="qty-btn" onclick="updateQty('${p.id}',-1)"><i data-feather="minus" style="width:18px;"></i></button><span class="qty-num" id="qty-${p.id}">${cart[p.id]?cart[p.id].qty:0}</span><button class="qty-btn" onclick="updateQty('${p.id}',1)"><i data-feather="plus" style="width:18px;"></i></button></div></div>`).join(''); feather.replace(); }
@@ -215,7 +216,10 @@
         function toggleSummary() { document.getElementById('shipping-summary').classList.toggle('expanded'); }
         function updatePacking(d) { const min=shipMethod==='711'?1:0; packingQty=Math.max(min, packingQty+d); document.getElementById('qty-packing').innerText=packingQty; calculateFinal(); }
         function calculateFinal() { let it=Object.values(cart).reduce((s,i)=>s+(i.price*i.qty),0); let sf=shipMethod==='711'?(80*packingQty):0; let pf=packingQty*10; document.getElementById('sum-items').innerText=`NT$ ${it.toLocaleString()}`; document.getElementById('sum-shipping').innerText=`NT$ ${sf.toLocaleString()}`; document.getElementById('sum-packing').innerText=`NT$ ${pf.toLocaleString()}`; document.getElementById('sum-total').innerText=`NT$ ${(it+sf+pf).toLocaleString()}`; }
-        function clearError(el) { el.classList.remove('error'); const tag=document.getElementById('tag-'+el.id); if(tag) tag.style.display='none'; }
+        function clearError(el) { el.classList.remove('error'); const tag=document.getElementById('tag-'+el.id); if(tag) tag.style.display='none'; if(el.tagName === 'TEXTAREA') autoGrow(el); }
+
+        function initTextareas() { const ts = document.querySelectorAll('textarea.input-box'); ts.forEach(t => { t.setAttribute('rows', '1'); t.style.height = '43px'; }); }
+        function autoGrow(element) { element.style.height = '43px'; if (element.scrollHeight > 43) { element.style.height = (element.scrollHeight) + "px"; } }
 
         async function upload() {
             const btn = document.getElementById('btn-upload');
@@ -262,6 +266,7 @@
         function openAddModal() { 
             document.getElementById('add-modal-content').style.display = 'flex';
             document.getElementById('add-modal-success').style.display = 'none';
+            initTextareas(); // 重新初始化 textarea
             document.getElementById('add-modal').style.display='flex'; 
         }
         function closeModal(id) { document.getElementById(id).style.display='none'; }
