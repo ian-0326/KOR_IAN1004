@@ -11,7 +11,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
     
     <style>
-        :root { --primary: #f7b500; --bg: #f2f4f6; --white: #ffffff; --text: #191f28; --sub: #4e5968; --gray: #adb5bd; --error: #f44336; }
+        /* 修正：將全站主色改為 #28b0eb */
+        :root { --primary: #28b0eb; --bg: #f2f4f6; --white: #ffffff; --text: #191f28; --sub: #4e5968; --gray: #adb5bd; --error: #f44336; }
         
         body { font-family: 'Noto Sans TC', sans-serif; background-color: var(--bg); margin: 0; padding: 0; color: var(--text); -webkit-font-smoothing: antialiased; touch-action: manipulation; }
         
@@ -24,13 +25,12 @@
         .page-content.active { display: block; }
         .top-spacer { height: 85px; width: 100%; }
 
-        /* 修正：Logo 樣式 */
         .logo-container { padding: 20px 16px 10px 16px; display: flex; align-items: flex-start; }
         .page-logo { height: 45px; width: auto; object-fit: contain; }
 
         .category-wrapper { position: sticky; top: 0; background: var(--bg); margin: 0 -16px 20px -16px; padding: 10px 16px; overflow-x: auto; display: flex; gap: 8px; scrollbar-width: none; z-index: 90; }
         .cat-pill { white-space: nowrap; padding: 10px 20px; background: #fff; border-radius: 50px; font-size: 14px; font-weight: 700; color: var(--sub); box-shadow: 0 2px 6px rgba(0,0,0,0.05); flex-shrink: 0; }
-        .cat-pill.active { background: var(--primary); color: #fff; box-shadow: 0 4px 12px rgba(247, 181, 0, 0.3); }
+        .cat-pill.active { background: var(--primary); color: #fff; box-shadow: 0 4px 12px rgba(40, 176, 235, 0.3); }
 
         .item-card { background: #fff; padding: 20px; border-radius: 28px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 12px rgba(0,0,0,0.04); margin-bottom: 12px; }
         .item-main { flex: 1; cursor: pointer; }
@@ -201,7 +201,7 @@
                 <div class="modal-footer"><button class="btn-main" id="btn-upload" onclick="upload()">確認登錄</button></div>
             </div>
             <div id="add-modal-success" class="success-state" style="display:none;">
-                <div style="width:60px; height:60px; background:#feeeb3; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:20px auto;"><i data-feather="check" style="width:32px; height:32px;"></i></div>
+                <div style="width:60px; height:60px; background:rgba(40, 176, 235, 0.15); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:20px auto;"><i data-feather="check" style="width:32px; height:32px; color:var(--primary);"></i></div>
                 <h2 style="font-weight:900; margin-bottom:10px;">登錄成功</h2>
                 <p style="font-size:14px; color:var(--sub); line-height:1.6; margin-bottom:30px;">待核對沒問題後將上架於頁面中<br>請再稍等一下喔！</p>
                 <div class="modal-footer"><button class="btn-main" onclick="location.reload()">我知道了</button></div>
@@ -226,7 +226,7 @@
         function setShipping(m) { shipMethod=m; document.getElementById('btn-face').classList.toggle('active',m==='face'); document.getElementById('btn-711').classList.toggle('active',m==='711'); document.getElementById('hint-face').style.display=m==='face'?'block':'none'; document.getElementById('form-711').style.display=m==='711'?'block':'none'; if(m==='711'&&packingQty<1) packingQty=1; calculateFinal(); }
         function toggleSummary() { document.getElementById('shipping-summary').classList.toggle('expanded'); }
         function updatePacking(d) { const min=shipMethod==='711'?1:0; packingQty=Math.max(min, packingQty+d); document.getElementById('qty-packing').innerText=packingQty; calculateFinal(); }
-        function calculateFinal() { let it=Object.values(cart).reduce((s,i)=>s+(i.price*i.qty),0); let sf=shipMethod==='711'?(80*packingQty):0; let pf=packingQty*10; document.getElementById('sum-items').innerText=`NT$ ${it.toLocaleString()}`; document.getElementById('sum-shipping').innerText=`NT$ ${sf.toLocaleString()}`; document.getElementById('sum-packing').innerText=`NT$ ${pf.toLocaleString()}`; document.getElementById('sum-total').innerText=`NT$ ${(it+sf+pf).toLocaleString()}`; }
+        function calculateFinal() { let it=Object.values(cart).reduce((s,i)=>s+(i.price*i.qty),0); let sf=shipMethod==='711'?(80*packingQty):0; let pf=packingQty * 10; document.getElementById('sum-items').innerText=`NT$ ${it.toLocaleString()}`; document.getElementById('sum-shipping').innerText=`NT$ ${sf.toLocaleString()}`; document.getElementById('sum-packing').innerText=`NT$ ${pf.toLocaleString()}`; document.getElementById('sum-total').innerText=`NT$ ${(it+sf+pf).toLocaleString()}`; }
         function clearError(el) { el.classList.remove('error'); const tag=document.getElementById('tag-'+el.id); if(tag) tag.style.display='none'; if(el.tagName === 'TEXTAREA') autoGrow(el); }
         function initTextareas() { const ts = document.querySelectorAll('textarea.input-box'); ts.forEach(t => { t.style.height = '48px'; }); }
         function autoGrow(element) { element.style.height = '48px'; if (element.scrollHeight > 48) { element.style.height = (element.scrollHeight) + "px"; } }
@@ -245,7 +245,14 @@
             if(!valid) return;
             btn.disabled=true; btn.innerText="處理中...";
             const { error } = await _supabase.from('products').insert({ category: cat.value, name_zh: name.value.trim(), option: opt.value.trim()||"", price_nt: price.value, olive_url: url.value.trim(), is_active: false, created_by: userLineId });
-            if(!error) { document.getElementById('add-modal-content').style.display = 'none'; document.getElementById('add-modal-success').style.display = 'flex'; document.getElementById('add-modal-success').style.flexDirection = 'column'; feather.replace(); } else { alert('失敗：'+error.message); btn.disabled=false; btn.innerText="確認登錄"; }
+            if(!error) { 
+                document.getElementById('add-modal-content').style.display = 'none';
+                document.getElementById('add-modal-success').style.display = 'flex';
+                document.getElementById('add-modal-success').style.flexDirection = 'column';
+                feather.replace();
+            } else { 
+                alert('失敗：'+error.message); btn.disabled=false; btn.innerText="確認登錄"; 
+            }
         }
 
         async function submitFinalOrder() {
@@ -257,14 +264,7 @@
             if(shipMethod==='711'){ if(!store.value.trim()){ store.classList.add('error'); document.getElementById('tag-ship-store').style.display='inline'; isValid=false; } if(!code.value.trim()){ code.classList.add('error'); document.getElementById('tag-ship-code').style.display='inline'; isValid=false; } }
             if(!isValid) return; btn.disabled=true; btn.innerText="下單中...";
             let itemsStr = Object.values(cart).filter(i=>i.qty>0).map(i=>`${i.name}*${i.qty}`).join(', ');
-            
-            // 修正：過濾包材
-            let itemsDisplay = Object.values(cart).filter(i => i.qty > 0).map(i => `
-                <div class="order-item-row">
-                    <div class="order-item-name">${i.name} ${i.option ? '('+i.option+')' : ''}</div>
-                    <div class="order-item-qty">× ${i.qty}</div>
-                </div>
-            `).join('');
+            let itemsDisplay = Object.values(cart).filter(i => i.qty > 0).map(i => `<div class="order-item-row"><div class="order-item-name">${i.name} ${i.option ? '('+i.option+')' : ''}</div><div class="order-item-qty">× ${i.qty}</div></div>`).join('');
 
             const finalMethod = shipMethod === 'face' ? '面交' : '7-11取件';
             const finalStore = shipMethod === '711' ? `${store.value}(${code.value})` : '台中指定區';
@@ -273,11 +273,15 @@
                 const { data, error } = await _supabase.from('orders').insert({ items_summary: itemsStr, user_id: userLineId, customer_name: name.value, customer_tel: tel.value, shipping_method: finalMethod, shipping_store: finalStore, packing_qty: packingQty, total_amount: document.getElementById('sum-total').innerText }).select();
                 if(error) throw error;
                 for(let i of Object.values(cart)){ if(i.qty>0) await _supabase.rpc('increment_order_count',{row_id:i.id, inc_val:parseInt(i.qty)}); }
+                
                 const oid = data[0].id; currentRawOrderId = oid.slice(-10).toUpperCase();
                 document.getElementById('m-order-id').innerText="編號: " + currentRawOrderId;
                 document.getElementById('m-items-container').innerHTML = itemsDisplay;
-                document.getElementById('m-name').innerText=name.value; document.getElementById('m-tel').innerText=tel.value; document.getElementById('m-method').innerText = `${finalMethod} ${shipMethod==='711' ? finalStore : ''}`;
-                document.getElementById('m-total').innerText=document.getElementById('sum-total').innerText; document.getElementById('order-detail-modal').style.display='flex';
+                document.getElementById('m-name').innerText=name.value; 
+                document.getElementById('m-tel').innerText=tel.value; 
+                document.getElementById('m-method').innerText = `${finalMethod} ${shipMethod==='711' ? finalStore : ''}`;
+                document.getElementById('m-total').innerText=document.getElementById('sum-total').innerText; 
+                document.getElementById('order-detail-modal').style.display='flex';
             } catch(e){ alert("失敗："+e.message); btn.disabled=false; btn.innerText="確認下單"; }
         }
 
