@@ -17,7 +17,7 @@
 
         /* 導覽列 */
         .nav-header { display: flex; align-items: center; padding: 20px 16px; background: var(--bg); position: sticky; top: 0; z-index: 100; }
-        .back-btn { background: none; border: none; padding: 0; cursor: pointer; color: var(--text); display: flex; align-items: center; }
+        .back-btn { background: none; border: none; padding: 10px; cursor: pointer; color: var(--text); display: flex; align-items: center; }
         .page-title { flex: 1; text-align: center; font-weight: 900; font-size: 20px; margin-right: 24px; }
         .page-content { display: none; padding: 0 16px 280px 16px; min-height: 100vh; box-sizing: border-box; }
         .page-content.active { display: block; }
@@ -28,7 +28,7 @@
         .cat-pill { white-space: nowrap; padding: 10px 20px; background: #fff; border-radius: 50px; font-size: 14px; font-weight: 700; color: var(--sub); box-shadow: 0 2px 6px rgba(0,0,0,0.05); flex-shrink: 0; }
         .cat-pill.active { background: var(--primary); color: #fff; box-shadow: 0 4px 12px rgba(247, 181, 0, 0.3); }
 
-        /* 卡片與清單 */
+        /* 卡片設計 */
         .item-card { background: #fff; padding: 20px; border-radius: 28px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 12px rgba(0,0,0,0.04); margin-bottom: 12px; }
         .item-main { flex: 1; cursor: pointer; }
         .item-name { font-size: 16px; font-weight: 700; color: var(--text); text-decoration: none; margin-bottom: 4px; display: inline-block; }
@@ -46,7 +46,7 @@
         .list-s { font-size: 11px; color: var(--gray); display: inline-block; margin-left: 6px; }
         .list-p { font-size: 13px; color: var(--primary); display: block; font-weight: 900; margin-top: 2px; }
 
-        /* 表單與驗證 */
+        /* 表單設計 */
         .form-item { margin-bottom: 20px; }
         .form-label { display: flex; align-items: center; font-size: 14px; font-weight: 700; margin-bottom: 10px; color: var(--sub); padding-left: 4px; }
         .req-tag { color: var(--error); font-size: 12px; margin-left: 6px; font-weight: 400; display: none; }
@@ -58,20 +58,23 @@
         .ship-btn { flex: 1; padding: 16px; background: #f2f4f6; border-radius: 20px; text-align: center; font-weight: 700; color: var(--sub); cursor: pointer; }
         .ship-btn.active { background: var(--primary); color: #fff; }
 
-        .bottom-summary { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; padding: 10px 24px calc(20px + env(safe-area-inset-bottom)); border-top: 1px solid #eee; z-index: 400; box-shadow: 0 -10px 30px rgba(0,0,0,0.05); }
+        /* 底部欄與彈窗 */
+        .bottom-summary { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; padding: 10px 24px calc(20px + env(safe-area-inset-bottom)); border-top: 1px solid #eee; z-index: 400; box-shadow: 0 -10px 30px rgba(0,0,0,0.05); transition: 0.3s; }
+        .summary-details { max-height: 0; overflow: hidden; transition: 0.3s; opacity: 0; }
+        .bottom-summary.expanded .summary-details { max-height: 200px; opacity: 1; margin-top: 10px; padding-bottom: 10px; }
+        .row-sm { display: flex; justify-content: space-between; font-size: 14px; color: var(--sub); margin-bottom: 8px; }
+        .row-lg { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; cursor: pointer; }
+        .price-lg { font-size: 24px; font-weight: 900; }
         .btn-main { background: var(--primary); color: #fff; border: none; padding: 18px; width: 100%; border-radius: 20px; font-weight: 700; font-size: 17px; cursor: pointer; }
+        .btn-main:disabled { background: var(--gray); opacity: 0.7; }
 
-        /* 彈窗設計 */
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 500; align-items: center; justify-content: center; padding: 20px; }
         .modal-card { background: #fff; border-radius: 36px; padding: 32px 24px; width: 100%; max-width: 360px; max-height: 85vh; box-sizing: border-box; display: flex; flex-direction: column; }
         .modal-header { text-align: center; margin-bottom: 20px; flex-shrink: 0; }
+        .order-id-label { font-size: 11px; color: var(--gray); font-weight: 700; margin-top: 4px; display: block; }
         .modal-body { overflow-y: auto; flex-grow: 1; padding-right: 4px; }
-        .modal-body::-webkit-scrollbar { width: 4px; }
-        .modal-body::-webkit-scrollbar-thumb { background: #eee; border-radius: 10px; }
         .modal-section { text-align: left; margin-bottom: 16px; padding: 16px; background: #f8f9fa; border-radius: 24px; }
-        .order-item-row { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 8px; }
-        .order-item-name { font-weight: 700; flex: 1; }
-        .order-item-qty { font-weight: 900; color: var(--primary); }
+        .modal-footer { flex-shrink: 0; padding-top: 10px; }
 
         .add-btn { position: fixed; top: 20px; right: 20px; width: 48px; height: 48px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; z-index: 300; border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.15); cursor: pointer; }
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; padding: 12px 0 calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid #e5e8eb; z-index: 200; }
@@ -121,7 +124,7 @@
                 <div class="form-item">
                     <label class="form-label">配送方式</label>
                     <div class="ship-group"><div class="ship-btn active" id="btn-face" onclick="setShipping('face')">面交</div><div class="ship-btn" id="btn-711" onclick="setShipping('711')">7-11 取件</div></div>
-                    <div id="hint-face" style="font-size:12px; color:var(--primary); margin-top:12px;">面交僅限台中大雅、梧棲、沙鹿區，請記得到LINE@上溝通喔！</div>
+                    <div id="hint-face" style="font-size:12px; color:var(--primary); margin-top:12px;">面交僅限台中大雅、梧棲、沙鹿區。</div>
                     <div id="form-711" style="display:none; margin-top:15px;">
                         <div class="form-item"><label class="form-label">取件門市<span class="req-tag" id="tag-ship-store">*必填</span></label><input type="text" id="ship-store" class="input-box" placeholder="取件門市" oninput="clearError(this)"></div>
                         <div class="form-item"><label class="form-label">門市代碼<span class="req-tag" id="tag-ship-code">*必填</span></label><input type="text" id="ship-code" class="input-box" placeholder="門市代碼" oninput="clearError(this)"></div>
@@ -130,7 +133,7 @@
                 <div class="list-row" style="border-top:1px solid #f2f4f6; margin-top: 20px; padding-top: 20px;"><div class="list-left"><span style="font-weight:700;">包材、紙箱</span><br><small style="color:var(--gray);">NT$ 10 / 個</small></div><div class="qty-ctrl"><button class="qty-btn" onclick="updatePacking(-1)"><i data-feather="minus" style="width:16px;"></i></button><span id="qty-packing" class="qty-num">1</span><button class="qty-btn" onclick="updatePacking(1)"><i data-feather="plus" style="width:16px;"></i></button></div></div>
             </div>
             <div class="bottom-summary" id="shipping-summary">
-                <div class="summary-details"><div class="row-sm"><span>商品小計</span><span id="sum-items">NT$ 0</span></div><div class="row-sm"><span>物流運費</span><span id="sum-shipping">NT$ 0</span></div><div class="row-sm"><span>包材費用</span><span id="sum-packing">NT$ 10</span></div></div>
+                <div class="summary-details"><div class="row-sm"><span>小計</span><span id="sum-items">NT$ 0</span></div><div class="row-sm"><span>運費</span><span id="sum-shipping">NT$ 0</span></div><div class="row-sm"><span>包材</span><span id="sum-packing">NT$ 10</span></div></div>
                 <div class="row-lg" onclick="toggleSummary()"><span>匯款總金額</span><div style="display:flex; align-items:center; gap:8px;"><span class="price-lg" id="sum-total">NT$ 0</span><i data-feather="chevron-up"></i></div></div>
                 <button class="btn-main" id="confirm-submit-btn" onclick="submitFinalOrder()">確認下單</button>
             </div>
@@ -156,7 +159,7 @@
         <div class="modal-card">
             <div class="modal-header"><h2 style="font-weight:900; margin:0; font-size: 22px;">訂單明細</h2><span class="order-id-label" id="m-order-id">編號: --------</span></div>
             <div class="modal-body">
-                <div class="modal-section"><div class="detail-item">取件姓名<div class="detail-val" id="m-name"></div></div><div class="detail-item">聯絡電話<div class="detail-val" id="m-tel"></div></div><div class="detail-item">取件方式<div class="detail-val" id="m-method"></div></div></div>
+                <div class="modal-section"><div class="detail-item">姓名<div class="detail-val" id="m-name"></div></div><div class="detail-item">電話<div class="detail-val" id="m-tel"></div></div><div class="detail-item">方式<div class="detail-val" id="m-method"></div></div></div>
                 <div class="modal-section"><div id="m-items-container"></div><div class="detail-item" style="margin-top:15px; border-top:1px solid #eee; padding-top:12px;">匯款金額<div class="detail-val" id="m-total" style="color:var(--primary); font-size:18px;"></div></div></div>
             </div>
             <div class="modal-footer"><button class="btn-main" onclick="location.reload()">我知道了</button></div>
@@ -167,28 +170,13 @@
         <div class="modal-card" onclick="event.stopPropagation()">
             <div class="modal-header"><h2 style="font-weight:900; margin:0; font-size: 20px;">新增商品</h2></div>
             <div class="modal-body">
-                <div class="form-item">
-                    <label class="form-label">選擇類別<span class="req-tag" id="tag-in-cat">*必填</span></label>
-                    <select id="in-cat" class="input-box" onchange="clearError(this)"><option value="">請選擇</option><option value="化妝水">化妝水</option><option value="精華液">精華液</option><option value="乳液">乳液</option><option value="面膜棉片">面膜棉片</option><option value="洗臉洗澡">洗臉洗澡</option><option value="美髮護髮">美髮護髮</option><option value="彩妝遮瑕">彩妝遮瑕</option><option value="口腔護理">口腔護理</option><option value="防曬">防曬</option><option value="藥膏藥品">藥膏藥品</option><option value="食品（含保健）">食品（含保健）</option><option value="其他">其他</option></select>
-                </div>
-                <div class="form-item">
-                    <label class="form-label">商品名稱<span class="req-tag" id="tag-in-name">*必填</span></label>
-                    <input type="text" id="in-name" class="input-box" placeholder="例如：Torriden 面膜" oninput="clearError(this)">
-                </div>
-                <div class="form-item">
-                    <label class="form-label">款式規格</label>
-                    <input type="text" id="in-option" class="input-box" placeholder="例如：藍色保濕型">
-                </div>
-                <div class="form-item">
-                    <label class="form-label">價格 NT$<span class="req-tag" id="tag-in-price">*必填</span></label>
-                    <input type="number" id="in-price" class="input-box" placeholder="請輸入金額" oninput="clearError(this)">
-                </div>
-                <div class="form-item">
-                    <label class="form-label">來源網址</label>
-                    <input type="url" id="in-url" class="input-box" placeholder="選填">
-                </div>
+                <div class="form-item"><label class="form-label">選擇類別<span class="req-tag" id="tag-in-cat">*必填</span></label><select id="in-cat" class="input-box" onchange="clearError(this)"><option value="">請選擇</option><option value="化妝水">化妝水</option><option value="精華液">精華液</option><option value="乳液">乳液</option><option value="面膜棉片">面膜棉片</option><option value="洗臉洗澡">洗臉洗澡</option><option value="美髮護髮">美髮護髮</option><option value="彩妝遮瑕">彩妝遮瑕</option><option value="口腔護理">口腔護理</option><option value="防曬">防曬</option><option value="藥膏藥品">藥膏藥品</option><option value="食品（含保健）">食品（含保健）</option><option value="其他">其他</option></select></div>
+                <div class="form-item"><label class="form-label">商品名稱<span class="req-tag" id="tag-in-name">*必填</span></label><input type="text" id="in-name" class="input-box" placeholder="例如：Torriden 面膜" oninput="clearError(this)"></div>
+                <div class="form-item"><label class="form-label">款式規格</label><input type="text" id="in-option" class="input-box" placeholder="例如：藍色保濕型"></div>
+                <div class="form-item"><label class="form-label">價格 NT$<span class="req-tag" id="tag-in-price">*必填</span></label><input type="number" id="in-price" class="input-box" placeholder="金額" oninput="clearError(this)"></div>
+                <div class="form-item"><label class="form-label">來源網址</label><input type="url" id="in-url" class="input-box" placeholder="選填"></div>
             </div>
-            <div class="modal-footer"><button class="btn-main" onclick="upload()">確認登錄</button></div>
+            <div class="modal-footer"><button class="btn-main" id="btn-upload" onclick="upload()">確認登錄</button></div>
         </div>
     </div>
 
@@ -197,135 +185,55 @@
         const SUPABASE_URL = 'https://ivpctyqlrkjstfsoweeh.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml2cGN0eXFscmtqc3Rmc293ZWVoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTk1MTksImV4cCI6MjA4ODc3NTUxOX0.DYgzhaTH3_5NFwv009ZfZAshfUnCW2PeTuNcJ9feyMU';
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
         let cart = {}, allProducts = [], userLineId = "unknown", shipMethod = 'face', packingQty = 1;
 
         async function init() { try { await fetchProducts(); await liff.init({ liffId: LIFF_ID }); if (!liff.isLoggedIn()) { liff.login(); return; } const p = await liff.getProfile(); userLineId = p.userId; document.getElementById('user-info').innerText = p.displayName; feather.replace(); } catch (e) { console.error(e); } }
         async function fetchProducts() { const { data } = await _supabase.from('products').select('*').eq('is_active', true); if(data) { allProducts = sortSmartly(data); renderProducts(allProducts); } }
-        
-        function sortSmartly(products) {
-            let sorted = [...products].sort((a, b) => (b.order_count || 0) - (a.order_count || 0));
-            let finalResult = []; let processedIds = new Set();
-            for (let i = 0; i < sorted.length; i++) {
-                let current = sorted[i]; if (processedIds.has(current.id)) continue;
-                finalResult.push(current); processedIds.add(current.id);
-                let prefix = current.name_zh.substring(0, 4);
-                let siblings = sorted.filter(p => !processedIds.has(p.id) && p.name_zh.startsWith(prefix));
-                siblings.forEach(s => { finalResult.push(s); processedIds.add(s.id); });
-            }
-            return finalResult;
-        }
-
-        function renderProducts(products) { 
-            document.getElementById('item-list').innerHTML = products.map(p => `
-                <div class="item-card">
-                    <div class="item-main" onclick="window.open('${p.olive_url}', '_blank')"><div><span class="item-name">${p.name_zh}</span>${p.option ? `<span class="item-option">${p.option}</span>` : ''}</div><span class="item-price">NT$ ${Number(p.price_nt).toLocaleString()}</span></div>
-                    <div class="qty-ctrl"><button class="qty-btn" onclick="updateQty('${p.id}', -1)"><i data-feather="minus" style="width:18px;"></i></button><span class="qty-num" id="qty-${p.id}">${cart[p.id] ? cart[p.id].qty : 0}</span><button class="qty-btn" onclick="updateQty('${p.id}', 1)"><i data-feather="plus" style="width:18px;"></i></button></div>
-                </div>
-            `).join(''); 
-            feather.replace(); 
-        }
-
-        function filterCategory(cat, el) { document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active')); el.classList.add('active'); renderProducts(cat === '全部' ? allProducts : allProducts.filter(p => p.category === cat)); }
-        
-        function updateQty(id, delta) { 
-            const p = allProducts.find(x => x.id === id); 
-            if (!cart[id]) cart[id] = { id: p.id, name: p.name_zh, option: p.option, price: p.price_nt, qty: 0 }; 
-            cart[id].qty = Math.max(0, cart[id].qty + delta); 
-            if(document.getElementById(`qty-${id}`)) document.getElementById(`qty-${id}`).innerText = cart[id].qty; 
-            let t = Object.values(cart).reduce((s, i) => s + i.qty, 0); 
-            document.getElementById('cart-bar').style.display = (t > 0 && document.getElementById('page-shop').classList.contains('active')) ? 'flex' : 'none';
-            document.getElementById('cart-qty').innerText = t; 
-            if(document.getElementById('page-checkout').classList.contains('active')) renderCheckout(); 
-            if(document.getElementById('page-shipping').classList.contains('active')) calculateFinal(); 
-        }
-
-        function renderCheckout() { 
-            let html = '', total = 0; 
-            Object.values(cart).forEach(item => { 
-                if(item.qty > 0) { 
-                    html += `<div class="list-row"><div class="list-left"><div><span class="list-n">${item.name}</span>${item.option ? `<span class="list-s">${item.option}</span>` : ''}</div><span class="list-p">NT$ ${Number(item.price).toLocaleString()}</span></div><div class="qty-ctrl"><button class="qty-btn" onclick="updateQty('${item.id}', -1)"><i data-feather="minus" style="width:16px;"></i></button><span class="qty-num">${item.qty}</span><button class="qty-btn" onclick="updateQty('${item.id}', 1)"><i data-feather="plus" style="width:16px;"></i></button></div></div>`; 
-                    total += item.price * item.qty; 
-                } 
-            }); 
-            document.getElementById('checkout-container').innerHTML = html || '<p style="text-align:center;padding:40px 0;color:#999;">尚未選擇商品</p>'; 
-            document.getElementById('checkout-grand-total').innerText = `NT$ ${total.toLocaleString()}`; 
-            feather.replace(); 
-        }
-
-        function setShipping(m) { shipMethod = m; document.getElementById('btn-face').classList.toggle('active', m === 'face'); document.getElementById('btn-711').classList.toggle('active', m === '711'); document.getElementById('hint-face').style.display = m === 'face' ? 'block' : 'none'; document.getElementById('form-711').style.display = m === '711' ? 'block' : 'none'; if(m === '711' && packingQty < 1) packingQty = 1; calculateFinal(); }
+        function sortSmartly(ps) { let s = [...ps].sort((a,b)=>(b.order_count||0)-(a.order_count||0)); let res = [], ids = new Set(); for(let p of s){ if(ids.has(p.id)) continue; res.push(p); ids.add(p.id); let prefix = p.name_zh.substring(0,4); let sibs = s.filter(x=>!ids.has(x.id)&&x.name_zh.startsWith(prefix)); sibs.forEach(x=>{res.push(x); ids.add(x.id);}); } return res; }
+        function renderProducts(ps) { document.getElementById('item-list').innerHTML = ps.map(p => `<div class="item-card"><div class="item-main" onclick="window.open('${p.olive_url}','_blank')"><div><span class="item-name">${p.name_zh}</span>${p.option ? `<span class="item-option">${p.option}</span>`:''}</div><span class="item-price">NT$ ${Number(p.price_nt).toLocaleString()}</span></div><div class="qty-ctrl"><button class="qty-btn" onclick="updateQty('${p.id}',-1)"><i data-feather="minus" style="width:18px;"></i></button><span class="qty-num" id="qty-${p.id}">${cart[p.id]?cart[p.id].qty:0}</span><button class="qty-btn" onclick="updateQty('${p.id}',1)"><i data-feather="plus" style="width:18px;"></i></button></div></div>`).join(''); feather.replace(); }
+        function filterCategory(cat, el) { document.querySelectorAll('.cat-pill').forEach(p=>p.classList.remove('active')); el.classList.add('active'); renderProducts(cat==='全部'?allProducts:allProducts.filter(p=>p.category===cat)); }
+        function updateQty(id, d) { const p = allProducts.find(x=>x.id===id); if(!cart[id]) cart[id]={id:p.id, name:p.name_zh, option:p.option, price:p.price_nt, qty:0}; cart[id].qty=Math.max(0, cart[id].qty+d); if(document.getElementById(`qty-${id}`)) document.getElementById(`qty-${id}`).innerText=cart[id].qty; let t = Object.values(cart).reduce((s,i)=>s+i.qty,0); document.getElementById('cart-bar').style.display=(t>0&&document.getElementById('page-shop').classList.contains('active'))?'flex':'none'; document.getElementById('cart-qty').innerText=t; if(document.getElementById('page-checkout').classList.contains('active')) renderCheckout(); if(document.getElementById('page-shipping').classList.contains('active')) calculateFinal(); }
+        function renderCheckout() { let h='', t=0; Object.values(cart).forEach(i=>{ if(i.qty>0){ h+=`<div class="list-row"><div class="list-left"><div><span class="list-n">${i.name}</span>${i.option?`<span class="list-s">${i.option}</span>`:''}</div><span class="list-p">NT$ ${Number(i.price).toLocaleString()}</span></div><div class="qty-ctrl"><button class="qty-btn" onclick="updateQty('${i.id}',-1)"><i data-feather="minus" style="width:16px;"></i></button><span class="qty-num">${i.qty}</span><button class="qty-btn" onclick="updateQty('${i.id}',1)"><i data-feather="plus" style="width:16px;"></i></button></div></div>`; t+=i.price*i.qty; }}); document.getElementById('checkout-container').innerHTML=h||'<p style="text-align:center;padding:40px 0;color:#999;">尚未選擇商品</p>'; document.getElementById('checkout-grand-total').innerText=`NT$ ${t.toLocaleString()}`; feather.replace(); }
+        function setShipping(m) { shipMethod=m; document.getElementById('btn-face').classList.toggle('active',m==='face'); document.getElementById('btn-711').classList.toggle('active',m==='711'); document.getElementById('hint-face').style.display=m==='face'?'block':'none'; document.getElementById('form-711').style.display=m==='711'?'block':'none'; if(m==='711'&&packingQty<1) packingQty=1; calculateFinal(); }
         function toggleSummary() { document.getElementById('shipping-summary').classList.toggle('expanded'); }
-        function updatePacking(d) { const min = shipMethod === '711' ? 1 : 0; packingQty = Math.max(min, packingQty + d); document.getElementById('qty-packing').innerText = packingQty; calculateFinal(); }
-        function calculateFinal() { let it = Object.values(cart).reduce((s, i) => s + (i.price * i.qty), 0); let sf = shipMethod === '711' ? (80 * packingQty) : 0; let pf = packingQty * 10; document.getElementById('sum-items').innerText = `NT$ ${it.toLocaleString()}`; document.getElementById('sum-shipping').innerText = `NT$ ${sf.toLocaleString()}`; document.getElementById('sum-packing').innerText = `NT$ ${pf.toLocaleString()}`; document.getElementById('sum-total').innerText = `NT$ ${(it + sf + pf).toLocaleString()}`; }
-        
-        function clearError(el) { 
-            el.classList.remove('error'); 
-            const tag = document.getElementById('tag-' + el.id); 
-            if(tag) tag.style.display = 'none'; 
+        function updatePacking(d) { const min=shipMethod==='711'?1:0; packingQty=Math.max(min, packingQty+d); document.getElementById('qty-packing').innerText=packingQty; calculateFinal(); }
+        function calculateFinal() { let it=Object.values(cart).reduce((s,i)=>s+(i.price*i.qty),0); let sf=shipMethod==='711'?(80*packingQty):0; let pf=packingQty*10; document.getElementById('sum-items').innerText=`NT$ ${it.toLocaleString()}`; document.getElementById('sum-shipping').innerText=`NT$ ${sf.toLocaleString()}`; document.getElementById('sum-packing').innerText=`NT$ ${pf.toLocaleString()}`; document.getElementById('sum-total').innerText=`NT$ ${(it+sf+pf).toLocaleString()}`; }
+        function clearError(el) { el.classList.remove('error'); const tag=document.getElementById('tag-'+el.id); if(tag) tag.style.display='none'; }
+
+        async function upload() {
+            const btn = document.getElementById('btn-upload');
+            const cat = document.getElementById('in-cat'), name = document.getElementById('in-name'), price = document.getElementById('in-price');
+            const option = document.getElementById('in-option'), url = document.getElementById('in-url');
+            let valid = true;
+            if(!cat.value) { cat.classList.add('error'); document.getElementById('tag-in-cat').style.display='inline'; valid=false; }
+            if(!name.value.trim()) { name.classList.add('error'); document.getElementById('tag-in-name').style.display='inline'; valid=false; }
+            if(!price.value) { price.classList.add('error'); document.getElementById('tag-in-price').style.display='inline'; valid=false; }
+            if(!valid) return;
+            btn.disabled=true; btn.innerText="處理中...";
+            const { error } = await _supabase.from('products').insert({ category: cat.value, name_zh: name.value.trim(), option: option.value.trim()||null, price_nt: price.value, olive_url: url.value.trim()||null, is_active: false, created_by: userLineId });
+            if(!error) { alert('商品已登錄'); location.reload(); } else { alert('失敗：'+error.message); btn.disabled=false; btn.innerText="確認登錄"; }
         }
 
         async function submitFinalOrder() {
             const btn = document.getElementById('confirm-submit-btn'); if(btn.disabled) return;
             const name = document.getElementById('ship-name'), tel = document.getElementById('ship-tel'), store = document.getElementById('ship-store'), code = document.getElementById('ship-code');
             const telPattern = /^09\d{8}$/; let isValid = true;
-            if(!name.value.trim()) { name.classList.add('error'); document.getElementById('tag-ship-name').style.display='inline'; isValid = false; }
-            if(!telPattern.test(tel.value.trim())) { tel.classList.add('error'); document.getElementById('tag-ship-tel').style.display='inline'; isValid = false; }
-            if(shipMethod === '711') {
-                if(!store.value.trim()) { store.classList.add('error'); document.getElementById('tag-ship-store').style.display='inline'; isValid = false; }
-                if(!code.value.trim()) { code.classList.add('error'); document.getElementById('tag-ship-code').style.display='inline'; isValid = false; }
-            }
-            if(!isValid) return window.scrollTo({ top: 0, behavior: 'smooth' });
-            btn.disabled = true; btn.innerText = "處理中...";
-
-            let itemsDisplay = Object.values(cart).filter(i => i.qty > 0).map(i => `<div class="order-item-row"><div class="order-item-name">${i.name} ${i.option ? '('+i.option+')' : ''}</div><div class="order-item-qty">× ${i.qty}</div></div>`).join('');
-            itemsDisplay += `<div class="order-item-row"><div class="order-item-name">包材紙箱</div><div class="order-item-qty">× ${packingQty}</div></div>`;
-            const finalMethod = shipMethod === 'face' ? '面交' : '7-11取件';
-            const finalStore = shipMethod === '711' ? `${store.value}(${code.value})` : '台中指定區';
-
+            if(!name.value.trim()){ name.classList.add('error'); document.getElementById('tag-ship-name').style.display='inline'; isValid=false; }
+            if(!telPattern.test(tel.value.trim())){ tel.classList.add('error'); document.getElementById('tag-ship-tel').style.display='inline'; isValid=false; }
+            if(shipMethod==='711'){ if(!store.value.trim()){ store.classList.add('error'); document.getElementById('tag-ship-store').style.display='inline'; isValid=false; } if(!code.value.trim()){ code.classList.add('error'); document.getElementById('tag-ship-code').style.display='inline'; isValid=false; } }
+            if(!isValid) return; btn.disabled=true; btn.innerText="下單中...";
+            let itemsStr = Object.values(cart).filter(i=>i.qty>0).map(i=>`${i.name}*${i.qty}`).join(', ');
             try {
-                const { data: orderData, error: orderError } = await _supabase.from('orders').insert({
-                    items_summary: Object.values(cart).filter(i => i.qty > 0).map(i => `${i.name}*${i.qty}`).join(', '), 
-                    user_id: userLineId, customer_name: name.value, customer_tel: tel.value,
-                    shipping_method: finalMethod, shipping_store: finalStore, packing_qty: packingQty,
-                    total_amount: document.getElementById('sum-total').innerText
-                }).select();
-                if(orderError) throw orderError;
-                for (const item of Object.values(cart)) { if (item.qty > 0) { await _supabase.rpc('increment_order_count', { row_id: item.id, inc_val: parseInt(item.qty) }); } }
-                const orderId = orderData[0].id;
-                document.getElementById('m-order-id').innerText = "編號: " + orderId.slice(-10).toUpperCase();
-                document.getElementById('m-items-container').innerHTML = itemsDisplay;
-                document.getElementById('m-name').innerText = name.value;
-                document.getElementById('m-tel').innerText = tel.value;
-                document.getElementById('m-method').innerText = `${finalMethod} ${shipMethod==='711' ? finalStore : ''}`;
-                document.getElementById('m-total').innerText = document.getElementById('sum-total').innerText;
-                document.getElementById('order-detail-modal').style.display = 'flex';
-            } catch (err) { alert("下單失敗：" + err.message); btn.disabled = false; btn.innerText = "確認下單"; }
+                const { data, error } = await _supabase.from('orders').insert({ items_summary: itemsStr, user_id: userLineId, customer_name: name.value, customer_tel: tel.value, shipping_method: shipMethod==='face'?'面交':'7-11取件', shipping_store: shipMethod==='711'?`${store.value}(${code.value})`:'面交', packing_qty: packingQty, total_amount: document.getElementById('sum-total').innerText }).select();
+                if(error) throw error;
+                for(let i of Object.values(cart)){ if(i.qty>0) await _supabase.rpc('increment_order_count',{row_id:i.id, inc_val:parseInt(i.qty)}); }
+                const oid = data[0].id; document.getElementById('m-order-id').innerText="編號: "+oid.slice(-10).toUpperCase();
+                document.getElementById('m-items-container').innerHTML = Object.values(cart).filter(i=>i.qty>0).map(i=>`<div class="order-item-row"><div class="order-item-name">${i.name} ${i.option?'('+i.option+')':''}</div><div class="order-item-qty">× ${i.qty}</div></div>`).join('') + `<div class="order-item-row"><div class="order-item-name">包材紙箱</div><div class="order-item-qty">× ${packingQty}</div></div>`;
+                document.getElementById('m-name').innerText=name.value; document.getElementById('m-tel').innerText=tel.value; document.getElementById('m-method').innerText=shipMethod==='face'?'面交':`7-11(${store.value})`; document.getElementById('m-total').innerText=document.getElementById('sum-total').innerText; document.getElementById('order-detail-modal').style.display='flex';
+            } catch(e){ alert("失敗："+e.message); btn.disabled=false; btn.innerText="確認下單"; }
         }
 
-        async function upload() {
-            const cat = document.getElementById('in-cat'), name = document.getElementById('in-name'), price = document.getElementById('in-price');
-            let valid = true;
-            if(!cat.value) { cat.classList.add('error'); document.getElementById('tag-in-cat').style.display='inline'; valid = false; }
-            if(!name.value.trim()) { name.classList.add('error'); document.getElementById('tag-in-name').style.display='inline'; valid = false; }
-            if(!price.value) { price.classList.add('error'); document.getElementById('tag-in-price').style.display='inline'; valid = false; }
-            if(!valid) return;
-            const { error } = await _supabase.from('products').insert({ category: cat.value, name_zh: name.value.trim(), option: document.getElementById('in-option').value.trim() || null, price_nt: price.value, olive_url: document.getElementById('in-url').value.trim() || null, is_active: false, created_by: userLineId });
-            if(!error) { alert('商品已登錄'); location.reload(); }
-        }
-
-        function switchPage(p) { 
-            document.querySelectorAll('.page-content').forEach(e => e.classList.remove('active')); 
-            document.getElementById('page-' + p).classList.add('active'); 
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            if(document.getElementById('nav-' + p)) document.getElementById('nav-' + p).classList.add('active');
-            document.getElementById('add-btn-main').style.display = (p === 'shop') ? 'flex' : 'none'; 
-            let t = Object.values(cart).reduce((s, i) => s + i.qty, 0);
-            document.getElementById('cart-bar').style.display = (t > 0 && p === 'shop') ? 'flex' : 'none';
-            if(p === 'checkout') renderCheckout(); 
-            if(p === 'shipping') { calculateFinal(); document.getElementById('shipping-summary').classList.remove('expanded'); } 
-            window.scrollTo(0,0); feather.replace(); 
-        }
-
+        function switchPage(p) { document.querySelectorAll('.page-content').forEach(e=>e.classList.remove('active')); document.getElementById('page-'+p).classList.add('active'); document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active')); if(document.getElementById('nav-'+p)) document.getElementById('nav-'+p).classList.add('active'); document.getElementById('add-btn-main').style.display = (p==='shop')?'flex':'none'; let t = Object.values(cart).reduce((s,i)=>s+i.qty,0); document.getElementById('cart-bar').style.display=(t>0&&p==='shop')?'flex':'none'; if(p==='checkout') renderCheckout(); if(p==='shipping'){ calculateFinal(); document.getElementById('shipping-summary').classList.remove('expanded'); } window.scrollTo(0,0); feather.replace(); }
         function openAddModal() { document.getElementById('add-modal').style.display='flex'; }
         function closeModal(id) { document.getElementById(id).style.display='none'; }
         window.onload = init;
