@@ -36,15 +36,15 @@
         .qty-btn { background: none; border: none; padding: 0; color: var(--sub); display: flex; align-items: center; cursor: pointer; }
         .qty-num { font-size: 16px; font-weight: 900; color: var(--primary); min-width: 20px; text-align: center; }
 
-        .card-box { background: #fff; border-radius: 32px; padding: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); margin-top: 10px; }
-        .list-row { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-bottom: 1px solid #f2f4f6; }
+        .card-box { background: #fff; border-radius: 32px; padding: 15px 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); margin-top: 10px; }
+        
+        /* 修正：清單項目間距縮小 */
+        .list-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f2f4f6; }
         .list-row:last-child { border-bottom: none; }
-
-        /* 修改：代購清單排版校正 */
         .list-left { flex: 1; padding-right: 15px; }
-        .list-n { font-size: 16px; font-weight: 900; color: #000; display: inline-block; line-height: 1.3; }
-        .list-s { font-size: 12px; color: var(--gray); display: inline-block; margin-left: 6px; font-weight: 400; }
-        .list-p { font-size: 14px; color: var(--primary); display: block; font-weight: 900; margin-top: 4px; }
+        .list-n { font-size: 15px; font-weight: 900; color: #000; display: inline-block; line-height: 1.3; }
+        .list-s { font-size: 11px; color: var(--gray); display: inline-block; margin-left: 6px; font-weight: 400; }
+        .list-p { font-size: 13px; color: var(--primary); display: block; font-weight: 900; margin-top: 2px; }
 
         .form-item { margin-bottom: 20px; }
         .form-label { display: flex; align-items: center; font-size: 14px; font-weight: 700; margin-bottom: 10px; color: var(--sub); padding-left: 4px; }
@@ -66,23 +66,29 @@
         .expand-toggle { color: var(--gray); display: flex; align-items: center; transition: 0.3s; }
         .bottom-summary.expanded .expand-toggle { transform: rotate(180deg); }
         .btn-main { background: var(--primary); color: #fff; border: none; padding: 18px; width: 100%; border-radius: 20px; font-weight: 700; font-size: 17px; cursor: pointer; }
+        .btn-main:disabled { background: var(--gray); opacity: 0.7; }
 
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 500; align-items: center; justify-content: center; padding: 20px; }
         .modal-card { background: #fff; border-radius: 36px; padding: 32px 24px; width: 100%; max-width: 360px; max-height: 85vh; box-sizing: border-box; display: flex; flex-direction: column; }
         .modal-header { text-align: center; margin-bottom: 20px; flex-shrink: 0; }
         .order-id-label { font-size: 11px; color: var(--gray); font-weight: 700; margin-top: 4px; display: block; }
         .modal-body { overflow-y: auto; flex-grow: 1; padding-right: 4px; }
+        .modal-body::-webkit-scrollbar { width: 4px; }
+        .modal-body::-webkit-scrollbar-thumb { background: #eee; border-radius: 10px; }
         .modal-section { text-align: left; margin-bottom: 16px; padding: 16px; background: #f8f9fa; border-radius: 24px; }
         .modal-section-title { font-size: 12px; font-weight: 900; color: var(--gray); margin-bottom: 10px; display: block; }
         .order-item-row { display: flex; justify-content: space-between; align-items: flex-start; font-size: 14px; margin-bottom: 8px; line-height: 1.4; }
         .order-item-name { text-align: left; font-weight: 700; color: var(--text); padding-right: 15px; flex: 1; }
         .order-item-qty { text-align: right; font-weight: 900; color: var(--primary); white-space: nowrap; }
         .detail-item { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; }
-        .detail-val { font-weight: 700; text-align: right; flex: 1; margin-left: 20px; }
+        .detail-val { font-weight: 700; text-align: right; flex: 1; margin-left: 20px; word-break: break-all; }
         .modal-footer { flex-shrink: 0; padding-top: 10px; }
 
         .add-btn { position: fixed; top: 20px; right: 20px; width: 48px; height: 48px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; z-index: 300; border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-        .cart-bar { position: fixed; bottom: 95px; left: 16px; right: 16px; background: #191f28; color: #fff; padding: 18px 24px; border-radius: 20px; display: none; justify-content: space-between; align-items: center; z-index: 250; box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
+        
+        /* 修正：確保 cart-bar 隱藏徹底 */
+        .cart-bar { position: fixed; bottom: 95px; left: 16px; right: 16px; background: #191f28; color: #fff; padding: 18px 24px; border-radius: 20px; display: none; justify-content: space-between; align-items: center; z-index: 250; box-shadow: 0 8px 24px rgba(0,0,0,0.2); pointer-events: auto; }
+        
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; padding: 12px 0 calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid #e5e8eb; z-index: 200; }
         .nav-item { color: #adb5bd; text-align: center; flex: 1; font-size: 11px; font-weight: 900; display: flex; flex-direction: column; align-items: center; gap: 6px; }
         .nav-item.active { color: var(--primary); }
@@ -117,7 +123,7 @@
             <div class="nav-header"><button class="back-btn" onclick="switchPage('shop')"><i data-feather="chevron-left"></i></button><div class="page-title">代購清單</div></div>
             <div class="card-box" id="checkout-container"></div>
             <div class="bottom-summary">
-                <div class="row-lg" style="cursor:default;"><span>清單總計</span><span class="price-lg" id="checkout-grand-total">NT$ 0</span></div>
+                <div class="row-lg" style="cursor:default; padding: 5px 0;"><span>清單總計</span><span class="price-lg" id="checkout-grand-total">NT$ 0</span></div>
                 <button class="btn-main" onclick="switchPage('shipping')">填寫資料</button>
             </div>
         </section>
@@ -195,9 +201,15 @@
         }
 
         function filterCategory(cat, el) { document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active')); el.classList.add('active'); renderProducts(cat === '全部' ? allProducts : allProducts.filter(p => p.category === cat)); }
-        function updateQty(id, delta) { const p = allProducts.find(x => x.id === id); if (!cart[id]) cart[id] = { id: p.id, name: p.name_zh, option: p.option, price: p.price_nt, qty: 0 }; cart[id].qty = Math.max(0, cart[id].qty + delta); if(document.getElementById(`qty-${id}`)) document.getElementById(`qty-${id}`).innerText = cart[id].qty; let t = Object.values(cart).reduce((s, i) => s + i.qty, 0); document.getElementById('cart-bar').style.display = t > 0 ? 'flex' : 'none'; document.getElementById('cart-qty').innerText = t; if(document.getElementById('page-checkout').classList.contains('active')) renderCheckout(); if(document.getElementById('page-shipping').classList.contains('active')) calculateFinal(); }
+        function updateQty(id, delta) { const p = allProducts.find(x => x.id === id); if (!cart[id]) cart[id] = { id: p.id, name: p.name_zh, option: p.option, price: p.price_nt, qty: 0 }; cart[id].qty = Math.max(0, cart[id].qty + delta); if(document.getElementById(`qty-${id}`)) document.getElementById(`qty-${id}`).innerText = cart[id].qty; let t = Object.values(cart).reduce((s, i) => s + i.qty, 0); 
+            // 修正：僅在商店頁顯示 cart-bar
+            const currentActive = document.querySelector('.page-content.active').id;
+            document.getElementById('cart-bar').style.display = (t > 0 && currentActive === 'page-shop') ? 'flex' : 'none';
+            document.getElementById('cart-qty').innerText = t; 
+            if(document.getElementById('page-checkout').classList.contains('active')) renderCheckout(); 
+            if(document.getElementById('page-shipping').classList.contains('active')) calculateFinal(); 
+        }
 
-        // 修改：代購清單頁面渲染邏輯 (款式在後方，價格在下方黃色顯示)
         function renderCheckout() { 
             let html = '', total = 0; 
             Object.values(cart).forEach(item => { 
@@ -273,7 +285,21 @@
             } catch (err) { alert("下單失敗：" + err.message); btn.disabled = false; btn.innerText = "確認下單"; }
         }
 
-        function switchPage(p) { document.querySelectorAll('.page-content').forEach(e => e.classList.remove('active')); document.getElementById('page-' + p).classList.add('active'); document.getElementById('bottom-nav').style.display = (['shop','passport'].includes(p)) ? 'flex' : 'none'; document.getElementById('add-btn').style.display = (p === 'shop') ? 'flex' : 'none'; if(p === 'checkout') renderCheckout(); if(p === 'shipping') { calculateFinal(); document.getElementById('shipping-summary').classList.remove('expanded'); } window.scrollTo(0,0); feather.replace(); }
+        function switchPage(p) { 
+            document.querySelectorAll('.page-content').forEach(e => e.classList.remove('active')); 
+            document.getElementById('page-' + p).classList.add('active'); 
+            document.getElementById('bottom-nav').style.display = (['shop','passport'].includes(p)) ? 'flex' : 'none'; 
+            document.getElementById('add-btn').style.display = (p === 'shop') ? 'flex' : 'none'; 
+            
+            // 修正 BUG：切換頁面時強制檢查 cart-bar 顯示狀態
+            let t = Object.values(cart).reduce((s, i) => s + i.qty, 0);
+            document.getElementById('cart-bar').style.display = (t > 0 && p === 'shop') ? 'flex' : 'none';
+            
+            if(p === 'checkout') renderCheckout(); 
+            if(p === 'shipping') { calculateFinal(); document.getElementById('shipping-summary').classList.remove('expanded'); } 
+            window.scrollTo(0,0); 
+            feather.replace(); 
+        }
         function openAddModal() { document.getElementById('add-modal').style.display='flex'; }
         function closeModal(id) { document.getElementById(id).style.display='none'; }
         window.onload = init;
