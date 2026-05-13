@@ -47,29 +47,11 @@
         .form-label { width: calc(100% - 24px); display: flex; align-items: center; font-size: 14px; font-weight: 700; margin-bottom: 6px; color: var(--sub); }
         .req-tag { color: var(--error); font-size: 12px; margin-left: 6px; font-weight: 400; display: none; }
         
-        /* 修正：輸入框左右縮窄，並增加 Padding 避免遮擋 */
-        .input-box { 
-            width: calc(100% - 24px); /* 左右縮窄 */
-            padding: 12px 20px; 
-            border: none; 
-            border-radius: 18px; 
-            font-size: 15px; 
-            outline: none; 
-            background: #f2f4f6; 
-            box-sizing: border-box; 
-            transition: 0.2s; 
-            display: block;
-        }
+        .input-box { width: calc(100% - 24px); padding: 12px 20px; border: none; border-radius: 18px; font-size: 15px; outline: none; background: #f2f4f6; box-sizing: border-box; transition: 0.2s; display: block; }
         .input-box:focus { background: #fff; box-shadow: 0 0 0 2px var(--primary); }
         .input-box.error { background: #fff5f5; box-shadow: 0 0 0 2px var(--error); }
 
-        textarea.input-box {
-            padding-top: 14px;
-            padding-bottom: 14px;
-            resize: none;
-            overflow-y: hidden;
-            min-height: 48px;
-        }
+        textarea.input-box { padding-top: 14px; padding-bottom: 14px; resize: none; overflow-y: hidden; min-height: 48px; }
 
         .ship-group { display: flex; gap: 12px; width: calc(100% - 24px); }
         .ship-btn { flex: 1; padding: 16px; background: #f2f4f6; border-radius: 20px; text-align: center; font-weight: 700; color: var(--sub); cursor: pointer; }
@@ -86,8 +68,8 @@
 
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 500; align-items: center; justify-content: center; padding: 20px; }
         .modal-card { background: #fff; border-radius: 36px; padding: 24px 20px 28px 20px; width: 100%; max-width: 360px; max-height: 85vh; box-sizing: border-box; display: flex; flex-direction: column; box-shadow: 0 15px 50px rgba(0,0,0,0.2); }
-        .modal-header { text-align: center; margin-bottom: 15px; flex-shrink: 0; }
-        .modal-body { overflow-y: auto; flex-grow: 1; padding-right: 0; margin-bottom: 15px; width: 100%; }
+        .modal-header { text-align: center; margin-bottom: 10px; flex-shrink: 0; }
+        .modal-body { overflow-y: auto; flex-grow: 1; padding-right: 0; margin-bottom: 10px; width: 100%; }
         .modal-body::-webkit-scrollbar { width: 4px; }
         .modal-body::-webkit-scrollbar-thumb { background: #eee; border-radius: 10px; }
         .modal-footer { flex-shrink: 0; display: flex; justify-content: center; width: 100%; }
@@ -97,6 +79,7 @@
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; padding: 12px 0 calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid #e5e8eb; z-index: 200; }
         .nav-item { color: #adb5bd; text-align: center; flex: 1; font-size: 11px; font-weight: 900; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; }
         .nav-item.active { color: var(--primary); }
+        .success-state { text-align: center; padding: 10px 0; }
     </style>
 </head>
 <body>
@@ -127,14 +110,17 @@
         <section id="page-checkout" class="page-content">
             <div class="nav-header"><button class="back-btn" onclick="switchPage('shop')"><i data-feather="chevron-left"></i></button><div class="page-title">代購清單</div></div>
             <div class="card-box" id="checkout-container"></div>
-            <div class="bottom-summary"><div class="row-lg" style="cursor:default; padding: 5px 0;"><span>清單總計</span><span class="price-lg" id="checkout-grand-total">NT$ 0</span></div><button class="btn-main" onclick="switchPage('shipping')">填寫資料</button></div>
+            <div class="bottom-summary">
+                <div class="row-lg" style="cursor:default; padding: 5px 0;"><span>清單總計</span><span class="price-lg" id="checkout-grand-total">NT$ 0</span></div>
+                <button class="btn-main" onclick="switchPage('shipping')">填寫資料</button>
+            </div>
         </section>
 
         <section id="page-shipping" class="page-content">
             <div class="nav-header"><button class="back-btn" onclick="switchPage('checkout')"><i data-feather="chevron-left"></i></button><div class="page-title">取件資料</div></div>
             <div class="card-box">
                 <div class="form-item"><label class="form-label">取件姓名<span class="req-tag" id="tag-ship-name">*必填</span></label><input type="text" id="ship-name" class="input-box" placeholder="收件人姓名" oninput="clearError(this)"></div>
-                <div class="form-item"><label class="form-label">聯絡電話<span class="req-tag" id="tag-ship-tel">*必填</span></label><input type="tel" id="ship-tel" class="input-box" placeholder="09xxxxxxxx" maxlength="10" oninput="clearError(this)"></div>
+                <div class="form-item"><label class="form-label">聯絡電話<span class="req-tag" id="tag-ship-tel">*必填</span></label><input type="tel" id="ship-tel" class="input-box" placeholder="09xxxxxxxx" maxlength="10" oninput="clearError(this)"><div style="font-size:12px; color:var(--error); margin-top:8px; line-height:1.5;">*請提供正確的取件人資訊，資料有誤導致無法取件概不負責。</div></div>
                 <div class="form-item">
                     <label class="form-label">配送方式</label>
                     <div class="ship-group"><div class="ship-btn active" id="btn-face" onclick="setShipping('face')">面交</div><div class="ship-btn" id="btn-711" onclick="setShipping('711')">7-11 取件</div></div>
@@ -183,8 +169,7 @@
     <div id="add-modal" class="modal" onclick="closeModal('add-modal')">
         <div class="modal-card" onclick="event.stopPropagation()">
             <div id="add-modal-content" style="display: flex; flex-direction: column; height: 100%;">
-                <div class="modal-header"><h2 style="font-weight:900; margin:0; font-size: 20px;">新增商品</h2></div>
-                <div class="modal-body">
+                <div class="modal-body" style="padding-top: 10px;">
                     <div class="form-item"><label class="form-label">選擇類別<span class="req-tag" id="tag-in-cat">*必填</span></label><select id="in-cat" class="input-box" onchange="clearError(this)"><option value="">請選擇</option><option value="化妝水">化妝水</option><option value="精華液">精華液</option><option value="乳液">乳液</option><option value="面膜棉片">面膜棉片</option><option value="洗臉洗澡">洗臉洗澡</option><option value="美髮護髮">美髮護髮</option><option value="彩妝遮瑕">彩妝遮瑕</option><option value="口腔護理">口腔護理</option><option value="防曬">防曬</option><option value="藥膏藥品">藥膏藥品</option><option value="食品（含保健）">食品（含保健）</option><option value="其他">其他</option></select></div>
                     <div class="form-item"><label class="form-label">商品名稱<span class="req-tag" id="tag-in-name">*必填</span></label><textarea id="in-name" class="input-box" placeholder="例如：Torriden 面膜" oninput="clearError(this)"></textarea></div>
                     <div class="form-item"><label class="form-label">款式規格</label><textarea id="in-option" class="input-box" placeholder="例如：藍色保濕型" oninput="autoGrow(this)"></textarea></div>
@@ -194,7 +179,7 @@
                 <div class="modal-footer"><button class="btn-main" id="btn-upload" onclick="upload()">確認登錄</button></div>
             </div>
             <div id="add-modal-success" class="success-state" style="display:none;">
-                <div style="width:60px; height:60px; background:#feeeb3; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 20px;"><i data-feather="check" style="width:32px; height:32px;"></i></div>
+                <div style="width:60px; height:60px; background:#feeeb3; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:20px auto;"><i data-feather="check" style="width:32px; height:32px;"></i></div>
                 <h2 style="font-weight:900; margin-bottom:10px;">登錄成功</h2>
                 <p style="font-size:14px; color:var(--sub); line-height:1.6; margin-bottom:30px;">待核對沒問題後將上架於頁面中<br>請再稍等一下喔！</p>
                 <div class="modal-footer"><button class="btn-main" onclick="location.reload()">我知道了</button></div>
