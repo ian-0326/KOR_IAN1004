@@ -42,7 +42,7 @@
         .list-n { font-size: 15px; font-weight: 900; color: #000; }
         .list-p { font-size: 13px; color: var(--primary); display: block; font-weight: 900; margin-top: 2px; }
 
-        /* 彈窗樣式 */
+        /* 彈窗與表單樣式 */
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 500; align-items: center; justify-content: center; padding: 20px; }
         .modal-card { background: #fff; border-radius: 36px; padding: 24px 20px 28px 20px; width: 100%; max-width: 360px; max-height: 85vh; box-sizing: border-box; display: flex; flex-direction: column; box-shadow: 0 15px 50px rgba(0,0,0,0.2); }
         .modal-body { overflow-y: auto; flex-grow: 1; width: 100%; padding-top: 10px; }
@@ -57,6 +57,10 @@
         .gender-group { display: flex; gap: 8px; margin-bottom: 3px; }
         .gender-btn { width: 42px; height: 42px; border-radius: 50%; border: none; background: #f2f4f6; color: var(--gray); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
         .gender-btn.active { background: var(--primary); color: white; box-shadow: 0 4px 10px rgba(40, 176, 235, 0.3); }
+
+        /* 修正：出生日期一行三欄下拉 */
+        .birth-row { display: flex; width: calc(100% - 24px); gap: 8px; }
+        .birth-row select { flex: 1; }
 
         .btn-main { background: var(--primary); color: #fff; border: none; padding: 18px; width: 100%; border-radius: 20px; font-weight: 700; font-size: 17px; cursor: pointer; }
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; padding: 12px 0 calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid #e5e8eb; z-index: 200; }
@@ -119,8 +123,8 @@
                         <div style="width:auto; text-align:center;">
                             <label class="form-label">性別</label>
                             <div class="gender-group">
-                                <button class="gender-btn" id="g-male" onclick="setGender('M')"><i data-feather="user"></i></button>
-                                <button class="gender-btn" id="g-female" onclick="setGender('F')"><i data-feather="user-plus"></i></button>
+                                <button class="gender-btn" id="g-male" onclick="setGender('M')"><i data-feather="plus-square"></i></button>
+                                <button class="gender-btn" id="g-female" onclick="setGender('F')"><i data-feather="heart"></i></button>
                             </div>
                         </div>
                     </div>
@@ -133,7 +137,11 @@
 
                 <div class="form-item">
                     <label class="form-label">出生日期<span class="req-tag" id="tag-reg-birth">*必填</span></label>
-                    <input type="date" id="reg-birth" class="input-box" onchange="clearError(this)">
+                    <div class="birth-row">
+                        <select id="reg-birth-y" class="input-box" onchange="clearError(this)"></select>
+                        <select id="reg-birth-m" class="input-box" onchange="clearError(this)"></select>
+                        <select id="reg-birth-d" class="input-box" onchange="clearError(this)"></select>
+                    </div>
                 </div>
 
                 <div class="form-item">
@@ -161,15 +169,22 @@
 
                 const { data } = await _supabase.from('profiles').select('*').eq('user_id', userLineId).single();
                 if (data) {
-                    userData = data;
-                    renderUserProfile();
-                    switchPage('passport');
+                    userData = data; renderUserProfile(); switchPage('passport');
                 } else {
+                    initBirthSelects();
                     document.body.classList.add('modal-open');
                     document.getElementById('register-modal').style.display = 'flex';
                 }
                 feather.replace();
             } catch (e) { console.error(e); }
+        }
+
+        // 修正：初始化生日下拉選單數據
+        function initBirthSelects() {
+            const sy = document.getElementById('reg-birth-y'), sm = document.getElementById('reg-birth-m'), sd = document.getElementById('reg-birth-d');
+            sy.innerHTML = '<option value="">年</option>' + Array.from({length: 87}, (_, i) => `<option value="${1940+i}">${1940+i}</option>`).reverse().join('');
+            sm.innerHTML = '<option value="">月</option>' + Array.from({length: 12}, (_, i) => `<option value="${(i+1).toString().padStart(2,'0')}">${i+1}</option>`).join('');
+            sd.innerHTML = '<option value="">日</option>' + Array.from({length: 31}, (_, i) => `<option value="${(i+1).toString().padStart(2,'0')}">${i+1}</option>`).join('');
         }
 
         function setGender(g) {
@@ -179,20 +194,22 @@
         }
 
         async function handleRegister() {
-            const name = document.getElementById('reg-name'), tel = document.getElementById('reg-tel'), birth = document.getElementById('reg-birth'), email = document.getElementById('reg-email');
+            const name = document.getElementById('reg-name'), tel = document.getElementById('reg-tel'), email = document.getElementById('reg-email');
+            const by = document.getElementById('reg-birth-y'), bm = document.getElementById('reg-birth-m'), bd = document.getElementById('reg-birth-d');
+            
             let valid = true;
             if(!name.value.trim()){ name.classList.add('error'); document.getElementById('tag-reg-name').style.display='inline'; valid=false; }
             if(!/^09\d{8}$/.test(tel.value)){ tel.classList.add('error'); document.getElementById('tag-reg-tel').style.display='inline'; valid=false; }
-            if(!birth.value){ birth.classList.add('error'); document.getElementById('tag-reg-birth').style.display='inline'; valid=false; }
+            if(!by.value || !bm.value || !bd.value){ 
+                [by,bm,bd].forEach(s => s.classList.add('error'));
+                document.getElementById('tag-reg-birth').style.display='inline'; valid=false; 
+            }
             if(!valid) return;
 
+            const fullBirth = `${by.value}-${bm.value}-${bd.value}`;
             const { error } = await _supabase.from('profiles').insert({ 
-                user_id: userLineId, 
-                full_name: name.value.trim(), 
-                phone: tel.value.trim(),
-                birthday: birth.value,
-                gender: selectedGender,
-                email: email.value.trim()
+                user_id: userLineId, full_name: name.value.trim(), phone: tel.value.trim(),
+                birthday: fullBirth, gender: selectedGender, email: email.value.trim()
             });
 
             if(!error) location.reload(); else alert("註冊失敗：" + error.message);
@@ -211,7 +228,15 @@
             feather.replace();
         }
 
-        function clearError(el) { el.classList.remove('error'); const tag=document.getElementById('tag-'+el.id); if(tag) tag.style.display='none'; }
+        function clearError(el) { 
+            el.classList.remove('error'); 
+            const tag = document.getElementById('tag-'+el.id.replace(/-[ymd]$/,'')); 
+            if(tag) tag.style.display='none'; 
+            if(el.id.startsWith('reg-birth')){
+                ['y','m','d'].forEach(suffix => document.getElementById('reg-birth-'+suffix).classList.remove('error'));
+                document.getElementById('tag-reg-birth').style.display='none';
+            }
+        }
         window.onload = init;
     </script>
 </body>
