@@ -11,7 +11,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
     
     <style>
-        /* 修正：將全站主色改為 #28b0eb */
         :root { --primary: #28b0eb; --bg: #f2f4f6; --white: #ffffff; --text: #191f28; --sub: #4e5968; --gray: #adb5bd; --error: #f44336; }
         
         body { font-family: 'Noto Sans TC', sans-serif; background-color: var(--bg); margin: 0; padding: 0; color: var(--text); -webkit-font-smoothing: antialiased; touch-action: manipulation; }
@@ -23,12 +22,40 @@
         .page-title { flex: 1; text-align: center; font-weight: 900; font-size: 20px; margin-right: 24px; }
         .page-content { display: none; padding: 0 16px 280px 16px; min-height: 100vh; box-sizing: border-box; }
         .page-content.active { display: block; }
-        .top-spacer { height: 85px; width: 100%; }
+        .top-spacer { height: 10px; width: 100%; }
 
-        .logo-container { padding: 20px 16px 10px 16px; display: flex; align-items: flex-start; }
+        /* 修正：Logo 區塊固定在最上方 */
+        .fixed-header { 
+            position: sticky; 
+            top: 0; 
+            background: var(--bg); 
+            z-index: 110; 
+            padding: 20px 16px 10px 16px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+        }
         .page-logo { height: 45px; width: auto; object-fit: contain; }
 
-        .category-wrapper { position: sticky; top: 0; background: var(--bg); margin: 0 -16px 20px -16px; padding: 10px 16px; overflow-x: auto; display: flex; gap: 8px; scrollbar-width: none; z-index: 90; }
+        /* 修正：新增商品按鈕固定於 Logo 右側 */
+        .add-btn { 
+            position: relative; /* 改為相對 Header 定位 */
+            width: 44px; 
+            height: 44px; 
+            background: var(--primary); 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            color: white; 
+            border: none; 
+            box-shadow: 0 4px 12px rgba(40, 176, 235, 0.2); 
+            cursor: pointer; 
+            top: auto;
+            right: auto;
+        }
+
+        .category-wrapper { position: sticky; top: 75px; background: var(--bg); margin: 0 -16px 20px -16px; padding: 10px 16px; overflow-x: auto; display: flex; gap: 8px; scrollbar-width: none; z-index: 90; }
         .cat-pill { white-space: nowrap; padding: 10px 20px; background: #fff; border-radius: 50px; font-size: 14px; font-weight: 700; color: var(--sub); box-shadow: 0 2px 6px rgba(0,0,0,0.05); flex-shrink: 0; }
         .cat-pill.active { background: var(--primary); color: #fff; box-shadow: 0 4px 12px rgba(40, 176, 235, 0.3); }
 
@@ -90,7 +117,6 @@
         .detail-val { font-weight: 700; text-align: right; flex: 1; margin-left: 20px; word-break: break-all; }
         .copy-btn { background: #eee; border: none; padding: 4px 8px; border-radius: 8px; font-size: 10px; color: var(--sub); cursor: pointer; margin-left: 8px; display: inline-flex; align-items: center; gap: 4px; vertical-align: middle; }
 
-        .add-btn { position: fixed; top: 20px; right: 20px; width: 48px; height: 48px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; z-index: 300; border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.15); cursor: pointer; }
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; padding: 12px 0 calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid #e5e8eb; z-index: 200; }
         .nav-item { color: #adb5bd; text-align: center; flex: 1; font-size: 11px; font-weight: 900; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; }
         .nav-item.active { color: var(--primary); }
@@ -99,12 +125,11 @@
 </head>
 <body>
 
-    <button id="add-btn-main" class="add-btn" onclick="openAddModal()"><i data-feather="plus"></i></button>
-
     <div id="main-app">
         <section id="page-shop" class="page-content active">
-            <div class="logo-container">
+            <div class="fixed-header">
                 <img src="https://raw.githubusercontent.com/ian-0326/KOR_IAN1004/main/KORIAN.png" alt="KOR.IAN Logo" class="page-logo">
+                <button id="add-btn-main" class="add-btn" onclick="openAddModal()"><i data-feather="plus"></i></button>
             </div>
             
             <div class="category-wrapper" id="category-bar">
@@ -285,7 +310,7 @@
             } catch(e){ alert("失敗："+e.message); btn.disabled=false; btn.innerText="確認下單"; }
         }
 
-        function switchPage(p) { document.querySelectorAll('.page-content').forEach(e=>e.classList.remove('active')); document.getElementById('page-'+p).classList.add('active'); document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active')); if(document.getElementById('nav-'+p)) document.getElementById('nav-'+p).classList.add('active'); document.getElementById('add-btn-main').style.display = (p==='shop')?'flex':'none'; let t = Object.values(cart).reduce((s,i)=>s+i.qty,0); document.getElementById('cart-bar').style.display=(t>0&&p==='shop')?'flex':'none'; if(p==='checkout') renderCheckout(); if(p==='shipping'){ calculateFinal(); document.getElementById('shipping-summary').classList.remove('expanded'); } window.scrollTo(0,0); feather.replace(); }
+        function switchPage(p) { document.querySelectorAll('.page-content').forEach(e=>e.classList.remove('active')); document.getElementById('page-'+p).classList.add('active'); document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active')); if(document.getElementById('nav-'+p)) document.getElementById('nav-'+p).classList.add('active'); let t = Object.values(cart).reduce((s,i)=>s+i.qty,0); document.getElementById('cart-bar').style.display=(t>0&&p==='shop')?'flex':'none'; if(p==='checkout') renderCheckout(); if(p==='shipping'){ calculateFinal(); document.getElementById('shipping-summary').classList.remove('expanded'); } window.scrollTo(0,0); feather.replace(); }
         function openAddModal() { document.body.classList.add('modal-open'); document.getElementById('add-modal-content').style.display = 'flex'; document.getElementById('add-modal-success').style.display = 'none'; initTextareas(); document.getElementById('add-modal').style.display='flex'; }
         function closeModal(id) { document.body.classList.remove('modal-open'); document.getElementById(id).style.display='none'; }
         window.onload = init;
