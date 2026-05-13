@@ -16,7 +16,7 @@
         body { font-family: 'Noto Sans TC', sans-serif; background-color: var(--bg); margin: 0; padding: 0; color: var(--text); -webkit-font-smoothing: antialiased; touch-action: manipulation; }
 
         .nav-header { display: flex; align-items: center; padding: 20px 16px; background: var(--bg); position: sticky; top: 0; z-index: 100; }
-        .back-btn { background: none; border: none; padding: 0; cursor: pointer; color: var(--text); display: flex; align-items: center; }
+        .back-btn { background: none; border: none; padding: 10px; cursor: pointer; color: var(--text); display: flex; align-items: center; }
         .page-title { flex: 1; text-align: center; font-weight: 900; font-size: 20px; margin-right: 24px; }
         .page-content { display: none; padding: 0 16px 280px 16px; min-height: 100vh; box-sizing: border-box; }
         .page-content.active { display: block; }
@@ -40,10 +40,11 @@
         .list-row { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-bottom: 1px solid #f2f4f6; }
         .list-row:last-child { border-bottom: none; }
 
-        /* 修改：代購清單內商品與款式分行顯示 */
+        /* 修改：代購清單排版校正 */
         .list-left { flex: 1; padding-right: 15px; }
-        .list-n { font-size: 16px; font-weight: 900; color: #000; display: block; margin-bottom: 4px; line-height: 1.3; }
-        .list-s { font-size: 12px; color: var(--gray); display: block; font-weight: 400; }
+        .list-n { font-size: 16px; font-weight: 900; color: #000; display: inline-block; line-height: 1.3; }
+        .list-s { font-size: 12px; color: var(--gray); display: inline-block; margin-left: 6px; font-weight: 400; }
+        .list-p { font-size: 14px; color: var(--primary); display: block; font-weight: 900; margin-top: 4px; }
 
         .form-item { margin-bottom: 20px; }
         .form-label { display: flex; align-items: center; font-size: 14px; font-weight: 700; margin-bottom: 10px; color: var(--sub); padding-left: 4px; }
@@ -51,7 +52,6 @@
         .input-box { width: 100%; padding: 18px; border: none; border-radius: 20px; font-size: 16px; outline: none; background: #f2f4f6; box-sizing: border-box; transition: 0.2s; }
         .input-box:focus { background: #fff; box-shadow: 0 0 0 2px var(--primary); }
         .input-box.error { background: #fff5f5; box-shadow: 0 0 0 2px var(--error); }
-        .input-hint { font-size: 12px; color: var(--error); margin-top: 8px; padding: 0 4px; line-height: 1.5; opacity: 0.8; }
 
         .ship-group { display: flex; gap: 12px; }
         .ship-btn { flex: 1; padding: 16px; background: #f2f4f6; border-radius: 20px; text-align: center; font-weight: 700; color: var(--sub); cursor: pointer; }
@@ -66,22 +66,19 @@
         .expand-toggle { color: var(--gray); display: flex; align-items: center; transition: 0.3s; }
         .bottom-summary.expanded .expand-toggle { transform: rotate(180deg); }
         .btn-main { background: var(--primary); color: #fff; border: none; padding: 18px; width: 100%; border-radius: 20px; font-weight: 700; font-size: 17px; cursor: pointer; }
-        .btn-main:disabled { background: var(--gray); opacity: 0.7; }
 
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 500; align-items: center; justify-content: center; padding: 20px; }
         .modal-card { background: #fff; border-radius: 36px; padding: 32px 24px; width: 100%; max-width: 360px; max-height: 85vh; box-sizing: border-box; display: flex; flex-direction: column; }
         .modal-header { text-align: center; margin-bottom: 20px; flex-shrink: 0; }
         .order-id-label { font-size: 11px; color: var(--gray); font-weight: 700; margin-top: 4px; display: block; }
         .modal-body { overflow-y: auto; flex-grow: 1; padding-right: 4px; }
-        .modal-body::-webkit-scrollbar { width: 4px; }
-        .modal-body::-webkit-scrollbar-thumb { background: #eee; border-radius: 10px; }
         .modal-section { text-align: left; margin-bottom: 16px; padding: 16px; background: #f8f9fa; border-radius: 24px; }
         .modal-section-title { font-size: 12px; font-weight: 900; color: var(--gray); margin-bottom: 10px; display: block; }
         .order-item-row { display: flex; justify-content: space-between; align-items: flex-start; font-size: 14px; margin-bottom: 8px; line-height: 1.4; }
         .order-item-name { text-align: left; font-weight: 700; color: var(--text); padding-right: 15px; flex: 1; }
         .order-item-qty { text-align: right; font-weight: 900; color: var(--primary); white-space: nowrap; }
         .detail-item { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; }
-        .detail-val { font-weight: 700; text-align: right; flex: 1; margin-left: 20px; word-break: break-all; }
+        .detail-val { font-weight: 700; text-align: right; flex: 1; margin-left: 20px; }
         .modal-footer { flex-shrink: 0; padding-top: 10px; }
 
         .add-btn { position: fixed; top: 20px; right: 20px; width: 48px; height: 48px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; z-index: 300; border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
@@ -129,14 +126,14 @@
             <div class="nav-header"><button class="back-btn" onclick="switchPage('checkout')"><i data-feather="chevron-left"></i></button><div class="page-title">取件資料</div></div>
             <div class="card-box">
                 <div class="form-item"><label class="form-label">取件姓名<span class="req-tag" id="tag-ship-name">*必填</span></label><input type="text" id="ship-name" class="input-box" placeholder="收件人姓名" oninput="clearError(this)"></div>
-                <div class="form-item"><label class="form-label">聯絡電話<span class="req-tag" id="tag-ship-tel">*必填</span></label><input type="tel" id="ship-tel" class="input-box" placeholder="09xxxxxxxx" maxlength="10" oninput="clearError(this)"><div class="input-hint">*請提供正確的取件人姓名及聯絡電話，資料若有誤導致無法取件概不負責。</div></div>
+                <div class="form-item"><label class="form-label">聯絡電話<span class="req-tag" id="tag-ship-tel">*必填</span></label><input type="tel" id="ship-tel" class="input-box" placeholder="09xxxxxxxx" maxlength="10" oninput="clearError(this)"><div style="font-size:12px; color:var(--error); margin-top:8px; line-height:1.5;">*請提供正確的取件人資訊，資料有誤導致無法取件概不負責。</div></div>
                 <div class="form-item">
                     <label class="form-label">配送方式</label>
                     <div class="ship-group"><div class="ship-btn active" id="btn-face" onclick="setShipping('face')">面交</div><div class="ship-btn" id="btn-711" onclick="setShipping('711')">7-11 配送</div></div>
                     <div id="hint-face" style="font-size:12px; color:var(--primary); margin-top:12px; line-height:1.5;">面交僅限台中大雅、梧棲、沙鹿區，請記得到LINE@上溝通喔！</div>
                     <div id="form-711" style="display:none; margin-top:15px;"><div class="form-item"><label class="form-label">取件門市<span class="req-tag" id="tag-ship-store">*必填</span></label><input type="text" id="ship-store" class="input-box" placeholder="取件門市" oninput="clearError(this)"></div><div class="form-item"><label class="form-label">門市代碼<span class="req-tag" id="tag-ship-code">*必填</span></label><input type="text" id="ship-code" class="input-box" placeholder="門市代碼" oninput="clearError(this)"></div></div>
                 </div>
-                <div class="list-row" style="border-top:1px solid #f2f4f6; margin-top: 20px; padding-top: 20px;"><div class="list-left"><span class="list-n">包材、紙箱</span><span class="list-s">NT$ 10 / 個</span></div><div class="qty-ctrl"><button class="qty-btn" onclick="updatePacking(-1)"><i data-feather="minus" style="width:16px;"></i></button><span id="qty-packing" class="qty-num">1</span><button class="qty-btn" onclick="updatePacking(1)"><i data-feather="plus" style="width:16px;"></i></button></div></div>
+                <div class="list-row" style="border-top:1px solid #f2f4f6; margin-top: 20px; padding-top: 20px;"><div class="list-left"><span style="font-weight:700;">包材、紙箱</span><br><small style="color:var(--gray);">NT$ 10 / 個</small></div><div class="qty-ctrl"><button class="qty-btn" onclick="updatePacking(-1)"><i data-feather="minus" style="width:16px;"></i></button><span id="qty-packing" class="qty-num">1</span><button class="qty-btn" onclick="updatePacking(1)"><i data-feather="plus" style="width:16px;"></i></button></div></div>
             </div>
             <div class="bottom-summary" id="shipping-summary">
                 <div class="summary-details"><div class="row-sm"><span>代購商品小計</span><span id="sum-items">NT$ 0</span></div><div class="row-sm"><span>物流運費</span><span id="sum-shipping">NT$ 0</span></div><div class="row-sm"><span>包材費用</span><span id="sum-packing">NT$ 10</span></div></div>
@@ -146,7 +143,7 @@
         </section>
 
         <section id="page-passport" class="page-content"><div class="top-spacer"></div><div class="card-box" style="text-align: center;"><h3>我的護照</h3><div id="user-info" style="font-weight: 700; color: var(--primary);">載入中...</div><button class="btn-main" style="background:#f2f4f6; color:#adb5bd; margin-top:30px; box-shadow:none;" onclick="liff.logout(); location.reload();">登出帳號</button></div></section>
-
+        
         <div id="cart-bar" class="cart-bar" onclick="switchPage('checkout')"><span>已選 <span id="cart-qty" style="color:var(--primary); font-weight:900;">0</span> 件商品</span><span style="font-weight:900;">查看清單 →</span></div>
         <nav class="bottom-nav" id="bottom-nav"><div class="nav-item active" onclick="switchPage('shop')"><i data-feather="shopping-bag"></i><span>弘大漫遊</span></div><div class="nav-item" onclick="switchPage('passport')"><i data-feather="user"></i><span>我的護照</span></div></nav>
     </div>
@@ -200,7 +197,7 @@
         function filterCategory(cat, el) { document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active')); el.classList.add('active'); renderProducts(cat === '全部' ? allProducts : allProducts.filter(p => p.category === cat)); }
         function updateQty(id, delta) { const p = allProducts.find(x => x.id === id); if (!cart[id]) cart[id] = { id: p.id, name: p.name_zh, option: p.option, price: p.price_nt, qty: 0 }; cart[id].qty = Math.max(0, cart[id].qty + delta); if(document.getElementById(`qty-${id}`)) document.getElementById(`qty-${id}`).innerText = cart[id].qty; let t = Object.values(cart).reduce((s, i) => s + i.qty, 0); document.getElementById('cart-bar').style.display = t > 0 ? 'flex' : 'none'; document.getElementById('cart-qty').innerText = t; if(document.getElementById('page-checkout').classList.contains('active')) renderCheckout(); if(document.getElementById('page-shipping').classList.contains('active')) calculateFinal(); }
 
-        // 修正：代購清單頁面渲染邏輯 (分行顯示)
+        // 修改：代購清單頁面渲染邏輯 (款式在後方，價格在下方黃色顯示)
         function renderCheckout() { 
             let html = '', total = 0; 
             Object.values(cart).forEach(item => { 
@@ -208,8 +205,11 @@
                     html += `
                     <div class="list-row">
                         <div class="list-left">
-                            <span class="list-n">${item.name}</span>
-                            <span class="list-s">${item.option ? item.option : '預設款式'} | NT$ ${Number(item.price).toLocaleString()}</span>
+                            <div>
+                                <span class="list-n">${item.name}</span>
+                                ${item.option ? `<span class="list-s">${item.option}</span>` : ''}
+                            </div>
+                            <span class="list-p">NT$ ${Number(item.price).toLocaleString()}</span>
                         </div>
                         <div class="qty-ctrl">
                             <button class="qty-btn" onclick="updateQty('${item.id}', -1)"><i data-feather="minus" style="width:16px;"></i></button>
