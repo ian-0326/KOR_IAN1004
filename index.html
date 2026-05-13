@@ -71,13 +71,12 @@
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 500; align-items: center; justify-content: center; padding: 20px; }
         .modal-card { background: #fff; border-radius: 36px; padding: 24px 20px 28px 20px; width: 100%; max-width: 360px; max-height: 85vh; box-sizing: border-box; display: flex; flex-direction: column; box-shadow: 0 15px 50px rgba(0,0,0,0.2); }
         .modal-header { text-align: center; margin-bottom: 15px; flex-shrink: 0; }
-        .modal-body { overflow-y: auto; flex-grow: 1; padding-right: 4px; margin-bottom: 15px; }
+        .modal-body { overflow-y: auto; flex-grow: 1; padding-right: 0; margin-bottom: 15px; width: 100%; }
         .modal-body::-webkit-scrollbar { width: 4px; }
         .modal-body::-webkit-scrollbar-thumb { background: #eee; border-radius: 10px; }
         .modal-footer { flex-shrink: 0; display: flex; justify-content: center; width: 100%; }
         .modal-footer .btn-main { width: calc(100% - 24px); }
         
-        /* 訂單明細排版修正樣式 */
         .modal-section { text-align: left; margin-bottom: 16px; padding: 16px; background: #f8f9fa; border-radius: 24px; }
         .modal-section-title { font-size: 12px; font-weight: 900; color: var(--gray); margin-bottom: 10px; display: block; }
         .order-item-row { display: flex; justify-content: space-between; align-items: flex-start; font-size: 14px; margin-bottom: 8px; line-height: 1.4; }
@@ -85,6 +84,13 @@
         .order-item-qty { text-align: right; font-weight: 900; color: var(--primary); white-space: nowrap; }
         .detail-item { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; }
         .detail-val { font-weight: 700; text-align: right; flex: 1; margin-left: 20px; word-break: break-all; }
+
+        /* 修正：複製按鈕樣式 */
+        .copy-btn { 
+            background: #eee; border: none; padding: 4px 8px; border-radius: 8px; 
+            font-size: 10px; color: var(--sub); cursor: pointer; margin-left: 8px;
+            display: inline-flex; align-items: center; gap: 4px; vertical-align: middle;
+        }
 
         .add-btn { position: fixed; top: 20px; right: 20px; width: 48px; height: 48px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; z-index: 300; border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.15); cursor: pointer; }
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; padding: 12px 0 calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid #e5e8eb; z-index: 200; }
@@ -121,10 +127,7 @@
         <section id="page-checkout" class="page-content">
             <div class="nav-header"><button class="back-btn" onclick="switchPage('shop')"><i data-feather="chevron-left"></i></button><div class="page-title">代購清單</div></div>
             <div class="card-box" id="checkout-container"></div>
-            <div class="bottom-summary">
-                <div class="row-lg" style="cursor:default; padding: 5px 0;"><span>清單總計</span><span class="price-lg" id="checkout-grand-total">NT$ 0</span></div>
-                <button class="btn-main" onclick="switchPage('shipping')">填寫資料</button>
-            </div>
+            <div class="bottom-summary"><div class="row-lg" style="cursor:default; padding: 5px 0;"><span>清單總計</span><span class="price-lg" id="checkout-grand-total">NT$ 0</span></div><button class="btn-main" onclick="switchPage('shipping')">填寫資料</button></div>
         </section>
 
         <section id="page-shipping" class="page-content">
@@ -164,7 +167,10 @@
         <div class="modal-card">
             <div class="modal-header">
                 <h2 style="font-weight:900; margin:0; font-size: 22px;">訂單明細</h2>
-                <span class="order-id-label" id="m-order-id">編號: --------</span>
+                <div>
+                    <span class="order-id-label" id="m-order-id" style="display:inline-block;">編號: --------</span>
+                    <button id="copy-btn" class="copy-btn" onclick="copyOrderId()"><i data-feather="copy" style="width:12px;"></i>複製</button>
+                </div>
             </div>
             
             <div class="modal-body">
@@ -177,22 +183,15 @@
 
                 <div class="modal-section">
                     <span class="modal-section-title">訂購商品</span>
-                    <div id="m-items-container">
-                        </div>
+                    <div id="m-items-container"></div>
                     <div class="detail-item" style="margin-top:15px; border-top:1px solid #eee; padding-top:12px;">
                         <div style="font-weight:900; color:var(--text);">匯款金額</div>
                         <div class="detail-val" id="m-total" style="color:var(--primary); font-size:18px; font-weight:900;"></div>
                     </div>
                 </div>
-                
-                <p style="font-size: 12px; color: var(--gray); text-align: center; line-height: 1.5; margin: 10px 0;">
-                    請截圖此畫面回傳至 LINE@<br>核對金額無誤後即可進行匯款。
-                </p>
+                <p style="font-size: 12px; color: var(--gray); text-align: center; line-height: 1.5; margin: 10px 0;">請截圖此畫面回傳至 LINE@<br>核對金額無誤後即可進行匯款。</p>
             </div>
-
-            <div class="modal-footer">
-                <button class="btn-main" onclick="location.reload()">我知道了</button>
-            </div>
+            <div class="modal-footer"><button class="btn-main" onclick="location.reload()">我知道了</button></div>
         </div>
     </div>
 
@@ -222,12 +221,12 @@
         const SUPABASE_URL = 'https://ivpctyqlrkjstfsoweeh.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml2cGN0eXFscmtqc3Rmc293ZWVoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTk1MTksImV4cCI6MjA4ODc3NTUxOX0.DYgzhaTH3_5NFwv009ZfZAshfUnCW2PeTuNcJ9feyMU';
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        let cart = {}, allProducts = [], userLineId = "unknown", shipMethod = 'face', packingQty = 1;
+        let cart = {}, allProducts = [], userLineId = "unknown", shipMethod = 'face', packingQty = 1, currentRawOrderId = "";
 
         async function init() { try { await fetchProducts(); await liff.init({ liffId: LIFF_ID }); if (!liff.isLoggedIn()) { liff.login(); return; } const p = await liff.getProfile(); userLineId = p.userId; document.getElementById('user-info').innerText = p.displayName; feather.replace(); initTextareas(); } catch (e) { console.error(e); } }
         async function fetchProducts() { const { data } = await _supabase.from('products').select('*').eq('is_active', true); if(data) { allProducts = sortSmartly(data); renderProducts(allProducts); } }
         function sortSmartly(ps) { let s = [...ps].sort((a,b)=>(b.order_count||0)-(a.order_count||0)); let res = [], ids = new Set(); for(let p of s){ if(ids.has(p.id)) continue; res.push(p); ids.add(p.id); let prefix = p.name_zh.substring(0,4); let sibs = s.filter(x=>!ids.has(x.id)&&x.name_zh.startsWith(prefix)); sibs.forEach(x=>{res.push(x); ids.add(x.id);}); } return res; }
-        function renderProducts(ps) { document.getElementById('item-list').innerHTML = ps.map(p => `<div class="item-card"><div class="item-main" onclick="window.open('${p.olive_url}','_blank')"><div><span class="item-name">${p.name_zh}</span>${p.option ? `<span class="item-option">${p.option}</span>`:''}</div><span class="item-price">NT$ ${Number(p.price_nt).toLocaleString()}</span></div><div class="qty-ctrl"><button class="qty-btn" onclick="updateQty('${p.id}',-1)"><i data-feather="minus" style="width:16px;"></i></button><span class="qty-num" id="qty-${p.id}">${cart[p.id]?cart[p.id].qty:0}</span><button class="qty-btn" onclick="updateQty('${p.id}',1)"><i data-feather="plus" style="width:18px;"></i></button></div></div>`).join(''); feather.replace(); }
+        function renderProducts(ps) { document.getElementById('item-list').innerHTML = ps.map(p => `<div class="item-card"><div class="item-main" onclick="window.open('${p.olive_url}','_blank')"><div><span class="item-name">${p.name_zh}</span>${p.option ? `<span class="item-option">${p.option}</span>`:''}</div><span class="item-price">NT$ ${Number(p.price_nt).toLocaleString()}</span></div><div class="qty-ctrl"><button class="qty-btn" onclick="updateQty('${p.id}',-1)"><i data-feather="minus" style="width:18px;"></i></button><span class="qty-num" id="qty-${p.id}">${cart[p.id]?cart[p.id].qty:0}</span><button class="qty-btn" onclick="updateQty('${p.id}',1)"><i data-feather="plus" style="width:18px;"></i></button></div></div>`).join(''); feather.replace(); }
         function filterCategory(cat, el) { document.querySelectorAll('.cat-pill').forEach(p=>p.classList.remove('active')); el.classList.add('active'); renderProducts(cat==='全部'?allProducts:allProducts.filter(p=>p.category===cat)); }
         function updateQty(id, d) { const p = allProducts.find(x=>x.id===id); if(!cart[id]) cart[id]={id:p.id, name:p.name_zh, option:p.option, price:p.price_nt, qty:0}; cart[id].qty=Math.max(0, cart[id].qty+d); if(document.getElementById(`qty-${id}`)) document.getElementById(`qty-${id}`).innerText=cart[id].qty; let t = Object.values(cart).reduce((s,i)=>s+i.qty,0); document.getElementById('cart-bar').style.display=(t>0&&document.getElementById('page-shop').classList.contains('active'))?'flex':'none'; document.getElementById('cart-qty').innerText=t; if(document.getElementById('page-checkout').classList.contains('active')) renderCheckout(); if(document.getElementById('page-shipping').classList.contains('active')) calculateFinal(); }
         function renderCheckout() { let h='', t=0; Object.values(cart).forEach(i=>{ if(i.qty>0){ h+=`<div class="list-row"><div class="list-left"><div><span class="list-n">${i.name}</span>${i.option?`<span class="list-s">${i.option}</span>`:''}</div><span class="list-p">NT$ ${Number(i.price).toLocaleString()}</span></div><div class="qty-ctrl"><button class="qty-btn" onclick="updateQty('${i.id}',-1)"><i data-feather="minus" style="width:16px;"></i></button><span class="qty-num">${i.qty}</span><button class="qty-btn" onclick="updateQty('${i.id}',1)"><i data-feather="plus" style="width:16px;"></i></button></div></div>`; t+=i.price*i.qty; }}); document.getElementById('checkout-container').innerHTML=h||'<p style="text-align:center;padding:40px 0;color:#999;">尚未選擇商品</p>'; document.getElementById('checkout-grand-total').innerText=`NT$ ${t.toLocaleString()}`; feather.replace(); }
@@ -236,9 +235,22 @@
         function updatePacking(d) { const min=shipMethod==='711'?1:0; packingQty=Math.max(min, packingQty+d); document.getElementById('qty-packing').innerText=packingQty; calculateFinal(); }
         function calculateFinal() { let it=Object.values(cart).reduce((s,i)=>s+(i.price*i.qty),0); let sf=shipMethod==='711'?(80*packingQty):0; let pf=packingQty*10; document.getElementById('sum-items').innerText=`NT$ ${it.toLocaleString()}`; document.getElementById('sum-shipping').innerText=`NT$ ${sf.toLocaleString()}`; document.getElementById('sum-packing').innerText=`NT$ ${pf.toLocaleString()}`; document.getElementById('sum-total').innerText=`NT$ ${(it+sf+pf).toLocaleString()}`; }
         function clearError(el) { el.classList.remove('error'); const tag=document.getElementById('tag-'+el.id); if(tag) tag.style.display='none'; if(el.tagName === 'TEXTAREA') autoGrow(el); }
-
         function initTextareas() { const ts = document.querySelectorAll('textarea.input-box'); ts.forEach(t => { t.style.height = '48px'; }); }
         function autoGrow(element) { element.style.height = '48px'; if (element.scrollHeight > 48) { element.style.height = (element.scrollHeight) + "px"; } }
+
+        // 修正：複製訂單編號函式
+        async function copyOrderId() {
+            try {
+                await navigator.clipboard.writeText(currentRawOrderId);
+                const btn = document.getElementById('copy-btn');
+                btn.innerHTML = '<i data-feather="check" style="width:12px;"></i>已複製';
+                feather.replace();
+                setTimeout(() => {
+                    btn.innerHTML = '<i data-feather="copy" style="width:12px;"></i>複製';
+                    feather.replace();
+                }, 2000);
+            } catch (err) { console.error('無法複製', err); }
+        }
 
         async function upload() {
             const btn = document.getElementById('btn-upload');
@@ -253,14 +265,7 @@
             if(!valid) return;
             btn.disabled=true; btn.innerText="處理中...";
             const { error } = await _supabase.from('products').insert({ category: cat.value, name_zh: name.value.trim(), option: opt.value.trim()||"", price_nt: price.value, olive_url: url.value.trim(), is_active: false, created_by: userLineId });
-            if(!error) { 
-                document.getElementById('add-modal-content').style.display = 'none';
-                document.getElementById('add-modal-success').style.display = 'flex';
-                document.getElementById('add-modal-success').style.flexDirection = 'column';
-                feather.replace();
-            } else { 
-                alert('失敗：'+error.message); btn.disabled=false; btn.innerText="確認登錄"; 
-            }
+            if(!error) { document.getElementById('add-modal-content').style.display = 'none'; document.getElementById('add-modal-success').style.display = 'flex'; document.getElementById('add-modal-success').style.flexDirection = 'column'; feather.replace(); } else { alert('失敗：'+error.message); btn.disabled=false; btn.innerText="確認登錄"; }
         }
 
         async function submitFinalOrder() {
@@ -273,14 +278,13 @@
             if(!isValid) return; btn.disabled=true; btn.innerText="下單中...";
             let itemsStr = Object.values(cart).filter(i=>i.qty>0).map(i=>`${i.name}*${i.qty}`).join(', ');
             
-            // 修正：彈窗內商品左右排版數據準備
+            // 修正：明細過濾掉包材
             let itemsDisplay = Object.values(cart).filter(i => i.qty > 0).map(i => `
                 <div class="order-item-row">
                     <div class="order-item-name">${i.name} ${i.option ? '('+i.option+')' : ''}</div>
                     <div class="order-item-qty">× ${i.qty}</div>
                 </div>
             `).join('');
-            itemsDisplay += `<div class="order-item-row"><div class="order-item-name">包材紙箱</div><div class="order-item-qty">× ${packingQty}</div></div>`;
 
             const finalMethod = shipMethod === 'face' ? '面交' : '7-11取件';
             const finalStore = shipMethod === '711' ? `${store.value}(${code.value})` : '台中指定區';
@@ -290,8 +294,9 @@
                 if(error) throw error;
                 for(let i of Object.values(cart)){ if(i.qty>0) await _supabase.rpc('increment_order_count',{row_id:i.id, inc_val:parseInt(i.qty)}); }
                 
-                const oid = data[0].id; 
-                document.getElementById('m-order-id').innerText="編號: "+oid.slice(-10).toUpperCase();
+                const oid = data[0].id;
+                currentRawOrderId = oid.slice(-10).toUpperCase(); // 存儲供複製用
+                document.getElementById('m-order-id').innerText="編號: " + currentRawOrderId;
                 document.getElementById('m-items-container').innerHTML = itemsDisplay;
                 document.getElementById('m-name').innerText=name.value; 
                 document.getElementById('m-tel').innerText=tel.value; 
@@ -302,17 +307,8 @@
         }
 
         function switchPage(p) { document.querySelectorAll('.page-content').forEach(e=>e.classList.remove('active')); document.getElementById('page-'+p).classList.add('active'); document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active')); if(document.getElementById('nav-'+p)) document.getElementById('nav-'+p).classList.add('active'); document.getElementById('add-btn-main').style.display = (p==='shop')?'flex':'none'; let t = Object.values(cart).reduce((s,i)=>s+i.qty,0); document.getElementById('cart-bar').style.display=(t>0&&p==='shop')?'flex':'none'; if(p==='checkout') renderCheckout(); if(p==='shipping'){ calculateFinal(); document.getElementById('shipping-summary').classList.remove('expanded'); } window.scrollTo(0,0); feather.replace(); }
-        function openAddModal() { 
-            document.body.classList.add('modal-open');
-            document.getElementById('add-modal-content').style.display = 'flex';
-            document.getElementById('add-modal-success').style.display = 'none';
-            initTextareas(); 
-            document.getElementById('add-modal').style.display='flex'; 
-        }
-        function closeModal(id) { 
-            document.body.classList.remove('modal-open');
-            document.getElementById(id).style.display='none'; 
-        }
+        function openAddModal() { document.body.classList.add('modal-open'); document.getElementById('add-modal-content').style.display = 'flex'; document.getElementById('add-modal-success').style.display = 'none'; initTextareas(); document.getElementById('add-modal').style.display='flex'; }
+        function closeModal(id) { document.body.classList.remove('modal-open'); document.getElementById(id).style.display='none'; }
         window.onload = init;
     </script>
 </body>
