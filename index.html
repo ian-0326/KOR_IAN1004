@@ -62,62 +62,20 @@
         .btn-main { background: var(--primary); color: #fff; border: none; padding: 18px; width: 100%; border-radius: 20px; font-weight: 700; font-size: 17px; cursor: pointer; }
         .btn-main:disabled { background: var(--gray); opacity: 0.7; }
 
-        /* 修正：彈窗整體長度控制 */
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 500; align-items: center; justify-content: center; padding: 20px; }
-        .modal-card { 
-            background: #fff; 
-            border-radius: 36px; 
-            padding: 32px 24px; 
-            width: 100%; 
-            max-width: 360px; 
-            max-height: 85vh; /* 限制最高為螢幕 85% */
-            box-sizing: border-box; 
-            display: flex;
-            flex-direction: column;
-        }
-        
+        .modal-card { background: #fff; border-radius: 36px; padding: 32px 24px; width: 100%; max-width: 360px; max-height: 85vh; box-sizing: border-box; display: flex; flex-direction: column; }
         .modal-header { text-align: center; margin-bottom: 20px; flex-shrink: 0; }
         .order-id-label { font-size: 11px; color: var(--gray); font-weight: 700; margin-top: 4px; display: block; }
-        
-        /* 修正：彈窗內部區塊滾動機制 */
-        .modal-body { 
-            overflow-y: auto; 
-            flex-grow: 1; 
-            padding-right: 4px;
-            scrollbar-width: thin;
-        }
+        .modal-body { overflow-y: auto; flex-grow: 1; padding-right: 4px; }
         .modal-body::-webkit-scrollbar { width: 4px; }
         .modal-body::-webkit-scrollbar-thumb { background: #eee; border-radius: 10px; }
-
         .modal-section { text-align: left; margin-bottom: 16px; padding: 16px; background: #f8f9fa; border-radius: 24px; }
         .modal-section-title { font-size: 12px; font-weight: 900; color: var(--gray); margin-bottom: 10px; display: block; }
-        
-        /* 修正：商品清單一行一個且左右對齊 */
-        .order-item-row { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: flex-start; 
-            font-size: 14px; 
-            margin-bottom: 8px; 
-            line-height: 1.4;
-        }
-        .order-item-name { 
-            text-align: left; 
-            font-weight: 700; 
-            color: var(--text); 
-            padding-right: 15px;
-            flex: 1;
-        }
-        .order-item-qty { 
-            text-align: right; 
-            font-weight: 900; 
-            color: var(--primary); 
-            white-space: nowrap; 
-        }
-
+        .order-item-row { display: flex; justify-content: space-between; align-items: flex-start; font-size: 14px; margin-bottom: 8px; line-height: 1.4; }
+        .order-item-name { text-align: left; font-weight: 700; color: var(--text); padding-right: 15px; flex: 1; }
+        .order-item-qty { text-align: right; font-weight: 900; color: var(--primary); white-space: nowrap; }
         .detail-item { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; }
         .detail-val { font-weight: 700; text-align: right; flex: 1; margin-left: 20px; word-break: break-all; }
-
         .modal-footer { flex-shrink: 0; padding-top: 10px; }
 
         .add-btn { position: fixed; top: 20px; right: 20px; width: 48px; height: 48px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; z-index: 300; border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
@@ -167,9 +125,12 @@
                     <label class="form-label">配送方式</label>
                     <div class="ship-group"><div class="ship-btn active" id="btn-face" onclick="setShipping('face')">面交</div><div class="ship-btn" id="btn-711" onclick="setShipping('711')">7-11 配送</div></div>
                     <div id="hint-face" style="font-size:12px; color:var(--primary); margin-top:12px; line-height:1.5;">面交僅限台中大雅、梧棲、沙鹿區，請記得到LINE@上溝通喔！</div>
-                    <div id="form-711" style="display:none; margin-top:15px;"><div class="form-item"><label class="form-label">取件門市<span class="req-tag" id="tag-ship-store">*必填</span></label><input type="text" id="ship-store" class="input-box" placeholder="取件門市" oninput="clearError(this)"></div><div class="form-item"><label class="form-label">門市代碼<span class="req-tag" id="tag-ship-code">*必填</span></label><input type="text" id="ship-code" class="input-box" placeholder="門市代碼" oninput="clearError(this)"></div></div>
+                    <div id="form-711" style="display:none; margin-top:15px;">
+                        <div class="form-item"><label class="form-label">取件門市<span class="req-tag" id="tag-ship-store">*必填</span></label><input type="text" id="ship-store" class="input-box" placeholder="取件門市" oninput="clearError(this)"></div>
+                        <div class="form-item"><label class="form-label">門市代碼<span class="req-tag" id="tag-ship-code">*必填</span></label><input type="text" id="ship-code" class="input-box" placeholder="門市代碼" oninput="clearError(this)"></div>
+                    </div>
                 </div>
-                <div class="list-row" style="border-top:1px solid #f2f4f6; margin-top: 20px; padding-top: 20px;"><div class="list-left"><span style="font-weight:700;">包材、紙箱</span><br><small style="color:var(--gray);">NT$ 10 / 個</small></div><div class="qty-ctrl"><button class="qty-btn" onclick="updatePacking(-1)"><i data-feather="minus" style="width:16px;"></i></button><span id="qty-packing" class="qty-num">1</span><button class="qty-btn" onclick="updatePacking(1)"><i data-feather="plus" style="width:16px;"></i></button></div></div>
+                <div class="list-row" style="border-top:1px solid #f2f4f6; margin-top: 20px; padding-top: 20px;"><div class="list-left"><span style="font-weight:700;">包材、紙箱</span><br><small style="color:var(--gray);">NT$ 10 / 個</small></div><div class="qty-ctrl"><button class="qty-btn" onclick="updatePacking(-1)"><i data-feather="minus" style="width:16px;"></i></button><span id="qty-packing" class="qty-val">1</span><button class="qty-btn" onclick="updatePacking(1)"><i data-feather="plus" style="width:16px;"></i></button></div></div>
             </div>
             <div class="bottom-summary" id="shipping-summary">
                 <div class="summary-details"><div class="row-sm"><span>代購商品小計</span><span id="sum-items">NT$ 0</span></div><div class="row-sm"><span>物流運費</span><span id="sum-shipping">NT$ 0</span></div><div class="row-sm"><span>包材費用</span><span id="sum-packing">NT$ 10</span></div></div>
@@ -179,44 +140,20 @@
         </section>
 
         <section id="page-passport" class="page-content"><div class="top-spacer"></div><div class="card-box" style="text-align: center;"><h3>我的護照</h3><div id="user-info" style="font-weight: 700; color: var(--primary);">載入中...</div><button class="btn-main" style="background:#f2f4f6; color:#adb5bd; margin-top:30px; box-shadow:none;" onclick="liff.logout(); location.reload();">登出帳號</button></div></section>
-
+        
         <div id="cart-bar" class="cart-bar" onclick="switchPage('checkout')"><span>已選 <span id="cart-qty" style="color:var(--primary); font-weight:900;">0</span> 件商品</span><span style="font-weight:900;">查看清單 →</span></div>
         <nav class="bottom-nav" id="bottom-nav"><div class="nav-item active" onclick="switchPage('shop')"><i data-feather="shopping-bag"></i><span>弘大漫遊</span></div><div class="nav-item" onclick="switchPage('passport')"><i data-feather="user"></i><span>我的護照</span></div></nav>
     </div>
 
     <div id="order-detail-modal" class="modal">
         <div class="modal-card">
-            <div class="modal-header">
-                <h2 style="font-weight:900; margin:0; font-size: 22px;">訂單明細</h2>
-                <span class="order-id-label" id="m-order-id">編號: --------</span>
-            </div>
-            
+            <div class="modal-header"><h2 style="font-weight:900; margin:0; font-size: 22px;">訂單明細</h2><span class="order-id-label" id="m-order-id">編號: --------</span></div>
             <div class="modal-body">
-                <div class="modal-section">
-                    <span class="modal-section-title">收件資訊</span>
-                    <div class="detail-item"><div class="detail-lbl">取件姓名</div><div class="detail-val" id="m-name"></div></div>
-                    <div class="detail-item"><div class="detail-lbl">聯絡電話</div><div class="detail-val" id="m-tel"></div></div>
-                    <div class="detail-item"><div class="detail-lbl">取件方式</div><div class="detail-val" id="m-method"></div></div>
-                </div>
-
-                <div class="modal-section">
-                    <span class="modal-section-title">訂購商品</span>
-                    <div id="m-items-container">
-                        </div>
-                    <div class="detail-item" style="margin-top:12px; border-top: 1px solid #eee; padding-top:12px;">
-                        <div class="detail-lbl" style="color:var(--text); font-weight:900;">匯款金額</div>
-                        <div class="detail-val" id="m-total" style="color:var(--primary); font-size:18px; font-weight:900;"></div>
-                    </div>
-                </div>
-                
-                <p style="font-size: 12px; color: var(--gray); text-align: center; line-height: 1.5; margin: 10px 0;">
-                    請截圖此畫面回傳至 LINE@<br>核對金額無誤後即可進行匯款。
-                </p>
+                <div class="modal-section"><span class="modal-section-title">收件資訊</span><div class="detail-item"><div class="detail-lbl">取件姓名</div><div class="detail-val" id="m-name"></div></div><div class="detail-item"><div class="detail-lbl">聯絡電話</div><div class="detail-val" id="m-tel"></div></div><div class="detail-item"><div class="detail-lbl">取件方式</div><div class="detail-val" id="m-method"></div></div></div>
+                <div class="modal-section"><span class="modal-section-title">訂購商品</span><div id="m-items-container" class="item-list-display"></div><div class="detail-item" style="margin-top:15px; border-top:1px solid #eee; padding-top:12px;"><div class="detail-lbl" style="color:var(--text); font-weight:900;">匯款金額</div><div class="detail-val" id="m-total" style="color:var(--primary); font-size:18px; font-weight:900;"></div></div></div>
+                <p style="font-size: 12px; color: var(--gray); text-align: center; line-height: 1.5; margin: 10px 0;">請截圖此畫面回傳至 LINE@<br>核對金額無誤後即可進行匯款。</p>
             </div>
-
-            <div class="modal-footer">
-                <button class="btn-main" onclick="location.reload()">我知道了</button>
-            </div>
+            <div class="modal-footer"><button class="btn-main" onclick="location.reload()">我知道了</button></div>
         </div>
     </div>
 
@@ -244,6 +181,7 @@
         function calculateFinal() { let it = Object.values(cart).reduce((s, i) => s + (i.price * i.qty), 0); let sf = shipMethod === '711' ? 80 : 0; let pf = packingQty * 10; document.getElementById('sum-items').innerText = `NT$ ${it.toLocaleString()}`; document.getElementById('sum-shipping').innerText = `NT$ ${sf}`; document.getElementById('sum-packing').innerText = `NT$ ${pf}`; document.getElementById('sum-total').innerText = `NT$ ${(it + sf + pf).toLocaleString()}`; }
         function clearError(el) { el.classList.remove('error'); const tag = document.getElementById('tag-' + el.id); if(tag) tag.style.display = 'none'; }
 
+        // 修改：精確化寫入欄位與包材數量獨立
         async function submitFinalOrder() {
             const btn = document.getElementById('confirm-submit-btn');
             if(btn.disabled) return;
@@ -263,7 +201,7 @@
 
             btn.disabled = true; btn.innerText = "處理中...";
 
-            // 修正：商品名稱 + 款式 (靠左) 與 數量 (靠右)
+            // 彈窗顯示用的商品列表
             let itemsDisplay = Object.values(cart).filter(i => i.qty > 0).map(i => `
                 <div class="order-item-row">
                     <div class="order-item-name">${i.name} ${i.option ? '('+i.option+')' : ''}</div>
@@ -272,29 +210,39 @@
             `).join('');
             itemsDisplay += `<div class="order-item-row"><div class="order-item-name">包材紙箱</div><div class="order-item-qty">× ${packingQty}</div></div>`;
 
-            let methodLabel = shipMethod === 'face' ? '面交' : `7-11 取件 (${store.value} / ${code.value})`;
+            // 配送與門市資料分開處理
+            const finalMethod = shipMethod === 'face' ? '面交' : '7-11配送';
+            const finalStore = shipMethod === '711' ? `${store.value}(${code.value})` : '台中指定區';
 
             try {
+                // 1. 寫入訂單表 (欄位：shipping_method 與 shipping_store 正確拆分，新增 packing_qty)
                 const { data: orderData, error: orderError } = await _supabase.from('orders').insert({
                     items_summary: Object.values(cart).filter(i => i.qty > 0).map(i => `${i.name}*${i.qty}`).join(', '), 
-                    user_id: userLineId, customer_name: name.value, customer_tel: tel.value,
-                    shipping_method: methodLabel, total_amount: document.getElementById('sum-total').innerText
+                    user_id: userLineId, 
+                    customer_name: name.value, 
+                    customer_tel: tel.value,
+                    shipping_method: finalMethod,  // 修正：僅存方式
+                    shipping_store: finalStore,    // 修正：存入門市(代碼)
+                    packing_qty: packingQty,       // 修正：獨立儲存包材數量
+                    total_amount: document.getElementById('sum-total').innerText
                 }).select();
 
                 if(orderError) throw orderError;
 
+                // 2. 累加商品計數
                 for (const item of Object.values(cart)) {
                     if (item.qty > 0) {
                         await _supabase.rpc('increment_order_count', { row_id: item.id, inc_val: parseInt(item.qty) });
                     }
                 }
 
+                // 3. 顯示成功彈窗
                 const orderId = orderData[0].id;
                 document.getElementById('m-order-id').innerText = "編號: " + orderId.slice(-10).toUpperCase();
                 document.getElementById('m-items-container').innerHTML = itemsDisplay;
                 document.getElementById('m-name').innerText = name.value;
                 document.getElementById('m-tel').innerText = tel.value;
-                document.getElementById('m-method').innerText = methodLabel;
+                document.getElementById('m-method').innerText = `${finalMethod} ${shipMethod==='711' ? finalStore : ''}`;
                 document.getElementById('m-total').innerText = document.getElementById('sum-total').innerText;
                 document.getElementById('order-detail-modal').style.display = 'flex';
                 
@@ -308,16 +256,8 @@
             }
         }
 
-        function switchPage(p) {
-            document.querySelectorAll('.page-content').forEach(e => e.classList.remove('active'));
-            document.getElementById('page-' + p).classList.add('active');
-            document.getElementById('bottom-nav').style.display = (['shop','passport'].includes(p)) ? 'flex' : 'none';
-            document.getElementById('add-btn').style.display = (p === 'shop') ? 'flex' : 'none';
-            if(p === 'checkout') renderCheckout();
-            if(p === 'shipping') { calculateFinal(); document.getElementById('shipping-summary').classList.remove('expanded'); }
-            window.scrollTo(0,0);
-            feather.replace();
-        }
+        function filterCategory(cat, el) { document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active')); el.classList.add('active'); renderProducts(cat === '全部' ? allProducts : allProducts.filter(p => p.category === cat)); }
+        function switchPage(p) { document.querySelectorAll('.page-content').forEach(e => e.classList.remove('active')); document.getElementById('page-' + p).classList.add('active'); document.getElementById('bottom-nav').style.display = (['shop','passport'].includes(p)) ? 'flex' : 'none'; document.getElementById('add-btn').style.display = (p === 'shop') ? 'flex' : 'none'; if(p === 'checkout') renderCheckout(); if(p === 'shipping') { calculateFinal(); document.getElementById('shipping-summary').classList.remove('expanded'); } window.scrollTo(0,0); feather.replace(); }
         function openAddModal() { document.getElementById('add-modal').style.display='flex'; }
         function closeModal(id) { document.getElementById(id).style.display='none'; }
         window.onload = init;
