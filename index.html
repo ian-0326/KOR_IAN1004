@@ -26,9 +26,11 @@
         .cat-pill { white-space: nowrap; padding: 10px 20px; background: #fff; border-radius: 50px; font-size: 14px; font-weight: 700; color: var(--sub); box-shadow: 0 2px 6px rgba(0,0,0,0.05); flex-shrink: 0; }
         .cat-pill.active { background: var(--primary); color: #fff; box-shadow: 0 4px 12px rgba(247, 181, 0, 0.3); }
 
+        /* 修改：移除底線，名稱改為黑色，款式回歸 */
         .item-card { background: #fff; padding: 20px; border-radius: 28px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 12px rgba(0,0,0,0.04); margin-bottom: 12px; }
         .item-main { flex: 1; cursor: pointer; }
-        .item-name { font-size: 16px; font-weight: 700; color: #007aff; text-decoration: underline; margin-bottom: 4px; display: inline-block; }
+        .item-name { font-size: 16px; font-weight: 700; color: var(--text); text-decoration: none; margin-bottom: 4px; display: inline-block; }
+        .item-option { font-size: 12px; color: var(--gray); margin-left: 6px; font-weight: 400; }
         .item-price { color: var(--primary); font-weight: 900; font-size: 17px; display: block; }
 
         .qty-ctrl { display: flex; align-items: center; gap: 14px; background: #f8f9fa; padding: 8px 16px; border-radius: 50px; }
@@ -45,7 +47,6 @@
         .input-box { width: 100%; padding: 18px; border: none; border-radius: 20px; font-size: 16px; outline: none; background: #f2f4f6; box-sizing: border-box; transition: 0.2s; }
         .input-box:focus { background: #fff; box-shadow: 0 0 0 2px var(--primary); }
         .input-box.error { background: #fff5f5; box-shadow: 0 0 0 2px var(--error); }
-        .input-hint { font-size: 12px; color: var(--error); margin-top: 8px; padding: 0 4px; line-height: 1.5; opacity: 0.8; }
 
         .ship-group { display: flex; gap: 12px; }
         .ship-btn { flex: 1; padding: 16px; background: #f2f4f6; border-radius: 20px; text-align: center; font-weight: 700; color: var(--sub); cursor: pointer; }
@@ -60,15 +61,12 @@
         .expand-toggle { color: var(--gray); display: flex; align-items: center; transition: 0.3s; }
         .bottom-summary.expanded .expand-toggle { transform: rotate(180deg); }
         .btn-main { background: var(--primary); color: #fff; border: none; padding: 18px; width: 100%; border-radius: 20px; font-weight: 700; font-size: 17px; cursor: pointer; }
-        .btn-main:disabled { background: var(--gray); opacity: 0.7; }
 
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 500; align-items: center; justify-content: center; padding: 20px; }
         .modal-card { background: #fff; border-radius: 36px; padding: 32px 24px; width: 100%; max-width: 360px; max-height: 85vh; box-sizing: border-box; display: flex; flex-direction: column; }
         .modal-header { text-align: center; margin-bottom: 20px; flex-shrink: 0; }
         .order-id-label { font-size: 11px; color: var(--gray); font-weight: 700; margin-top: 4px; display: block; }
         .modal-body { overflow-y: auto; flex-grow: 1; padding-right: 4px; }
-        .modal-body::-webkit-scrollbar { width: 4px; }
-        .modal-body::-webkit-scrollbar-thumb { background: #eee; border-radius: 10px; }
         .modal-section { text-align: left; margin-bottom: 16px; padding: 16px; background: #f8f9fa; border-radius: 24px; }
         .modal-section-title { font-size: 12px; font-weight: 900; color: var(--gray); margin-bottom: 10px; display: block; }
         .order-item-row { display: flex; justify-content: space-between; align-items: flex-start; font-size: 14px; margin-bottom: 8px; line-height: 1.4; }
@@ -79,7 +77,7 @@
         .modal-footer { flex-shrink: 0; padding-top: 10px; }
 
         .add-btn { position: fixed; top: 20px; right: 20px; width: 48px; height: 48px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; z-index: 300; border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-        .cart-bar { position: fixed; bottom: 95px; left: 16px; right: 16px; background: #191f28; color: #fff; padding: 18px 24px; border-radius: 20px; display: none; justify-content: space-between; align-items: center; z-index: 250; }
+        .cart-bar { position: fixed; bottom: 95px; left: 16px; right: 16px; background: #191f28; color: #fff; padding: 18px 24px; border-radius: 20px; display: none; justify-content: space-between; align-items: center; z-index: 250; box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; padding: 12px 0 calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid #e5e8eb; z-index: 200; }
         .nav-item { color: #adb5bd; text-align: center; flex: 1; font-size: 11px; font-weight: 900; display: flex; flex-direction: column; align-items: center; gap: 6px; }
         .nav-item.active { color: var(--primary); }
@@ -120,17 +118,14 @@
             <div class="nav-header"><button class="back-btn" onclick="switchPage('checkout')"><i data-feather="chevron-left"></i></button><div class="page-title">取件資料</div></div>
             <div class="card-box">
                 <div class="form-item"><label class="form-label">取件姓名<span class="req-tag" id="tag-ship-name">*必填</span></label><input type="text" id="ship-name" class="input-box" placeholder="收件人姓名" oninput="clearError(this)"></div>
-                <div class="form-item"><label class="form-label">聯絡電話<span class="req-tag" id="tag-ship-tel">*必填</span></label><input type="tel" id="ship-tel" class="input-box" placeholder="09xxxxxxxx" maxlength="10" oninput="clearError(this)"><div class="input-hint">*請提供正確的取件人姓名及聯絡電話，資料若有誤導致無法取件概不負責。</div></div>
+                <div class="form-item"><label class="form-label">聯絡電話<span class="req-tag" id="tag-ship-tel">*必填</span></label><input type="tel" id="ship-tel" class="input-box" placeholder="09xxxxxxxx" maxlength="10" oninput="clearError(this)"><div style="font-size:12px; color:var(--error); margin-top:8px; line-height:1.5;">*請提供正確的取件人資訊，資料有誤導致無法取件概不負責。</div></div>
                 <div class="form-item">
                     <label class="form-label">配送方式</label>
                     <div class="ship-group"><div class="ship-btn active" id="btn-face" onclick="setShipping('face')">面交</div><div class="ship-btn" id="btn-711" onclick="setShipping('711')">7-11 配送</div></div>
                     <div id="hint-face" style="font-size:12px; color:var(--primary); margin-top:12px; line-height:1.5;">面交僅限台中大雅、梧棲、沙鹿區，請記得到LINE@上溝通喔！</div>
-                    <div id="form-711" style="display:none; margin-top:15px;">
-                        <div class="form-item"><label class="form-label">取件門市<span class="req-tag" id="tag-ship-store">*必填</span></label><input type="text" id="ship-store" class="input-box" placeholder="取件門市" oninput="clearError(this)"></div>
-                        <div class="form-item"><label class="form-label">門市代碼<span class="req-tag" id="tag-ship-code">*必填</span></label><input type="text" id="ship-code" class="input-box" placeholder="門市代碼" oninput="clearError(this)"></div>
-                    </div>
+                    <div id="form-711" style="display:none; margin-top:15px;"><div class="form-item"><label class="form-label">取件門市<span class="req-tag" id="tag-ship-store">*必填</span></label><input type="text" id="ship-store" class="input-box" placeholder="取件門市" oninput="clearError(this)"></div><div class="form-item"><label class="form-label">門市代碼<span class="req-tag" id="tag-ship-code">*必填</span></label><input type="text" id="ship-code" class="input-box" placeholder="門市代碼" oninput="clearError(this)"></div></div>
                 </div>
-                <div class="list-row" style="border-top:1px solid #f2f4f6; margin-top: 20px; padding-top: 20px;"><div class="list-left"><span style="font-weight:700;">包材、紙箱</span><br><small style="color:var(--gray);">NT$ 10 / 個</small></div><div class="qty-ctrl"><button class="qty-btn" onclick="updatePacking(-1)"><i data-feather="minus" style="width:16px;"></i></button><span id="qty-packing" class="qty-val">1</span><button class="qty-btn" onclick="updatePacking(1)"><i data-feather="plus" style="width:16px;"></i></button></div></div>
+                <div class="list-row" style="border-top:1px solid #f2f4f6; margin-top: 20px; padding-top: 20px;"><div class="list-left"><span style="font-weight:700;">包材、紙箱</span><br><small style="color:var(--gray);">NT$ 10 / 個</small></div><div class="qty-ctrl"><button class="qty-btn" onclick="updatePacking(-1)"><i data-feather="minus" style="width:16px;"></i></button><span id="qty-packing" class="qty-num">1</span><button class="qty-btn" onclick="updatePacking(1)"><i data-feather="plus" style="width:16px;"></i></button></div></div>
             </div>
             <div class="bottom-summary" id="shipping-summary">
                 <div class="summary-details"><div class="row-sm"><span>代購商品小計</span><span id="sum-items">NT$ 0</span></div><div class="row-sm"><span>物流運費</span><span id="sum-shipping">NT$ 0</span></div><div class="row-sm"><span>包材費用</span><span id="sum-packing">NT$ 10</span></div></div>
@@ -157,10 +152,6 @@
         </div>
     </div>
 
-    <div id="add-modal" class="modal" onclick="closeModal('add-modal')">
-        <div class="modal-card" onclick="event.stopPropagation()"><h2 style="margin-bottom:24px;">登錄商品</h2><select id="in-cat" class="input-box" style="margin-bottom:12px;"><option value="">類別</option><option value="化妝水">化妝水</option><option value="精華液">精華液</option><option value="乳液">乳液</option><option value="面膜棉片">面膜棉片</option><option value="洗臉洗澡">洗臉洗澡</option><option value="美髮護髮">美髮護髮</option><option value="彩妝遮瑕">彩妝遮瑕</option><option value="口腔護理">口腔護理</option><option value="防曬">防曬</option><option value="藥膏藥品">藥膏藥品</option><option value="食品（含保健）">食品（含保健）</option><option value="其他">其他</option></select><input type="text" id="in-name" class="input-box" placeholder="名稱" style="margin-bottom:12px;"><input type="number" id="in-price" class="input-box" placeholder="價格" style="margin-bottom:12px;"><input type="url" id="in-url" class="input-box" placeholder="網址" style="margin-bottom:20px;"><button class="btn-main" onclick="upload()">確認登錄</button></div>
-    </div>
-
     <script>
         const LIFF_ID = '2009405888-D5absVA3';
         const SUPABASE_URL = 'https://ivpctyqlrkjstfsoweeh.supabase.co';
@@ -170,9 +161,75 @@
         let cart = {}, allProducts = [], userLineId = "unknown", shipMethod = 'face', packingQty = 1;
 
         async function init() { try { await fetchProducts(); await liff.init({ liffId: LIFF_ID }); if (!liff.isLoggedIn()) { liff.login(); return; } const p = await liff.getProfile(); userLineId = p.userId; document.getElementById('user-info').innerText = p.displayName; feather.replace(); } catch (e) { console.error(e); } }
-        async function fetchProducts() { const { data } = await _supabase.from('products').select('*').eq('is_active', true).order('created_at', { ascending: false }); if(data) { allProducts = data; renderProducts(allProducts); } }
-        function renderProducts(products) { document.getElementById('item-list').innerHTML = products.map(p => `<div class="item-card"><div class="item-main" onclick="window.open('${p.olive_url}', '_blank')"><div><span class="item-name">${p.name_zh}</span></div><span class="item-price">NT$ ${Number(p.price_nt).toLocaleString()}</span></div><div class="qty-ctrl"><button class="qty-btn" onclick="updateQty('${p.id}', -1)"><i data-feather="minus" style="width:18px;"></i></button><span class="qty-num" id="qty-${p.id}">${cart[p.id] ? cart[p.id].qty : 0}</span><button class="qty-btn" onclick="updateQty('${p.id}', 1)"><i data-feather="plus" style="width:18px;"></i></button></div></div>`).join(''); feather.replace(); }
-        function filterCategory(cat, el) { document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active')); el.classList.add('active'); renderProducts(cat === '全部' ? allProducts : allProducts.filter(p => p.category === cat)); }
+        
+        // 修正：加入相似名稱聚合排序邏輯
+        async function fetchProducts() { 
+            const { data } = await _supabase.from('products').select('*').eq('is_active', true);
+            if(data) { 
+                allProducts = sortSmartly(data);
+                renderProducts(allProducts); 
+            } 
+        }
+
+        // 智慧排序核心算法
+        function sortSmartly(products) {
+            // 1. 基礎排序：依 order_count 由大到小
+            let sorted = [...products].sort((a, b) => (b.order_count || 0) - (a.order_count || 0));
+            
+            let finalResult = [];
+            let processedIds = new Set();
+
+            for (let i = 0; i < sorted.length; i++) {
+                let current = sorted[i];
+                if (processedIds.has(current.id)) continue;
+
+                // 將目前銷量最高者放入
+                finalResult.push(current);
+                processedIds.add(current.id);
+
+                // 2. 尋找與目前商品「高度相似」的其他商品 (取名稱前 4 個字)
+                let prefix = current.name_zh.substring(0, 4);
+                let siblings = sorted.filter(p => 
+                    !processedIds.has(p.id) && 
+                    p.name_zh.startsWith(prefix)
+                );
+
+                // 將相似商品排在他後面（即便是銷量低也拉過來）
+                siblings.forEach(s => {
+                    finalResult.push(s);
+                    processedIds.add(s.id);
+                });
+            }
+            return finalResult;
+        }
+
+        function renderProducts(products) { 
+            document.getElementById('item-list').innerHTML = products.map(p => `
+                <div class="item-card">
+                    <div class="item-main" onclick="window.open('${p.olive_url}', '_blank')">
+                        <div>
+                            <span class="item-name">${p.name_zh}</span>
+                            ${p.option ? `<span class="item-option">${p.option}</span>` : ''}
+                        </div>
+                        <span class="item-price">NT$ ${Number(p.price_nt).toLocaleString()}</span>
+                    </div>
+                    <div class="qty-ctrl">
+                        <button class="qty-btn" onclick="updateQty('${p.id}', -1)"><i data-feather="minus" style="width:18px;"></i></button>
+                        <span class="qty-num" id="qty-${p.id}">${cart[p.id] ? cart[p.id].qty : 0}</span>
+                        <button class="qty-btn" onclick="updateQty('${p.id}', 1)"><i data-feather="plus" style="width:18px;"></i></button>
+                    </div>
+                </div>
+            `).join(''); 
+            feather.replace(); 
+        }
+
+        function filterCategory(cat, el) { 
+            document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active')); 
+            el.classList.add('active'); 
+            let filtered = cat === '全部' ? allProducts : allProducts.filter(p => p.category === cat);
+            renderProducts(filtered);
+        }
+
         function updateQty(id, delta) { const p = allProducts.find(x => x.id === id); if (!cart[id]) cart[id] = { id: p.id, name: p.name_zh, option: p.option, price: p.price_nt, qty: 0 }; cart[id].qty = Math.max(0, cart[id].qty + delta); if(document.getElementById(`qty-${id}`)) document.getElementById(`qty-${id}`).innerText = cart[id].qty; let t = Object.values(cart).reduce((s, i) => s + i.qty, 0); document.getElementById('cart-bar').style.display = t > 0 ? 'flex' : 'none'; document.getElementById('cart-qty').innerText = t; if(document.getElementById('page-checkout').classList.contains('active')) renderCheckout(); if(document.getElementById('page-shipping').classList.contains('active')) calculateFinal(); }
         function renderCheckout() { let html = '', total = 0; Object.values(cart).forEach(item => { if(item.qty > 0) { html += `<div class="list-row"><div class="list-left"><span class="list-n">${item.name}</span><span class="list-s">${item.option || ''} | NT$ ${item.price}</span></div><div class="qty-ctrl"><button class="qty-btn" onclick="updateQty('${item.id}', -1)"><i data-feather="minus" style="width:16px;"></i></button><span class="qty-num">${item.qty}</span><button class="qty-btn" onclick="updateQty('${item.id}', 1)"><i data-feather="plus" style="width:16px;"></i></button></div></div>`; total += item.price * item.qty; } }); document.getElementById('checkout-container').innerHTML = html || '<p style="text-align:center;padding:40px 0;color:#999;">尚未選擇商品</p>'; document.getElementById('checkout-grand-total').innerText = `NT$ ${total.toLocaleString()}`; feather.replace(); }
         function setShipping(m) { shipMethod = m; document.getElementById('btn-face').classList.toggle('active', m === 'face'); document.getElementById('btn-711').classList.toggle('active', m === '711'); document.getElementById('hint-face').style.display = m === 'face' ? 'block' : 'none'; document.getElementById('form-711').style.display = m === '711' ? 'block' : 'none'; calculateFinal(); }
@@ -181,7 +238,6 @@
         function calculateFinal() { let it = Object.values(cart).reduce((s, i) => s + (i.price * i.qty), 0); let sf = shipMethod === '711' ? 80 : 0; let pf = packingQty * 10; document.getElementById('sum-items').innerText = `NT$ ${it.toLocaleString()}`; document.getElementById('sum-shipping').innerText = `NT$ ${sf}`; document.getElementById('sum-packing').innerText = `NT$ ${pf}`; document.getElementById('sum-total').innerText = `NT$ ${(it + sf + pf).toLocaleString()}`; }
         function clearError(el) { el.classList.remove('error'); const tag = document.getElementById('tag-' + el.id); if(tag) tag.style.display = 'none'; }
 
-        // 修改：精確化寫入欄位與包材數量獨立
         async function submitFinalOrder() {
             const btn = document.getElementById('confirm-submit-btn');
             if(btn.disabled) return;
@@ -201,7 +257,6 @@
 
             btn.disabled = true; btn.innerText = "處理中...";
 
-            // 彈窗顯示用的商品列表
             let itemsDisplay = Object.values(cart).filter(i => i.qty > 0).map(i => `
                 <div class="order-item-row">
                     <div class="order-item-name">${i.name} ${i.option ? '('+i.option+')' : ''}</div>
@@ -210,33 +265,25 @@
             `).join('');
             itemsDisplay += `<div class="order-item-row"><div class="order-item-name">包材紙箱</div><div class="order-item-qty">× ${packingQty}</div></div>`;
 
-            // 配送與門市資料分開處理
             const finalMethod = shipMethod === 'face' ? '面交' : '7-11配送';
             const finalStore = shipMethod === '711' ? `${store.value}(${code.value})` : '台中指定區';
 
             try {
-                // 1. 寫入訂單表 (欄位：shipping_method 與 shipping_store 正確拆分，新增 packing_qty)
                 const { data: orderData, error: orderError } = await _supabase.from('orders').insert({
                     items_summary: Object.values(cart).filter(i => i.qty > 0).map(i => `${i.name}*${i.qty}`).join(', '), 
-                    user_id: userLineId, 
-                    customer_name: name.value, 
-                    customer_tel: tel.value,
-                    shipping_method: finalMethod,  // 修正：僅存方式
-                    shipping_store: finalStore,    // 修正：存入門市(代碼)
-                    packing_qty: packingQty,       // 修正：獨立儲存包材數量
+                    user_id: userLineId, customer_name: name.value, customer_tel: tel.value,
+                    shipping_method: finalMethod, shipping_store: finalStore, packing_qty: packingQty,
                     total_amount: document.getElementById('sum-total').innerText
                 }).select();
 
                 if(orderError) throw orderError;
 
-                // 2. 累加商品計數
                 for (const item of Object.values(cart)) {
                     if (item.qty > 0) {
                         await _supabase.rpc('increment_order_count', { row_id: item.id, inc_val: parseInt(item.qty) });
                     }
                 }
 
-                // 3. 顯示成功彈窗
                 const orderId = orderData[0].id;
                 document.getElementById('m-order-id').innerText = "編號: " + orderId.slice(-10).toUpperCase();
                 document.getElementById('m-items-container').innerHTML = itemsDisplay;
@@ -256,7 +303,6 @@
             }
         }
 
-        function filterCategory(cat, el) { document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active')); el.classList.add('active'); renderProducts(cat === '全部' ? allProducts : allProducts.filter(p => p.category === cat)); }
         function switchPage(p) { document.querySelectorAll('.page-content').forEach(e => e.classList.remove('active')); document.getElementById('page-' + p).classList.add('active'); document.getElementById('bottom-nav').style.display = (['shop','passport'].includes(p)) ? 'flex' : 'none'; document.getElementById('add-btn').style.display = (p === 'shop') ? 'flex' : 'none'; if(p === 'checkout') renderCheckout(); if(p === 'shipping') { calculateFinal(); document.getElementById('shipping-summary').classList.remove('expanded'); } window.scrollTo(0,0); feather.replace(); }
         function openAddModal() { document.getElementById('add-modal').style.display='flex'; }
         function closeModal(id) { document.getElementById(id).style.display='none'; }
