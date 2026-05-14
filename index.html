@@ -42,13 +42,14 @@
         .list-n { font-size: 15px; font-weight: 900; color: #000; }
         .list-p { font-size: 13px; color: var(--primary); display: block; font-weight: 900; margin-top: 2px; }
 
+        /* 彈窗樣式 */
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 500; align-items: center; justify-content: center; padding: 20px; }
         .modal-card { background: #fff; border-radius: 36px; padding: 24px 20px 28px 20px; width: 100%; max-width: 360px; max-height: 85vh; box-sizing: border-box; display: flex; flex-direction: column; box-shadow: 0 15px 50px rgba(0,0,0,0.2); }
         .modal-body { overflow-y: auto; flex-grow: 1; width: 100%; padding-top: 10px; }
         .form-item { margin-bottom: 12px; width: 100%; display: flex; flex-direction: column; align-items: center; }
         .form-label { width: calc(100% - 24px); font-size: 14px; font-weight: 700; margin-bottom: 6px; color: var(--sub); display: flex; align-items: center; }
         .req-tag { color: var(--error); font-size: 12px; margin-left: 6px; display: none; }
-        .input-box { width: calc(100% - 24px); padding: 12px 20px; border: none; border-radius: 18px; font-size: 15px; outline: none; background: #f2f4f6; box-sizing: border-box; transition: 0.2s; }
+        .input-box { width: calc(100% - 24px); padding: 12px 20px; border: none; border-radius: 18px; font-size: 15px; outline: none; background: #f2f4f6; box-sizing: border-box; transition: 0.2s; -webkit-appearance: none; }
         .input-box.error { background: #fff5f5; box-shadow: 0 0 0 2px var(--error); }
         
         .row-flex { display: flex; width: calc(100% - 24px); gap: 10px; align-items: flex-end; }
@@ -57,13 +58,33 @@
         .gender-btn.active-m { background: var(--primary); color: white; box-shadow: 0 4px 10px rgba(40, 176, 235, 0.3); }
         .gender-btn.active-f { background: var(--pink); color: white; box-shadow: 0 4px 10px rgba(255, 133, 162, 0.3); }
 
-        /* 修正：生日下拉選單固定長度且等寬 */
-        .birth-row { display: flex; width: calc(100% - 24px); gap: 8px; justify-content: center; }
-        .birth-row select { width: 33.33% !important; padding: 12px 10px; text-align: center; }
+        /* 修正：生日下拉選單樣式與展開行為 */
+        .birth-row { display: flex; width: calc(100% - 24px); gap: 8px; justify-content: center; position: relative; }
+        .birth-row select { 
+            width: 33.33% !important; 
+            padding: 12px 10px; 
+            text-align: center; 
+            cursor: pointer;
+        }
 
-        /* 修正：登機報到按鈕縮小一點 */
-        .btn-main { background: var(--primary); color: #fff; border: none; padding: 14px; width: 100%; border-radius: 18px; font-weight: 700; font-size: 16px; cursor: pointer; }
+        /* 修正：登機報到按鈕縮小為輕量化標籤感 */
+        .btn-main { 
+            background: var(--primary); 
+            color: #fff; 
+            border: none; 
+            padding: 12px 40px; 
+            width: auto; 
+            min-width: 140px;
+            border-radius: 50px; 
+            font-weight: 700; 
+            font-size: 15px; 
+            cursor: pointer; 
+            margin: 0 auto;
+            display: block;
+        }
         .btn-main:disabled { background: var(--gray); opacity: 0.7; }
+
+        .modal-footer { flex-shrink: 0; display: flex; justify-content: center; width: 100%; padding-top: 10px; }
 
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; padding: 12px 0 calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid #e5e8eb; z-index: 200; }
         .nav-item { color: #adb5bd; text-align: center; flex: 1; font-size: 11px; font-weight: 900; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; }
@@ -102,7 +123,7 @@
                 <h3 style="font-weight: 900;">我的護照</h3>
                 <div id="user-display-name" style="font-size: 20px; font-weight: 900; color: var(--primary); margin: 10px 0;">---</div>
                 <div id="user-phone" style="color: var(--gray); font-size: 14px;">---</div>
-                <button class="btn-main" style="background:#f2f4f6; color:#adb5bd; margin-top:30px; box-shadow:none;" onclick="liff.logout(); location.reload();">登出帳號</button>
+                <button class="btn-main" style="background:#f2f4f6; color:#adb5bd; margin-top:30px; box-shadow:none; width:auto; min-width:120px;" onclick="liff.logout(); location.reload();">登出帳號</button>
             </div>
         </section>
 
@@ -204,7 +225,6 @@
             if(!/^09\d{8}$/.test(tel.value)){ tel.classList.add('error'); document.getElementById('tag-reg-tel').style.display='inline'; valid=false; }
             if(!by.value || !bm.value || !bd.value){ [by,bm,bd].forEach(s => s.classList.add('error')); document.getElementById('tag-reg-birth').style.display='inline'; valid=false; }
             if(!valid) return;
-
             const fullBirth = `${by.value}-${bm.value}-${bd.value}`;
             const { error } = await _supabase.from('profiles').insert({ user_id: userLineId, full_name: name.value.trim(), phone: tel.value.trim(), birthday: fullBirth, gender: selectedGender, email: email.value.trim() });
             if(!error) location.reload(); else alert("報到失敗：" + error.message);
@@ -232,8 +252,8 @@
                 ['y','m','d'].forEach(suffix => document.getElementById('reg-birth-'+suffix).classList.remove('error'));
             }
         }
-        function openAddModal() { document.body.classList.add('modal-open'); } // 預留原邏輯
-        function closeModal(id) { document.body.classList.remove('modal-open'); }
+        function openAddModal() { } // 預留邏輯
+        function closeModal(id) { document.getElementById(id).style.display='none'; document.body.classList.remove('modal-open'); }
         window.onload = init;
     </script>
 </body>
