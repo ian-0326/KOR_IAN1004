@@ -42,7 +42,6 @@
         .list-n { font-size: 15px; font-weight: 900; color: #000; }
         .list-p { font-size: 13px; color: var(--primary); display: block; font-weight: 900; margin-top: 2px; }
 
-        /* 彈窗樣式 */
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 500; align-items: center; justify-content: center; padding: 20px; }
         .modal-card { background: #fff; border-radius: 36px; padding: 24px 20px 28px 20px; width: 100%; max-width: 360px; max-height: 85vh; box-sizing: border-box; display: flex; flex-direction: column; box-shadow: 0 15px 50px rgba(0,0,0,0.2); }
         .modal-body { overflow-y: auto; flex-grow: 1; width: 100%; padding-top: 10px; }
@@ -54,16 +53,18 @@
         
         .row-flex { display: flex; width: calc(100% - 24px); gap: 10px; align-items: flex-end; }
         .gender-group { display: flex; gap: 8px; margin-bottom: 3px; }
-        
-        /* 修正：性別按鈕樣式 */
         .gender-btn { width: 44px; height: 44px; border-radius: 50%; border: none; background: #f2f4f6; color: var(--gray); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; font-size: 15px; font-weight: 900; }
         .gender-btn.active-m { background: var(--primary); color: white; box-shadow: 0 4px 10px rgba(40, 176, 235, 0.3); }
         .gender-btn.active-f { background: var(--pink); color: white; box-shadow: 0 4px 10px rgba(255, 133, 162, 0.3); }
 
-        .birth-row { display: flex; width: calc(100% - 24px); gap: 8px; }
-        .birth-row select { flex: 1; }
+        /* 修正：生日下拉選單固定長度且等寬 */
+        .birth-row { display: flex; width: calc(100% - 24px); gap: 8px; justify-content: center; }
+        .birth-row select { width: 33.33% !important; padding: 12px 10px; text-align: center; }
 
-        .btn-main { background: var(--primary); color: #fff; border: none; padding: 18px; width: 100%; border-radius: 20px; font-weight: 700; font-size: 17px; cursor: pointer; }
+        /* 修正：登機報到按鈕縮小一點 */
+        .btn-main { background: var(--primary); color: #fff; border: none; padding: 14px; width: 100%; border-radius: 18px; font-weight: 700; font-size: 16px; cursor: pointer; }
+        .btn-main:disabled { background: var(--gray); opacity: 0.7; }
+
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; padding: 12px 0 calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid #e5e8eb; z-index: 200; }
         .nav-item { color: #adb5bd; text-align: center; flex: 1; font-size: 11px; font-weight: 900; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; }
         .nav-item.active { color: var(--primary); }
@@ -183,19 +184,14 @@
         function initBirthSelects() {
             const sy = document.getElementById('reg-birth-y'), sm = document.getElementById('reg-birth-m'), sd = document.getElementById('reg-birth-d');
             sy.innerHTML = '<option value="">年</option>' + Array.from({length: 87}, (_, i) => `<option value="${1940+i}">${1940+i}</option>`).reverse().join('');
-            sm.innerHTML = '<option value="">月</option>' + Array.from({length: 12}, (_, i) => `<option value="${(i+1).toString().padStart(2,'0')}">${i+1}</option>`).join('');
-            sd.innerHTML = '<option value="">日</option>' + Array.from({length: 31}, (_, i) => `<option value="${(i+1).toString().padStart(2,'0')}">${i+1}</option>`).join('');
+            sm.innerHTML = '<option value="">月</option>' + Array.from({length: 12}, (_, i) => `<option value="${(i+1).toString().padStart(2,'0')}">${(i+1).toString().padStart(2,'0')}</option>`).join('');
+            sd.innerHTML = '<option value="">日</option>' + Array.from({length: 31}, (_, i) => `<option value="${(i+1).toString().padStart(2,'0')}">${(i+1).toString().padStart(2,'0')}</option>`).join('');
         }
 
-        // 修正：性別切換與變色邏輯
         function setGender(g) {
             selectedGender = g;
-            const maleBtn = document.getElementById('g-male');
-            const femaleBtn = document.getElementById('g-female');
-            
-            maleBtn.classList.remove('active-m');
-            femaleBtn.classList.remove('active-f');
-            
+            const maleBtn = document.getElementById('g-male'), femaleBtn = document.getElementById('g-female');
+            maleBtn.classList.remove('active-m'); femaleBtn.classList.remove('active-f');
             if (g === 'M') maleBtn.classList.add('active-m');
             if (g === 'F') femaleBtn.classList.add('active-f');
         }
@@ -236,6 +232,8 @@
                 ['y','m','d'].forEach(suffix => document.getElementById('reg-birth-'+suffix).classList.remove('error'));
             }
         }
+        function openAddModal() { document.body.classList.add('modal-open'); } // 預留原邏輯
+        function closeModal(id) { document.body.classList.remove('modal-open'); }
         window.onload = init;
     </script>
 </body>
