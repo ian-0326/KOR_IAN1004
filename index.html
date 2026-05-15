@@ -11,9 +11,9 @@
     
     <style>
         :root { --primary: #28b0eb; --pink: #ff85a2; --bg: #f2f4f6; --white: #ffffff; --text: #191f28; --sub: #4e5968; --gray: #adb5bd; --error: #f44336; }
-        /* 修正：移除引發阻塞的外部 Google Fonts，改用系統原生高效能黑體族群，確保執行緒 100% 放行 */
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Helvetica, Arial, "PingFang TC", "Hiragino Sans GB", "Microsoft JhengHei", sans-serif; background-color: #f2f4f6; margin: 0; padding: 0; color: #191f28; -webkit-font-smoothing: antialiased; touch-action: manipulation; }
-        body.modal-open { overflow: hidden; position: fixed; width: 100%; }
+        /* 修正：徹底移除引發瀏覽器渲染執行緒死結的 position: fixed，改用安全單純的 overflow 控制 */
+        body.modal-open { overflow: hidden; }
 
         /* 強制登入天藍色開屏安全牆 */
         #login-gate { position: fixed; inset: 0; background: #28b0eb; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
@@ -251,7 +251,7 @@
                 <div class="modal-body" style="padding-top: 10px;">
                     <div class="form-item"><label class="form-label">選擇類別<span class="req-tag" id="tag-in-cat">*必填</span></label><select id="in-cat" class="input-box" onchange="changeCat(this)"><option value="">請選擇</option><option value="化妝水">化妝水</option><option value="精華液">精華液</option><option value="乳液">乳液</option><option value="面膜棉片">面膜棉片</option><option value="洗臉洗澡">洗臉洗澡</option><option value="美髮護髮">美髮護髮</option><option value="彩妝遮瑕">彩妝遮瑕</option><option value="口腔護理">口腔護理</option><option value="防曬">防曬</option><option value="藥膏藥品">藥膏藥品</option><option value="食品（含保健）">食品（含保健）</option><option value="其他">其他</option></select></div>
                     <div class="form-item"><label class="form-label">商品名稱<span class="req-tag" id="tag-in-name">*必填</span></label><textarea id="in-name" class="input-box" placeholder="例如：Torriden 面膜" oninput="clearError(this)"></textarea></div>
-                    <div class="form-item"><label class="form-label">款式規格</label><textarea id="in-option" class="input-box" placeholder="例如：藍色保濕型" oninput="autoGrow(this)"></textarea></div>
+                    <div class="form-item"><label class="form-label">款式規格</label><textarea id="in-option" class="input-box" placeholder="example：藍色保濕型" oninput="autoGrow(this)"></textarea></div>
                     <div class="form-item"><label class="form-label">價格 NT$<span class="req-tag" id="tag-in-price">*必填</span></label><input type="number" id="in-price" class="input-box" placeholder="金額" oninput="clearError(this)"></div>
                     <div class="form-item"><label class="form-label">來源網址<span class="req-tag" id="tag-in-url">*必填</span></label><input type="url" id="in-url" class="input-box" placeholder="請輸入網址" oninput="clearError(this)"></div>
                 </div>
@@ -312,12 +312,15 @@
                 if (data && data.length > 0) {
                     userData = data[0]; 
                     renderUserProfile(); 
+                    // 舊會員：強制在排版就定位後隱藏天藍遮罩牆放行
                     document.getElementById('login-gate').style.display = 'none';
                     const lastPage = localStorage.getItem('korian_last_page') || 'passport';
                     switchPage(lastPage);
                 } else {
                     initBirthSelects();
+                    // 新會員：背景分頁預設就定位，保持天藍牆，彈出報到櫃檯，並且徹底阻斷遮罩隱藏，逼出彈窗
                     switchPage('passport'); 
+                    document.getElementById('login-gate').style.display = 'none'; // 先關閉天藍色，讓會員立刻看見表單
                     document.body.classList.add('modal-open');
                     document.getElementById('register-modal').style.display = 'flex';
                 }
@@ -413,7 +416,7 @@
             if(!cat.value){ cat.classList.add('error'); valid=false; }
             if(!name.value.trim()){ name.classList.add('error'); valid=false; }
             if(!price.value){ price.classList.add('error'); valid=false; }
-            if(!url.value.trim()){ url.value.classList.add('error'); valid=false; }
+            if(!url.value.trim()){ url.classList.add('error'); valid=false; }
             if(!valid) return;
             btn.disabled=true; btn.innerText="處理中...";
             const taiwanTime = new Date().toISOString();
