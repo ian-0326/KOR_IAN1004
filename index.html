@@ -8,12 +8,11 @@
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.0/feather.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght=400;500;700;900&display=swap" rel="stylesheet">
     
     <style>
-        /* 修正：將拼錯的 :rose 精準更正回 :root，鎖定全站變數 */
         :root { --primary: #28b0eb; --pink: #ff85a2; --bg: #f2f4f6; --white: #ffffff; --text: #191f28; --sub: #4e5968; --gray: #adb5bd; --error: #f44336; }
-        body { font-family: 'Noto Sans TC', sans-serif; background-color: #f2f4f6; margin: 0; padding: 0; color: #191f28; -webkit-font-smoothing: antialiased; touch-action: manipulation; }
+        /* 修正：移除引發阻塞的外部 Google Fonts，改用系統原生高效能黑體族群，確保執行緒 100% 放行 */
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Helvetica, Arial, "PingFang TC", "Hiragino Sans GB", "Microsoft JhengHei", sans-serif; background-color: #f2f4f6; margin: 0; padding: 0; color: #191f28; -webkit-font-smoothing: antialiased; touch-action: manipulation; }
         body.modal-open { overflow: hidden; position: fixed; width: 100%; }
 
         /* 強制登入天藍色開屏安全牆 */
@@ -293,9 +292,7 @@
         const SUPABASE_URL = 'https://ivpctyqlrkjstfsoweeh.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml2cGN0eXFscmtqc3Rmc293ZWVoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTk1MTksImV4cCI6MjA4ODc3NTUxOX0.DYgzhaTH3_5NFwv009ZfZAshfUnCW2PeTuNcJ9feyMU';
         
-        // 修正：將全域變數命名統一鎖定為庫所預期的 supabase 實體名，徹底消滅 ReferenceError
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        
         let userLineId = "", userLinePicture = "", userData = null, selectedGender = "", allProducts = [], cart = {}, shipMethod = 'face', packingQty = 1, currentRawOrderId = "";
 
         async function init() {
@@ -308,7 +305,6 @@
 
                 await fetchProducts();
 
-                // 修正：讀取與比對統一改為對齊後的變數名
                 const { data } = await supabaseClient.from('profiles').select('*').or(`line_id.eq.${userLineId},user_id.eq.${userLineId}`);
                 
                 document.getElementById('main-app').style.display = 'block';
@@ -316,12 +312,12 @@
                 if (data && data.length > 0) {
                     userData = data[0]; 
                     renderUserProfile(); 
-                    document.getElementById('login-gate').style.display = 'none'; // 舊會員：直接解鎖放行
+                    document.getElementById('login-gate').style.display = 'none';
                     const lastPage = localStorage.getItem('korian_last_page') || 'passport';
                     switchPage(lastPage);
                 } else {
                     initBirthSelects();
-                    switchPage('passport'); // 新會員：背景分頁預設就定位，保持天藍牆，彈出櫃檯
+                    switchPage('passport'); 
                     document.body.classList.add('modal-open');
                     document.getElementById('register-modal').style.display = 'flex';
                 }
@@ -417,7 +413,7 @@
             if(!cat.value){ cat.classList.add('error'); valid=false; }
             if(!name.value.trim()){ name.classList.add('error'); valid=false; }
             if(!price.value){ price.classList.add('error'); valid=false; }
-            if(!url.value.trim()){ url.classList.add('error'); valid=false; }
+            if(!url.value.trim()){ url.value.classList.add('error'); valid=false; }
             if(!valid) return;
             btn.disabled=true; btn.innerText="處理中...";
             const taiwanTime = new Date().toISOString();
