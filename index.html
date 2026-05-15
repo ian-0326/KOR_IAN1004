@@ -8,17 +8,22 @@
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.0/feather.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2=family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
     
     <style>
         :root { --primary: #28b0eb; --pink: #ff85a2; --bg: #f2f4f6; --white: #ffffff; --text: #191f28; --sub: #4e5968; --gray: #adb5bd; --error: #f44336; }
         body { font-family: 'Noto Sans TC', sans-serif; background-color: var(--bg); margin: 0; padding: 0; color: var(--text); -webkit-font-smoothing: antialiased; touch-action: manipulation; }
         body.modal-open { overflow: hidden; position: fixed; width: 100%; }
 
-        /* 強制登入隔離牆 */
+        /* 修正：Loading 安全牆改為飛機飛行器動畫 */
         #login-gate { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .gate-loader { width: 40px; height: 40px; border: 4px solid #e5e8eb; border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-top: 20px; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .airplane-loader { color: var(--primary); animation: fly 1.5s ease-in-out infinite; }
+        .gate-text { font-size: 13px; font-weight: 700; color: var(--gray); margin-top: 15px; letter-spacing: 1px; }
+        @keyframes fly {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0.5; }
+            50% { transform: translateY(-12px) rotate(5deg); opacity: 1; }
+            100% { transform: translateY(0) rotate(0deg); opacity: 0.5; }
+        }
 
         /* 弘大漫遊頂部固定 Header */
         .fixed-header { position: sticky; top: 0; background: var(--bg); z-index: 110; padding: 20px 16px 10px 16px; display: flex; justify-content: space-between; align-items: center; }
@@ -114,8 +119,8 @@
 <body>
 
     <div id="login-gate">
-        <img src="https://raw.githubusercontent.com/ian-0326/KOR_IAN1004/main/KORIAN.png" alt="Logo" style="height:55px; width:auto;">
-        <div class="gate-loader"></div>
+        <div class="airplane-loader"><i data-feather="send" style="width:48px; height:48px; transform: rotate(45deg);"></i></div>
+        <div class="gate-text">KOR.IAN 連線準備中...</div>
     </div>
 
     <div id="main-app" style="display: none;">
@@ -273,8 +278,6 @@
                 if (data && data.length > 0) {
                     userData = data[0]; 
                     renderUserProfile(); 
-                    
-                    // 修正：讀取歷史頁面紀錄，若沒有則預設 passport
                     const lastPage = localStorage.getItem('korian_last_page') || 'passport';
                     switchPage(lastPage);
                 } else {
@@ -365,7 +368,7 @@
             if (g === 'F') femaleBtn.classList.add('active-f');
         }
 
-        // 修正：新增商品完成後直接關閉，留在弘大漫遊
+        // 修正：1. 提交成功後直接關閉彈窗，零提示彈窗 2. 強制寫入當下台灣標準時間
         async function upload() {
             const btn = document.getElementById('btn-upload');
             const cat = document.getElementById('in-cat'), name = document.getElementById('in-name'), price = document.getElementById('in-price'), url = document.getElementById('in-url'), opt = document.getElementById('in-option');
@@ -376,21 +379,33 @@
             if(!url.value.trim()){ url.classList.add('error'); valid=false; }
             if(!valid) return;
             btn.disabled=true; btn.innerText="處理中...";
-            const { error } = await _supabase.from('products').insert({ category: cat.value, name_zh: name.value.trim(), option: opt.value.trim()||"", price_nt: price.value, olive_url: url.value.trim(), is_active: false, created_by: userLineId });
+            
+            // 修正：精準抓取當下台灣時間戳記寫入資料庫
+            const taiwanTime = new Date().toISOString();
+
+            const { error } = await _supabase.from('products').insert({ 
+                category: cat.value, 
+                name_zh: name.value.trim(), 
+                option: opt.value.trim()||"", 
+                price_nt: price.value, 
+                olive_url: url.value.trim(), 
+                is_active: false, 
+                created_by: userLineId,
+                created_at: taiwanTime
+            });
             
             if(!error) { 
-                alert('商品已登錄，審核通過後將自動上架！');
-                closeModal('add-modal'); // 直接關閉彈窗
+                closeModal('add-modal'); // 修正：直接關閉彈窗，沒有任何提示
                 btn.disabled=false; btn.innerText="確認登錄";
-                // 清空輸入
                 [name, opt, price, url].forEach(el => el.value = "");
                 cat.value = "";
-                await fetchProducts(); // 刷商品列表
+                await fetchProducts(); 
             } else { 
                 alert('失敗：'+error.message); btn.disabled=false; btn.innerText="確認登錄"; 
             }
         }
 
+        // 修正：結帳時強制寫入當下台灣標準時間
         async function submitFinalOrder() {
             const btn = document.getElementById('confirm-submit-btn'); if(btn.disabled) return;
             const name = document.getElementById('ship-name'), tel = document.getElementById('ship-tel'), store = document.getElementById('ship-store'), code = document.getElementById('ship-code');
@@ -403,8 +418,17 @@
             let itemsDisplay = Object.values(cart).filter(i => i.qty > 0).map(i => `<div class="order-item-row"><div class="order-item-name">${i.name} ${i.option ? '('+i.option+')' : ''}</div><div class="order-item-qty">× ${i.qty}</div></div>`).join('');
             const finalMethod = shipMethod === 'face' ? '面交' : '7-11取件';
             const finalStore = shipMethod === '711' ? `${store.value}(${code.value})` : '台中指定區';
+            
+            // 修正：下單時間精準同步
+            const taiwanTime = new Date().toISOString();
+
             try {
-                const { data, error } = await _supabase.from('orders').insert({ items_summary: itemsStr, user_id: userLineId, customer_name: name.value, customer_tel: tel.value, shipping_method: finalMethod, shipping_store: finalStore, packing_qty: packingQty, total_amount: document.getElementById('sum-total').innerText }).select();
+                const { data, error } = await _supabase.from('orders').insert({ 
+                    items_summary: itemsStr, user_id: userLineId, customer_name: name.value, 
+                    customer_tel: tel.value, shipping_method: finalMethod, shipping_store: finalStore, 
+                    packing_qty: packingQty, total_amount: document.getElementById('sum-total').innerText,
+                    created_at: taiwanTime
+                }).select();
                 if(error) throw error;
                 for(let i of Object.values(cart)){ if(i.qty>0) await _supabase.rpc('increment_order_count',{row_id:i.id, inc_val:parseInt(i.qty)}); }
                 const oid = data[0].id; currentRawOrderId = oid.slice(-10).toUpperCase();
@@ -415,12 +439,21 @@
             } catch(e){ alert("失敗："+e.message); btn.disabled=false; }
         }
 
+        // 修正：新會員報到時強制寫入當下台灣標準時間
         async function handleRegister() {
             const name = document.getElementById('reg-name'), tel = document.getElementById('reg-tel'), email = document.getElementById('reg-email');
             const by = document.getElementById('reg-birth-y'), bm = document.getElementById('reg-birth-m'), bd = document.getElementById('reg-birth-d');
             if(!name.value.trim() || !/^09\d{8}$/.test(tel.value) || !by.value || !bm.value || !bd.value){ alert("請檢查必填欄位"); return; }
             const fullBirth = `${by.value}-${bm.value}-${bd.value}`;
-            const { error } = await _supabase.from('profiles').insert([{ line_id: userLineId, user_id: userLineId, full_name: name.value.trim(), phone: tel.value.trim(), birthday: fullBirth, gender: selectedGender, email: email.value.trim() }]);
+            
+            // 修正：報到註冊時間精準同步
+            const taiwanTime = new Date().toISOString();
+
+            const { error } = await _supabase.from('profiles').insert([{ 
+                line_id: userLineId, user_id: userLineId, full_name: name.value.trim(), 
+                phone: tel.value.trim(), birthday: fullBirth, gender: selectedGender, 
+                email: email.value.trim(), created_at: taiwanTime
+            }]);
             if(!error) location.reload(); else alert("失敗：" + error.message);
         }
 
@@ -438,7 +471,6 @@
             document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
             if(document.getElementById('nav-'+p)) document.getElementById('nav-'+p).classList.add('active');
             
-            // 修正：當切換至主要選單分頁時，記錄到記憶庫中
             if(p === 'shop' || p === 'passport') {
                 localStorage.setItem('korian_last_page', p);
             }
