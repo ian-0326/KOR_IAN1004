@@ -55,8 +55,9 @@
 
         /* 護照頁最外圍大卡片 */
         .card-box { background: #fff; border-radius: 32px; padding: 15px 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); margin-top: 10px; }
-        /* 修正：合併內外圈，將內部框與背景色移除 */
-        .passport-inner-card { padding: 5px 0; display: flex; gap: 16px; text-align: left; margin-top: 15px; }
+        
+        /* 修正：增加 gap 拉開照片與右側欄位，使右側資料往右移動 */
+        .passport-inner-card { padding: 5px 0; display: flex; gap: 28px; text-align: left; }
         .passport-photo-box { width: 100px; display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
         .passport-photo { width: 100px; height: 130px; object-fit: cover; border-radius: 8px; background: #e5e8eb; border: 1px solid #ced4da; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
         .passport-fields { flex: 1; display: flex; flex-direction: column; gap: 10px; }
@@ -191,10 +192,10 @@
             </div>
         </section>
 
-        <section id="page-passport" class="page-content" style="padding-top: 30px;">
+        <section id="page-passport" class="page-content" style="padding-top: 40px;">
+            <h3 style="font-weight: 900; text-align: center; margin: 0 0 15px 0; letter-spacing: 1px;">PASSPORT / 護照</h3>
+            
             <div class="card-box" style="padding: 24px 16px;">
-                <h3 style="font-weight: 900; text-align: center; margin: 0 0 15px 0; letter-spacing: 1px;">PASSPORT / 護照</h3>
-                
                 <div class="passport-inner-card">
                     <div class="passport-photo-box">
                         <div class="pass-row" style="align-items: center; margin-bottom: 8px; width: 100%;">
@@ -304,8 +305,7 @@
                 document.getElementById('login-gate').style.display = 'none';
 
                 if (data && data.length > 0) {
-                    userData = data[0]; 
-                    renderUserProfile(); 
+                    userData = data[0]; renderUserProfile(); 
                     const lastPage = localStorage.getItem('korian_last_page') || 'passport';
                     switchPage(lastPage);
                 } else {
