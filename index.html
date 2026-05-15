@@ -44,7 +44,7 @@
         .form-item { margin-bottom: 12px; width: 100%; display: flex; flex-direction: column; align-items: center; }
         .form-label { width: calc(100% - 24px); font-size: 14px; font-weight: 700; margin-bottom: 6px; color: var(--sub); display: flex; align-items: center; }
         .req-tag { color: var(--error); font-size: 12px; margin-left: 6px; display: none; }
-        .input-box { width: calc(100% - 24px); padding: 12px 20px; border: none; border-radius: 18px; font-size: 15px; outline: none; background: #f2f4f6; box-sizing: border-box; transition: 0.2s; }
+        .input-box { width: calc(100% - 24px); padding: 12px 20px; border: none; border-radius: 18px; font-size: 15px; outline: none; background: #f2f4f6; box-sizing: border-box; transition: 0.2s; -webkit-appearance: none; }
         .input-box.error { background: #fff5f5; box-shadow: 0 0 0 2px var(--error); }
         
         .row-flex { display: flex; width: calc(100% - 24px); gap: 10px; align-items: flex-end; }
@@ -151,22 +151,22 @@
         const SUPABASE_URL = 'https://ivpctyqlrkjstfsoweeh.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml2cGN0eXFscmtqc3Rmc293ZWVoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTk1MTksImV4cCI6MjA4ODc3NTUxOX0.DYgzhaTH3_5NFwv009ZfZAshfUnCW2PeTuNcJ9feyMU';
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        let userLineId = "unknown", userData = null, selectedGender = "";
+        let userLineId = ""; // 關鍵：存儲全局識別碼
+        let userData = null, selectedGender = "";
 
         async function init() {
             try {
                 await liff.init({ liffId: LIFF_ID });
                 if (!liff.isLoggedIn()) { liff.login(); return; }
                 const profile = await liff.getProfile();
-                userLineId = profile.userId;
+                userLineId = profile.userId; // 取得 LINE 識別碼
 
-                // 修正：增加錯誤捕捉，判斷是否為欄位快取問題
-                const { data, error } = await _supabase.from('profiles').select('*').eq('user_id', userLineId);
+                // 查詢會員
+                let { data } = await _supabase.from('profiles').select('*').eq('line_id', userLineId);
                 
-                if (error) {
-                    console.error("Supabase Error:", error);
-                    // 如果還是找不到欄位，彈出明確提示
-                    if (error.message.includes('user_id')) alert("資料庫配置中：請確保 profiles 資料表包含 user_id 欄位。");
+                if (!data || data.length === 0) {
+                    const res = await _supabase.from('profiles').select('*').eq('user_id', userLineId);
+                    if (res.data) data = res.data;
                 }
 
                 if (data && data.length > 0) {
@@ -206,20 +206,26 @@
             if(!by.value || !bm.value || !bd.value){ [by,bm,bd].forEach(s => s.classList.add('error')); document.getElementById('tag-reg-birth').style.display='inline'; valid=false; }
             if(!valid) return;
 
+            // 再次確認 userLineId 存在
+            if(!userLineId) { alert("尚未取得 LINE 登入資訊，請重新整理頁面。"); return; }
+
             btn.disabled = true; btn.innerText = "處理中...";
             const fullBirth = `${by.value}-${bm.value}-${bd.value}`;
             
-            // 修正：明確指定資料寫入
+            // 重要：同時寫入 line_id 與 user_id
             const { error } = await _supabase.from('profiles').insert([
-                { user_id: userLineId, full_name: name.value.trim(), phone: tel.value.trim(), birthday: fullBirth, gender: selectedGender, email: email.value.trim() }
+                { 
+                    line_id: userLineId, 
+                    user_id: userLineId, 
+                    full_name: name.value.trim(), 
+                    phone: tel.value.trim(), 
+                    birthday: fullBirth, 
+                    gender: selectedGender, 
+                    email: email.value.trim() 
+                }
             ]);
 
-            if(!error) {
-                location.reload(); 
-            } else { 
-                alert("報到失敗：" + error.message); 
-                btn.disabled = false; btn.innerText = "登機報到";
-            }
+            if(!error) { location.reload(); } else { alert("報到失敗：" + error.message); btn.disabled = false; btn.innerText = "登機報到"; }
         }
 
         function renderUserProfile() {
@@ -240,11 +246,9 @@
             const baseId = el.id.startsWith('reg-birth') ? 'reg-birth' : el.id;
             const tag = document.getElementById('tag-' + baseId);
             if(tag) tag.style.display='none'; 
-            if(el.id.startsWith('reg-birth')){
-                ['y','m','d'].forEach(suffix => document.getElementById('reg-birth-'+suffix).classList.remove('error'));
-            }
+            if(el.id.startsWith('reg-birth')) ['y','m','d'].forEach(suffix => document.getElementById('reg-birth-'+suffix).classList.remove('error'));
         }
-        function openAddModal() {} // 預留原邏輯
+        function openAddModal() { }
         window.onload = init;
     </script>
 </body>
