@@ -98,8 +98,16 @@
         .detail-val { font-weight: 700; text-align: right; flex: 1; margin-left: 20px; word-break: break-all; }
         .copy-btn { background: #eee; border: none; padding: 4px 8px; border-radius: 8px; font-size: 10px; color: var(--sub); cursor: pointer; margin-left: 8px; display: inline-flex; align-items: center; gap: 4px; vertical-align: middle; }
 
-        /* 修正：訂單明細標域置中且底部加深距離 */
         .modal-header-centered { text-align: center; margin-bottom: 24px; flex-shrink: 0; }
+
+        /* 修正：「我的護照」真實護照內頁模擬排版 */
+        .passport-inner-card { background: #fffdf7; border: 1px solid #e2dbcd; border-radius: 20px; padding: 20px 16px; display: flex; gap: 16px; box-shadow: inset 0 0 20px rgba(218,206,178,0.15), 0 4px 15px rgba(0,0,0,0.05); text-align: left; margin-top: 15px; }
+        .passport-photo-box { width: 100px; display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+        .passport-photo { width: 100px; height: 130px; object-fit: cover; border-radius: 8px; background: #e5e8eb; border: 1px solid #ced4da; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
+        .passport-fields { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+        .pass-row { display: flex; flex-direction: column; line-height: 1.2; }
+        .pass-label { font-size: 10px; font-weight: 700; color: #8e8576; text-transform: uppercase; margin-bottom: 1px; }
+        .pass-val { font-size: 14px; font-weight: 900; color: #2b2925; word-break: break-all; }
 
         /* 報到櫃檯特定樣式 */
         .row-flex { display: flex; width: calc(100% - 24px); gap: 10px; align-items: flex-end; }
@@ -184,10 +192,22 @@
 
         <section id="page-passport" class="page-content">
             <div class="fixed-header"><img src="https://raw.githubusercontent.com/ian-0326/KOR_IAN1004/main/KORIAN.png" alt="Logo" class="page-logo"></div>
-            <div class="card-box" style="text-align: center; margin-top: 20px;">
-                <h3 style="font-weight: 900;">我的護照</h3>
-                <div id="user-display-name" style="font-size: 20px; font-weight: 900; color: var(--primary); margin: 10px 0;">---</div>
-                <div id="user-phone" style="color: var(--gray); font-size: 14px;">---</div>
+            <div class="card-box" style="padding: 24px 16px;">
+                <h3 style="font-weight: 900; text-align: center; margin: 0 0 15px 0;">PASSPORT / 護照</h3>
+                
+                <div class="passport-inner-card">
+                    <div class="passport-photo-box">
+                        <img id="pass-avatar" src="" alt="Avatar" class="passport-photo">
+                    </div>
+                    <div class="passport-fields">
+                        <div class="pass-row"><span class="pass-label">Full Name / 姓名</span><span id="pass-name" class="pass-val">---</span></div>
+                        <div class="pass-row"><span class="pass-label">Sex / 性別</span><span id="pass-sex" class="pass-val">---</span></div>
+                        <div class="pass-row"><span class="pass-label">Date of Birth / 生日</span><span id="pass-birth" class="pass-val">---</span></div>
+                        <div class="pass-row"><span class="pass-label">Passport No. / 會員編號</span><span id="pass-no" class="pass-val">---</span></div>
+                        <div class="pass-row"><span class="pass-label">Class / 護照等級</span><span id="pass-class" class="pass-val">REGULAR</span></div>
+                    </div>
+                </div>
+
                 <button class="btn-main" style="background:#f2f4f6; color:#adb5bd; margin-top:30px; box-shadow:none; width:auto; min-width:120px;" onclick="liff.logout(); localStorage.clear(); location.reload();">登出帳號</button>
             </div>
         </section>
@@ -265,7 +285,7 @@
         const SUPABASE_URL = 'https://ivpctyqlrkjstfsoweeh.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml2cGN0eXFscmtqc3Rmc293ZWVoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTk1MTksImV4cCI6MjA4ODc3NTUxOX0.DYgzhaTH3_5NFwv009ZfZAshfUnCW2PeTuNcJ9feyMU';
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        let userLineId = "", userData = null, selectedGender = "", allProducts = [], cart = {}, shipMethod = 'face', packingQty = 1, currentRawOrderId = "";
+        let userLineId = "", userLinePicture = "", userData = null, selectedGender = "", allProducts = [], cart = {}, shipMethod = 'face', packingQty = 1, currentRawOrderId = "";
 
         async function init() {
             try {
@@ -273,6 +293,7 @@
                 if (!liff.isLoggedIn()) { liff.login(); return; }
                 const profile = await liff.getProfile();
                 userLineId = profile.userId;
+                userLinePicture = profile.pictureUrl || "https://img.icons8.com/illustrations/96/user.png"; // 暫存大頭照網址
 
                 await fetchProducts();
 
@@ -282,7 +303,8 @@
                 document.getElementById('login-gate').style.display = 'none';
 
                 if (data && data.length > 0) {
-                    userData = data[0]; renderUserProfile(); 
+                    userData = data[0]; 
+                    renderUserProfile(); 
                     const lastPage = localStorage.getItem('korian_last_page') || 'passport';
                     switchPage(lastPage);
                 } else {
@@ -439,7 +461,23 @@
         }
 
         async function copyOrderId() { try { await navigator.clipboard.writeText(currentRawOrderId); const btn = document.getElementById('copy-btn'); btn.innerHTML = '<i data-feather="check" style="width:12px;"></i>已複製'; feather.replace(); setTimeout(() => { btn.innerHTML = '<i data-feather="copy" style="width:12px;"></i>複製'; feather.replace(); }, 2000); } catch (err) { console.error(err); } }
-        function renderUserProfile() { document.getElementById('user-display-name').innerText = userData.full_name; document.getElementById('user-phone').innerText = userData.phone; }
+        
+        // 修正：從 Supabase profile 完美渲染出真實護照格式內頁資料
+        function renderUserProfile() { 
+            // 填入照片
+            document.getElementById('pass-avatar').src = userLinePicture;
+            // 填入真實姓名
+            document.getElementById('pass-name').innerText = userData.full_name || "---"; 
+            // 填入性別 (M 轉為男，F 轉為女)
+            document.getElementById('pass-sex').innerText = userData.gender === 'M' ? '男 / M' : (userData.gender === 'F' ? '女 / F' : '---');
+            // 填入會員生日
+            document.getElementById('pass-birth').innerText = userData.birthday || "---";
+            // 填入會員編號 (自動擷取 Supabase 自動生成的 ID 後 8 碼並轉大寫字體做為護照號碼)
+            const mockNo = userData.id ? String(userData.id).slice(-8).toUpperCase() : "--------";
+            document.getElementById('pass-no').innerText = "KP-" + mockNo;
+            // 填入護照等級 (若資料庫有 passport_class 欄位則讀取，否則預設為 REGULAR)
+            document.getElementById('pass-class').innerText = userData.passport_class || "REGULAR";
+        }
         
         function clearError(el) { 
             el.classList.remove('error'); 
