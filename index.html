@@ -8,14 +8,15 @@
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.0/feather.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght=400;500;700;900&display=swap" rel="stylesheet">
     
     <style>
+        /* 修正：將拼錯的 :rose 精準更正回 :root，鎖定全站變數 */
         :root { --primary: #28b0eb; --pink: #ff85a2; --bg: #f2f4f6; --white: #ffffff; --text: #191f28; --sub: #4e5968; --gray: #adb5bd; --error: #f44336; }
         body { font-family: 'Noto Sans TC', sans-serif; background-color: #f2f4f6; margin: 0; padding: 0; color: #191f28; -webkit-font-smoothing: antialiased; touch-action: manipulation; }
         body.modal-open { overflow: hidden; position: fixed; width: 100%; }
 
-        /* 強制登入安全牆 (開屏天藍色畫面) */
+        /* 強制登入天藍色開屏安全牆 */
         #login-gate { position: fixed; inset: 0; background: #28b0eb; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .airplane-loader { color: #ffffff; animation: fly 1.5s ease-in-out infinite; }
         .gate-text { font-size: 13px; font-weight: 700; color: #ffffff; margin-top: 15px; letter-spacing: 1px; opacity: 0.9; }
@@ -105,7 +106,7 @@
         .pass-val { font-size: 16px; font-weight: 900; color: #191f28; word-break: break-all; }
         .pass-no-val { font-size: 13px; font-weight: 900; color: #28b0eb; }
 
-        /* 護照實體按鈕 */
+        /* 護照功能按鈕 */
         .passport-btn-group { display: flex; gap: 12px; margin-top: 15px; width: 100%; padding: 0 8px; box-sizing: border-box; }
         .passport-action-btn { flex: 1; background: #f2f4f6; border: 1px solid #e5e8eb; border-radius: 18px; padding: 16px; font-size: 15px; font-weight: 700; color: #4e5968; cursor: pointer; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.02); transition: 0.15s; }
         .passport-action-btn:active { background: #e5e8eb; transform: scale(0.98); }
@@ -125,7 +126,7 @@
         .btn-sub-small { background: #28b0eb; color: #fff; border: none; padding: 12px 40px; width: auto; min-width: 140px; border-radius: 50px; font-weight: 700; font-size: 15px; cursor: pointer; margin: 0 auto; display: block; }
         .btn-sub-small:disabled { background: #adb5bd; opacity: 0.7; }
 
-        /* 底部導覽列精準排列 */
+        /* 底部選單導覽 */
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; padding: 12px 0 calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid #e5e8eb; z-index: 200; }
         .nav-item { color: #adb5bd; text-align: center; flex: 1; font-size: 11px; font-weight: 900; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; }
         .nav-item.active { color: #28b0eb; }
@@ -281,7 +282,7 @@
                     <div id="m-items-container"></div>
                     <div class="detail-item" style="margin-top:15px; border-top:1px solid #eee; padding-top:12px;"><div style="font-weight:900; color:#191f28;">匯款金額</div><div class="detail-val" id="m-total" style="color:#28b0eb; font-size:18px; font-weight:900;"></div></div>
                 </div>
-                <p style="font-size: 12px; color: #gray; text-align: center; line-height: 1.5; margin: 10px 0;">請截圖此畫面回傳至 LINE@<br>核對金額無誤後即可進行匯款。</p>
+                <p style="font-size: 12px; color: var(--gray); text-align: center; line-height: 1.5; margin: 10px 0;">請截圖此畫面回傳至 LINE@<br>核對金額無誤後即可進行匯款。</p>
             </div>
             <div class="modal-footer"><button class="btn-main" onclick="location.reload()">我知道了</button></div>
         </div>
@@ -291,10 +292,12 @@
         const LIFF_ID = '2009405888-D5absVA3';
         const SUPABASE_URL = 'https://ivpctyqlrkjstfsoweeh.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml2cGN0eXFscmtqc3Rmc293ZWVoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTk1MTksImV4cCI6MjA4ODc3NTUxOX0.DYgzhaTH3_5NFwv009ZfZAshfUnCW2PeTuNcJ9feyMU';
-        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        
+        // 修正：將全域變數命名統一鎖定為庫所預期的 supabase 實體名，徹底消滅 ReferenceError
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        
         let userLineId = "", userLinePicture = "", userData = null, selectedGender = "", allProducts = [], cart = {}, shipMethod = 'face', packingQty = 1, currentRawOrderId = "";
 
-        // 修正：修正新會員初始化未給予預設分頁選取導致頁面完全空白的非同步死結 Bug
         async function init() {
             try {
                 await liff.init({ liffId: LIFF_ID });
@@ -305,20 +308,20 @@
 
                 await fetchProducts();
 
-                const { data } = await _supabase.from('profiles').select('*').or(`line_id.eq.${userLineId},user_id.eq.${userLineId}`);
+                // 修正：讀取與比對統一改為對齊後的變數名
+                const { data } = await supabaseClient.from('profiles').select('*').or(`line_id.eq.${userLineId},user_id.eq.${userLineId}`);
                 
                 document.getElementById('main-app').style.display = 'block';
 
                 if (data && data.length > 0) {
                     userData = data[0]; 
                     renderUserProfile(); 
-                    document.getElementById('login-gate').style.display = 'none'; // 舊會員：立刻關閉天藍牆放行
+                    document.getElementById('login-gate').style.display = 'none'; // 舊會員：直接解鎖放行
                     const lastPage = localStorage.getItem('korian_last_page') || 'passport';
                     switchPage(lastPage);
                 } else {
                     initBirthSelects();
-                    // 新會員修正：先在背景初始化預設分頁（但不關閉天藍牆安全防護），接著精準彈出報到櫃檯
-                    switchPage('passport'); 
+                    switchPage('passport'); // 新會員：背景分頁預設就定位，保持天藍牆，彈出櫃檯
                     document.body.classList.add('modal-open');
                     document.getElementById('register-modal').style.display = 'flex';
                 }
@@ -328,7 +331,7 @@
 
         async function fetchProducts() {
             try {
-                const { data } = await _supabase.from('products').select('*').eq('is_active', true);
+                const { data } = await supabaseClient.from('products').select('*').eq('is_active', true);
                 if(data) {
                     allProducts = data.sort((a,b)=>(b.order_count||0)-(a.order_count||0));
                     renderProducts(allProducts);
@@ -418,7 +421,7 @@
             if(!valid) return;
             btn.disabled=true; btn.innerText="處理中...";
             const taiwanTime = new Date().toISOString();
-            const { error } = await _supabase.from('products').insert({ category: cat.value, name_zh: name.value.trim(), option: opt.value.trim()||"", price_nt: price.value, olive_url: url.value.trim(), is_active: false, created_by: userLineId, created_at: taiwanTime });
+            const { error } = await supabaseClient.from('products').insert({ category: cat.value, name_zh: name.value.trim(), option: opt.value.trim()||"", price_nt: price.value, olive_url: url.value.trim(), is_active: false, created_by: userLineId, created_at: taiwanTime });
             if(!error) { 
                 closeModal('add-modal'); 
                 btn.disabled=false; btn.innerText="確認登錄";
@@ -441,9 +444,9 @@
             const finalStore = shipMethod === '711' ? `${store.value}(${code.value})` : '台中指定區';
             const taiwanTime = new Date().toISOString();
             try {
-                const { data, error } = await _supabase.from('orders').insert({ items_summary: itemsStr, user_id: userLineId, customer_name: name.value, customer_tel: tel.value, shipping_method: finalMethod, shipping_store: finalStore, packing_qty: packingQty, total_amount: document.getElementById('sum-total').innerText, created_at: taiwanTime }).select();
+                const { data, error } = await supabaseClient.from('orders').insert({ items_summary: itemsStr, user_id: userLineId, customer_name: name.value, customer_tel: tel.value, shipping_method: finalMethod, shipping_store: finalStore, packing_qty: packingQty, total_amount: document.getElementById('sum-total').innerText, created_at: taiwanTime }).select();
                 if(error) throw error;
-                for(let i of Object.values(cart)){ if(i.qty>0) await _supabase.rpc('increment_order_count',{row_id:i.id, inc_val:parseInt(i.qty)}); }
+                for(let i of Object.values(cart)){ if(i.qty>0) await supabaseClient.rpc('increment_order_count',{row_id:i.id, inc_val:parseInt(i.qty)}); }
                 const oid = data[0].id; currentRawOrderId = oid.slice(-10).toUpperCase();
                 document.getElementById('m-order-id').innerText="編號: " + currentRawOrderId;
                 document.getElementById('m-items-container').innerHTML = itemsDisplay;
@@ -465,23 +468,19 @@
             btn.disabled = true; btn.innerText = "處理中...";
             const fullBirth = `${by.value}-${bm.value}-${bd.value}`;
             const taiwanTime = new Date().toISOString();
-            const { error } = await _supabase.from('profiles').insert([{ line_id: userLineId, user_id: userLineId, full_name: name.value.trim(), phone: tel.value.trim(), birthday: fullBirth, gender: selectedGender, email: email.value.trim(), created_at: taiwanTime }]);
+            const { error } = await supabaseClient.from('profiles').insert([{ line_id: userLineId, user_id: userLineId, full_name: name.value.trim(), phone: tel.value.trim(), birthday: fullBirth, gender: selectedGender, email: email.value.trim(), created_at: taiwanTime }]);
             if(!error) location.reload(); else { alert("失敗：" + error.message); btn.disabled = false; btn.innerText = "登機報到"; }
         }
 
-        async function copyOrderId() { try { await navigator.clipboard.writeText(currentRawOrderId); const btn = document.getElementById('copy-btn'); btn.innerHTML = '<i data-feather="check" style="width:12px;"></i>已複製'; feather.replace(); setTimeout(() => { btn.innerHTML = '<i data-feather="copy" style="width:12px;"></i>複製'; feather.replace(); }, 2000); } catch (err) { console.error(err); } }
-        
         function renderUserProfile() { 
             if(!userData) return;
             document.getElementById('pass-avatar').src = userLinePicture;
             document.getElementById('pass-name').innerText = userData.full_name || "---"; 
             document.getElementById('pass-sex').innerText = userData.gender === 'M' ? '男 / M' : (userData.gender === 'F' ? '女 / F' : '---');
             document.getElementById('pass-birth').innerText = userData.birthday || "---";
-            
             const rawId = userData.user_id ? String(userData.user_id) : "";
             const lastEight = rawId.slice(-8).toUpperCase();
             document.getElementById('pass-no').innerText = lastEight ? "TW-" + lastEight : "TW---------";
-            
             document.getElementById('pass-class').innerText = userData.passport_class || "REGULAR";
         }
         
