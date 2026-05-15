@@ -12,7 +12,6 @@
     <style>
         :root { --primary: #28b0eb; --pink: #ff85a2; --bg: #f2f4f6; --white: #ffffff; --text: #191f28; --sub: #4e5968; --gray: #adb5bd; --error: #f44336; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Helvetica, Arial, "PingFang TC", "Hiragino Sans GB", "Microsoft JhengHei", sans-serif; background-color: #f2f4f6; margin: 0; padding: 0; color: #191f28; -webkit-font-smoothing: antialiased; touch-action: manipulation; }
-        /* 修正：徹底移除引發瀏覽器渲染執行緒死結的 position: fixed，改用安全單純的 overflow 控制 */
         body.modal-open { overflow: hidden; }
 
         /* 強制登入天藍色開屏安全牆 */
@@ -82,7 +81,8 @@
         .row-lg { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; cursor: pointer; }
         .price-lg { font-size: 24px; font-weight: 900; }
 
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 500; align-items: center; justify-content: center; padding: 20px; }
+        /* 修正：將報到櫃檯彈窗的層級調高於天藍色安全牆(z-index: 9999)，使其在天藍背景上層顯示 */
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 10000; align-items: center; justify-content: center; padding: 20px; }
         .modal-card { background: #fff; border-radius: 36px; padding: 24px 20px 28px 20px; width: 100%; max-width: 360px; max-height: 85vh; box-sizing: border-box; display: flex; flex-direction: column; box-shadow: 0 15px 50px rgba(0,0,0,0.2); }
         .modal-body { overflow-y: auto; flex-grow: 1; width: 100%; margin-bottom: 10px; }
         .modal-section { text-align: left; margin-bottom: 16px; padding: 16px; background: #f8f9fa; border-radius: 24px; }
@@ -134,8 +134,10 @@
 <body>
 
     <div id="login-gate">
-        <div class="airplane-loader"><i data-feather="send" style="width:48px; height:48px; transform: rotate(45deg);"></i></div>
-        <div class="gate-text">KOR.IAN 連線準備中...</div>
+        <div id="loader-content" style="text-align:center;">
+            <div class="airplane-loader"><i data-feather="send" style="width:48px; height:48px; transform: rotate(45deg);"></i></div>
+            <div class="gate-text">KOR.IAN 連線準備中...</div>
+        </div>
     </div>
 
     <div id="main-app" style="display: none;">
@@ -312,17 +314,18 @@
                 if (data && data.length > 0) {
                     userData = data[0]; 
                     renderUserProfile(); 
-                    // 舊會員：強制在排版就定位後隱藏天藍遮罩牆放行
-                    document.getElementById('login-gate').style.display = 'none';
+                    document.getElementById('login-gate').style.display = 'none'; // 舊會員：直接解鎖隱藏天藍牆放行
                     const lastPage = localStorage.getItem('korian_last_page') || 'passport';
                     switchPage(lastPage);
                 } else {
                     initBirthSelects();
-                    // 新會員：背景分頁預設就定位，保持天藍牆，彈出報到櫃檯，並且徹底阻斷遮罩隱藏，逼出彈窗
                     switchPage('passport'); 
-                    document.getElementById('login-gate').style.display = 'none'; // 先關閉天藍色，讓會員立刻看見表單
+                    
+                    // 修正：當報到表單出現時，將天藍牆內的載入文字與飛機清空，使背景保持完美的純天藍色
+                    document.getElementById('loader-content').style.display = 'none'; 
+                    
                     document.body.classList.add('modal-open');
-                    document.getElementById('register-modal').style.display = 'flex';
+                    document.getElementById('register-modal').style.display = 'flex'; // 彈出表單
                 }
                 feather.replace();
             } catch (e) { console.error(e); }
@@ -416,7 +419,7 @@
             if(!cat.value){ cat.classList.add('error'); valid=false; }
             if(!name.value.trim()){ name.classList.add('error'); valid=false; }
             if(!price.value){ price.classList.add('error'); valid=false; }
-            if(!url.value.trim()){ url.classList.add('error'); valid=false; }
+            if(!url.value.trim()){ url.value.classList.add('error'); valid=false; }
             if(!valid) return;
             btn.disabled=true; btn.innerText="處理中...";
             const taiwanTime = new Date().toISOString();
@@ -491,6 +494,7 @@
             if(el.id.startsWith('reg-birth')) ['y','m','d'].forEach(suffix => document.getElementById('reg-birth-'+suffix).classList.remove('error'));
         }
         
+        // 修正：openAddModal 鎖定背景滾動
         function openAddModal() { document.body.classList.add('modal-open'); document.getElementById('add-modal').style.display='flex'; initTextareas(); }
         function closeModal(id) { document.body.classList.remove('modal-open'); document.getElementById(id).style.display='none'; }
         function initTextareas() { const ts = document.querySelectorAll('textarea.input-box'); ts.forEach(t => { t.style.height = '48px'; }); }
