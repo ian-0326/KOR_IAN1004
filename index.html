@@ -56,8 +56,8 @@
         /* 護照頁最外圍大卡片 */
         .card-box { background: #fff; border-radius: 32px; padding: 15px 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); margin-top: 10px; }
         
-        /* 修正：增加 gap 拉開照片與右側欄位，使右側資料往右移動 */
-        .passport-inner-card { padding: 5px 0; display: flex; gap: 28px; text-align: left; }
+        /* 修正：將 gap 加大至 40px，讓右側資料更往右移動，拉開與相片的距離 */
+        .passport-inner-card { padding: 5px 0; display: flex; gap: 40px; text-align: left; }
         .passport-photo-box { width: 100px; display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
         .passport-photo { width: 100px; height: 130px; object-fit: cover; border-radius: 8px; background: #e5e8eb; border: 1px solid #ced4da; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
         .passport-fields { flex: 1; display: flex; flex-direction: column; gap: 10px; }
@@ -176,7 +176,7 @@
                 <div class="form-item"><label class="form-label">聯絡電話<span class="req-tag" id="tag-ship-tel">*必填</span></label><input type="tel" id="ship-tel" class="input-box" placeholder="09xxxxxxxx" maxlength="10" oninput="clearError(this)"><div style="font-size:12px; color:var(--error); margin-top:8px; line-height:1.5;">*請提供正確的取件人資訊，資料有誤導致無法取件概不負責。</div></div>
                 <div class="form-item">
                     <label class="form-label">配送方式</label>
-                    <div class="ship-group"><div class="ship-btn active" id="btn-face" onclick="setShipping('face')">面交</div><div class="ship-btn" id="btn-711" onclick="setShipping('711')">7-11 取件</div></div>
+                    <div class="ship-group"><div class="ship-btn active" id="btn-face" onclick="setShipping('face')">面交</div><div class="ship-btn" id="711" onclick="setShipping('711')">7-11 取件</div></div>
                     <div id="hint-face" style="font-size:12px; color:var(--primary); margin-top:12px; width:calc(100% - 24px);">面交僅限台中大雅、梧棲、沙鹿區。</div>
                     <div id="form-711" style="display:none; margin-top:15px; width:100%;">
                         <div class="form-item"><label class="form-label">取件門市<span class="req-tag" id="tag-ship-store">*必填</span></label><input type="text" id="ship-store" class="input-box" placeholder="取件門市" oninput="clearError(this)"></div>
@@ -305,7 +305,8 @@
                 document.getElementById('login-gate').style.display = 'none';
 
                 if (data && data.length > 0) {
-                    userData = data[0]; renderUserProfile(); 
+                    userData = data[0]; 
+                    renderUserProfile(); 
                     const lastPage = localStorage.getItem('korian_last_page') || 'passport';
                     switchPage(lastPage);
                 } else {
@@ -459,13 +460,18 @@
 
         async function copyOrderId() { try { await navigator.clipboard.writeText(currentRawOrderId); const btn = document.getElementById('copy-btn'); btn.innerHTML = '<i data-feather="check" style="width:12px;"></i>已複製'; feather.replace(); setTimeout(() => { btn.innerHTML = '<i data-feather="copy" style="width:12px;"></i>複製'; feather.replace(); }, 2000); } catch (err) { console.error(err); } }
         
+        // 修正：會員資料渲染邏輯 (對齊 user_id 後 8 碼及前綴 TW-)
         function renderUserProfile() { 
             document.getElementById('pass-avatar').src = userLinePicture;
             document.getElementById('pass-name').innerText = userData.full_name || "---"; 
             document.getElementById('pass-sex').innerText = userData.gender === 'M' ? '男 / M' : (userData.gender === 'F' ? '女 / F' : '---');
             document.getElementById('pass-birth').innerText = userData.birthday || "---";
-            const mockNo = userData.id ? String(userData.id).slice(-8).toUpperCase() : "--------";
-            document.getElementById('pass-no').innerText = "KP-" + mockNo;
+            
+            // 修正：確實從 profiles 的 user_id 欄位中擷取最後八碼，並加上前綴 TW-
+            const rawId = userData.user_id ? String(userData.user_id) : "";
+            const lastEight = rawId.slice(-8).toUpperCase();
+            document.getElementById('pass-no').innerText = lastEight ? "TW-" + lastEight : "TW---------";
+            
             document.getElementById('pass-class').innerText = userData.passport_class || "REGULAR";
         }
         
