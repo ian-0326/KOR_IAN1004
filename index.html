@@ -63,12 +63,9 @@
         .pass-row { display: flex; flex-direction: column; line-height: 1.2; }
         .pass-label { font-size: 10px; font-weight: 700; color: var(--gray); text-transform: uppercase; margin-bottom: 1px; }
         
-        /* 修正：除了護照編號以外，其他的資料內容字體稍微放大至 16px */
         .pass-val { font-size: 16px; font-weight: 900; color: var(--text); word-break: break-all; }
-        /* 護照編號專用，不進行放大保持 13px */
         .pass-no-val { font-size: 13px; font-weight: 900; color: var(--primary); }
 
-        /* 修正：功能方形按鈕群組外觀，加上明確的實體框線與精緻底色 */
         .passport-btn-group { display: flex; gap: 12px; margin-top: 15px; width: 100%; padding: 0 8px; box-sizing: border-box; }
         .passport-action-btn { flex: 1; background: #fff; border: 1px solid #e5e8eb; border-radius: 18px; padding: 16px; font-size: 15px; font-weight: 700; color: var(--sub); cursor: pointer; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.02); transition: 0.15s; }
         .passport-action-btn:active { background: #f8f9fa; transform: scale(0.98); }
@@ -127,6 +124,11 @@
         .gender-btn.active-f { background: var(--pink); color: white; box-shadow: 0 4px 10px rgba(255, 133, 162, 0.3); }
         .birth-row { display: flex; width: calc(100% - 24px); gap: 8px; justify-content: center; }
         .birth-row select { width: 33.33% !important; padding: 12px 10px; text-align: center; cursor: pointer; }
+
+        /* 修正：精準復原底部選單欄位排版、圖示文字垂直排列 */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; padding: 12px 0 calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid #e5e8eb; z-index: 200; }
+        .nav-item { color: #adb5bd; text-align: center; flex: 1; font-size: 11px; font-weight: 900; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; }
+        .nav-item.active { color: var(--primary); }
     </style>
 </head>
 <body>
