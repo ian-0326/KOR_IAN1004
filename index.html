@@ -15,7 +15,7 @@
         body { font-family: 'Noto Sans TC', sans-serif; background-color: #f2f4f6; margin: 0; padding: 0; color: #191f28; -webkit-font-smoothing: antialiased; touch-action: manipulation; }
         body.modal-open { overflow: hidden; position: fixed; width: 100%; }
 
-        /* 修正：剛點擊連結進入網站時，呈現全螢幕天藍色背景畫面 */
+        /* 強制登入安全牆 */
         #login-gate { position: fixed; inset: 0; background: #28b0eb; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .airplane-loader { color: #ffffff; animation: fly 1.5s ease-in-out infinite; }
         .gate-text { font-size: 13px; font-weight: 700; color: #ffffff; margin-top: 15px; letter-spacing: 1px; opacity: 0.9; }
@@ -294,7 +294,6 @@
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         let userLineId = "", userLinePicture = "", userData = null, selectedGender = "", allProducts = [], cart = {}, shipMethod = 'face', packingQty = 1, currentRawOrderId = "";
 
-        // 修正：調整分流與載入牆邏輯，完美呼應天藍色背景分流機制
         async function init() {
             try {
                 await liff.init({ liffId: LIFF_ID });
@@ -307,18 +306,15 @@
 
                 const { data } = await _supabase.from('profiles').select('*').or(`line_id.eq.${userLineId},user_id.eq.${userLineId}`);
                 
-                // 核心：一律先渲染並將主應用代碼結構喚醒
                 document.getElementById('main-app').style.display = 'block';
 
                 if (data && data.length > 0) {
-                    // 非第一次登入者：後台已有資料，直接關閉天藍色加載牆，順暢進入網頁畫面
                     userData = data[0]; 
                     renderUserProfile(); 
                     document.getElementById('login-gate').style.display = 'none';
                     const lastPage = localStorage.getItem('korian_last_page') || 'passport';
                     switchPage(lastPage);
                 } else {
-                    // 第一次登入者：後台無資料，背景保持天藍色隔離牆，立刻精準彈出「報到櫃檯」表單
                     initBirthSelects();
                     document.body.classList.add('modal-open');
                     document.getElementById('register-modal').style.display = 'flex';
@@ -328,11 +324,13 @@
         }
 
         async function fetchProducts() {
-            const { data } = await _supabase.from('products').select('*').eq('is_active', true);
-            if(data) {
-                allProducts = data.sort((a,b)=>(b.order_count||0)-(a.order_count||0));
-                renderProducts(allProducts);
-            }
+            try {
+                const { data } = await _supabase.from('products').select('*').eq('is_active', true);
+                if(data) {
+                    allProducts = data.sort((a,b)=>(b.order_count||0)-(a.order_count||0));
+                    renderProducts(allProducts);
+                }
+            } catch (err) { console.error(err); }
         }
 
         function renderProducts(ps) {
@@ -362,6 +360,7 @@
 
         function updateQty(id, d) {
             const p = allProducts.find(x=>x.id===id);
+            if(!p) return;
             if(!cart[id]) cart[id]={id:p.id, name:p.name_zh, option:p.option, price:p.price_nt, qty:0};
             cart[id].qty=Math.max(0, cart[id].qty+d);
             if(document.getElementById(`qty-${id}`)) document.getElementById(`qty-${id}`).innerText=cart[id].qty;
@@ -470,6 +469,7 @@
         async function copyOrderId() { try { await navigator.clipboard.writeText(currentRawOrderId); const btn = document.getElementById('copy-btn'); btn.innerHTML = '<i data-feather="check" style="width:12px;"></i>已複製'; feather.replace(); setTimeout(() => { btn.innerHTML = '<i data-feather="copy" style="width:12px;"></i>複製'; feather.replace(); }, 2000); } catch (err) { console.error(err); } }
         
         function renderUserProfile() { 
+            if(!userData) return;
             document.getElementById('pass-avatar').src = userLinePicture;
             document.getElementById('pass-name').innerText = userData.full_name || "---"; 
             document.getElementById('pass-sex').innerText = userData.gender === 'M' ? '男 / M' : (userData.gender === 'F' ? '女 / F' : '---');
@@ -498,7 +498,8 @@
 
         function switchPage(p) {
             document.querySelectorAll('.page-content').forEach(e=>e.classList.remove('active'));
-            document.getElementById('page-'+p).classList.add('active');
+            const target = document.getElementById('page-'+p);
+            if(target) target.classList.add('active');
             document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
             if(document.getElementById('nav-'+p)) document.getElementById('nav-'+p).classList.add('active');
             if(p === 'shop' || p === 'passport') localStorage.setItem('korian_last_page', p);
