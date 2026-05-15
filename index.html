@@ -15,7 +15,7 @@
         body { font-family: 'Noto Sans TC', sans-serif; background-color: #f2f4f6; margin: 0; padding: 0; color: #191f28; -webkit-font-smoothing: antialiased; touch-action: manipulation; }
         body.modal-open { overflow: hidden; position: fixed; width: 100%; }
 
-        /* 強制登入安全牆 */
+        /* 強制登入安全牆 (開屏天藍色畫面) */
         #login-gate { position: fixed; inset: 0; background: #28b0eb; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .airplane-loader { color: #ffffff; animation: fly 1.5s ease-in-out infinite; }
         .gate-text { font-size: 13px; font-weight: 700; color: #ffffff; margin-top: 15px; letter-spacing: 1px; opacity: 0.9; }
@@ -95,7 +95,7 @@
         .copy-btn { background: #eee; border: none; padding: 4px 8px; border-radius: 8px; font-size: 10px; color: #4e5968; cursor: pointer; margin-left: 8px; display: inline-flex; align-items: center; gap: 4px; vertical-align: middle; }
         .modal-header-centered { text-align: center; margin-bottom: 24px; flex-shrink: 0; }
 
-        /* 護照排版 */
+        /* 護照內頁大卡片排版 */
         .passport-inner-card { padding: 5px 0 5px 30px; display: flex; gap: 40px; text-align: left; box-sizing: border-box; }
         .passport-photo-box { width: 100px; display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
         .passport-photo { width: 100px; height: 130px; object-fit: cover; border-radius: 8px; background: #e5e8eb; border: 1px solid #ced4da; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
@@ -105,7 +105,7 @@
         .pass-val { font-size: 16px; font-weight: 900; color: #191f28; word-break: break-all; }
         .pass-no-val { font-size: 13px; font-weight: 900; color: #28b0eb; }
 
-        /* 護照功能按鈕 */
+        /* 護照實體按鈕 */
         .passport-btn-group { display: flex; gap: 12px; margin-top: 15px; width: 100%; padding: 0 8px; box-sizing: border-box; }
         .passport-action-btn { flex: 1; background: #f2f4f6; border: 1px solid #e5e8eb; border-radius: 18px; padding: 16px; font-size: 15px; font-weight: 700; color: #4e5968; cursor: pointer; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.02); transition: 0.15s; }
         .passport-action-btn:active { background: #e5e8eb; transform: scale(0.98); }
@@ -119,13 +119,13 @@
         .birth-row { display: flex; width: calc(100% - 24px); gap: 8px; justify-content: center; }
         .birth-row select { width: 33.33% !important; padding: 12px 10px; text-align: center; cursor: pointer; }
 
-        /* 按鈕主樣式分類 */
+        /* 按鈕規格定義 */
         .btn-main { background: #28b0eb; color: #fff; border: none; padding: 18px; width: 100%; border-radius: 20px; font-weight: 700; font-size: 17px; cursor: pointer; display: block; box-sizing: border-box; }
         .btn-main:disabled { background: #adb5bd; opacity: 0.7; }
         .btn-sub-small { background: #28b0eb; color: #fff; border: none; padding: 12px 40px; width: auto; min-width: 140px; border-radius: 50px; font-weight: 700; font-size: 15px; cursor: pointer; margin: 0 auto; display: block; }
         .btn-sub-small:disabled { background: #adb5bd; opacity: 0.7; }
 
-        /* 底部選單導覽 */
+        /* 底部導覽列精準排列 */
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; padding: 12px 0 calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid #e5e8eb; z-index: 200; }
         .nav-item { color: #adb5bd; text-align: center; flex: 1; font-size: 11px; font-weight: 900; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; }
         .nav-item.active { color: #28b0eb; }
@@ -294,6 +294,7 @@
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         let userLineId = "", userLinePicture = "", userData = null, selectedGender = "", allProducts = [], cart = {}, shipMethod = 'face', packingQty = 1, currentRawOrderId = "";
 
+        // 修正：修正新會員初始化未給予預設分頁選取導致頁面完全空白的非同步死結 Bug
         async function init() {
             try {
                 await liff.init({ liffId: LIFF_ID });
@@ -311,11 +312,13 @@
                 if (data && data.length > 0) {
                     userData = data[0]; 
                     renderUserProfile(); 
-                    document.getElementById('login-gate').style.display = 'none';
+                    document.getElementById('login-gate').style.display = 'none'; // 舊會員：立刻關閉天藍牆放行
                     const lastPage = localStorage.getItem('korian_last_page') || 'passport';
                     switchPage(lastPage);
                 } else {
                     initBirthSelects();
+                    // 新會員修正：先在背景初始化預設分頁（但不關閉天藍牆安全防護），接著精準彈出報到櫃檯
+                    switchPage('passport'); 
                     document.body.classList.add('modal-open');
                     document.getElementById('register-modal').style.display = 'flex';
                 }
