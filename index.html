@@ -18,18 +18,27 @@
         /* 強制登入天藍色開屏安全牆 */
         #login-gate { position: fixed; inset: 0; background: #28b0eb; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         
-        /* 核心動效：飛機與文字整體同頻呼吸淡入淡出，並且加上優雅的上下浮動 */
-        #loader-content { text-align: center; animation: fadeInOutFloat 2s ease-in-out infinite; }
+        /* 核心動效優化：讓整體內容只做同頻率的淡入淡出（不參與位置晃動） */
+        #loader-content { text-align: center; animation: fadeInOut 2s ease-in-out infinite; }
         
-        /* 採用您上傳的原始圖片檔案，設定寬度 90px，高度自適應 auto 確保永不變形 */
-        .custom-airplane-img { width: 90px; height: auto; display: block; margin: 0 auto; }
+        /* 修正：單獨為飛機圖片檔案加入獨立的上下浮動呼吸動畫，寬度 90px，高度 auto 永不變形 */
+        .custom-airplane-img { width: 90px; height: auto; display: block; margin: 0 auto; animation: floatAnimation 2s ease-in-out infinite; }
+        
+        /* 修正：文字維持原有的內距與透明度，因為外層沒有位移動畫，位置將會完美固定，絕不跟著飛機晃動 */
         .gate-text { font-size: 14px; font-weight: 700; color: #ffffff; margin-top: 24px; letter-spacing: 2px; opacity: 0.95; }
         
-        /* 整合動畫：同時滿足「上下浮動」與「同頻出現、同頻結束」的淡入淡出 */
-        @keyframes fadeInOutFloat {
-            0% { transform: translateY(0); opacity: 0.4; }
-            50% { transform: translateY(-12px); opacity: 1; }
-            100% { transform: translateY(0); opacity: 0.4; }
+        /* 飛機專屬：純粹的位置上下浮動效果 */
+        @keyframes floatAnimation {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-12px); }
+            100% { transform: translateY(0); }
+        }
+        
+        /* 整體同頻呼吸淡入淡出（不含位移） */
+        @keyframes fadeInOut {
+            0% { opacity: 0.4; }
+            50% { opacity: 1; }
+            100% { opacity: 0.4; }
         }
 
         /* 頂部固定 Header */
@@ -455,12 +464,11 @@
             initTextareas(); 
         }
 
-        // 修正：完美閉合 closeModal 函式並更正內嵌屬性語法錯誤，徹底打破編譯崩潰死結
         function closeModal(id) { 
             document.body.classList.remove('modal-open'); 
             document.getElementById(id).style.display = 'none'; 
         }
-        
+
         function initTextareas() { const ts = document.querySelectorAll('textarea.input-box'); ts.forEach(t => { t.style.height = '48px'; }); }
         function autoGrow(element) { element.style.height = '48px'; if (element.scrollHeight > 48) { element.style.height = (element.scrollHeight) + "px"; } }
         function changeCat(el) { clearError(el); }
