@@ -108,11 +108,12 @@
         .pass-label { font-size: 10px; font-weight: 700; color: #adb5bd; text-transform: uppercase; margin-bottom: 1px; }
         .pass-val { font-size: 16px; font-weight: 900; color: #191f28; word-break: break-all; }
 
-        /* 護照功能方形按鈕：修正為具備 Flex 佈局以利圖示與文字水平對齊 */
-        .passport-btn-group { display: flex; gap: 12px; margin-top: 15px; width: 100%; padding: 0 8px; box-sizing: border-box; }
-        .passport-action-btn { flex: 1; background: #f2f4f6; border: 1px solid #e5e8eb; border-radius: 18px; padding: 16px; font-size: 15px; font-weight: 700; color: #4e5968; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.02); transition: 0.15s; }
-        .passport-action-btn:active { background: #e5e8eb; transform: scale(0.98); }
-        .passport-action-btn svg { width: 16px; height: 16px; color: #4e5968; }
+        /* 修正：將原本的橫條按鈕，完美蛻變成參考圖中「白色高飽滿圓角方塊、置頂大 icon、粗黑標題」的圖卡 Grid 風格 */
+        .passport-btn-group { display: flex; gap: 16px; margin-top: 24px; width: 100%; box-sizing: border-box; }
+        .passport-action-btn { flex: 1; aspect-ratio: 1 / 1; background: #ffffff; border: none; border-radius: 28px; padding: 20px; font-size: 16px; font-weight: 900; color: #191f28; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.04); border: 1px solid rgba(0,0,0,0.01); transition: 0.15s ease-in-out; }
+        .passport-action-btn:active { background: #f8f9fa; transform: translateY(2px); box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
+        /* 放大並將圖示置頂，完美模擬平面插圖質感 */
+        .passport-action-btn svg { width: 28px; height: 28px; color: #4e5968; stroke-width: 2.3; }
 
         /* 報到櫃檯特定樣式 */
         .row-flex { display: flex; width: calc(100% - 24px); gap: 10px; align-items: flex-end; }
@@ -220,8 +221,14 @@
             </div>
 
             <div class="passport-btn-group">
-                <button class="passport-action-btn" onclick="console.log('下單流程點擊')"><i data-feather="help-circle"></i>下單流程</button>
-                <button class="passport-action-btn" onclick="console.log('我的訂單點擊')"><i data-feather="file-text"></i>我的訂單</button>
+                <button class="passport-action-btn" onclick="console.log('下單流程點擊')">
+                    <i data-feather="help-circle"></i>
+                    <span>下單流程</span>
+                </button>
+                <button class="passport-action-btn" onclick="console.log('我的訂單點擊')">
+                    <i data-feather="file-text"></i>
+                    <span>我的訂單</span>
+                </button>
             </div>
         </section>
 
@@ -502,15 +509,12 @@
             if(!error) location.reload(); else { alert("失敗：" + error.message); btn.disabled = false; btn.innerText = "登機報到"; }
         }
 
-        // 修正：讀取 profiles 的新欄位「會員等級」並完美渲染
         function renderUserProfile() { 
             if(!userData) return;
             document.getElementById('pass-avatar').src = userLinePicture;
             document.getElementById('pass-name').innerText = userData.full_name || "---"; 
             document.getElementById('pass-sex').innerText = userData.gender === 'M' ? '男 / M' : (userData.gender === 'F' ? '女 / F' : '---');
             document.getElementById('pass-birth').innerText = userData.birthday || "---";
-            
-            // 修正：精準對齊 profiles 中的「會員等級」新欄位名稱，預設為 REGULAR
             document.getElementById('pass-class').innerText = userData.會員等級 || "REGULAR";
         }
         
