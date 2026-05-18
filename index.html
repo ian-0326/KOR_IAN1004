@@ -18,12 +18,10 @@
         /* 強制登入天藍色開屏安全牆 */
         #login-gate { position: fixed; inset: 0; background: #28b0eb; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         
-        /* 修正：將動畫直接綁定在整體內容容器上，確保飛機與提示字同時出現、同時結束 */
         #loader-content { text-align: center; animation: fadeInOut 2s ease-in-out infinite; }
         .airplane-loader { color: #ffffff; display: block; margin: 0 auto; }
         .gate-text { font-size: 14px; font-weight: 700; color: #ffffff; margin-top: 18px; letter-spacing: 2px; opacity: 0.95; }
         
-        /* 定義整體淡入淡出與輕微升降的同步動畫 */
         @keyframes fadeInOut {
             0% { transform: translateY(5px); opacity: 0.3; }
             50% { transform: translateY(-5px); opacity: 1; }
@@ -42,7 +40,7 @@
         .page-content.active { display: block; }
         
         /* 分類選單固定 */
-        .category-wrapper { position: sticky; top: 75px; background: #f2f4f6; margin: 0 -16px 20px -16px; padding: 10px 16px; overflow-x: auto; display: flex; gap: 8px; scrollbar-width: none; z-index: 90; }
+        .category-wrapper { position: sticky; top: 75px; background: #f2f4f6; margin: 0 -1px 20px -16px; padding: 10px 16px; overflow-x: auto; display: flex; gap: 8px; scrollbar-width: none; z-index: 90; }
         .cat-pill { white-space: nowrap; padding: 10px 20px; background: #fff; border-radius: 50px; font-size: 14px; font-weight: 700; color: #4e5968; box-shadow: 0 2px 6px rgba(0,0,0,0.05); flex-shrink: 0; cursor: pointer; }
         .cat-pill.active { background: #28b0eb; color: #fff; }
 
@@ -75,8 +73,10 @@
         .input-box.error { background: #fff5f5; box-shadow: 0 0 0 2px #f44336; }
         textarea.input-box { padding-top: 14px; padding-bottom: 14px; resize: none; overflow-y: hidden; min-height: 48px; padding-left: 20px !important; padding-right: 20px !important; }
 
-        .ship-group { display: flex; gap: 12px; width: calc(100% - 24px); }
-        .ship-btn { flex: 1; padding: 16px; background: #f2f4f6; border-radius: 20px; text-align: center; font-weight: 700; color: #4e5968; cursor: pointer; }
+        .ship-group { display: flex; gap: 12px; width: calc(100% - 24px); transition: 0.2s; border-radius: 20px; }
+        /* 修正：當配送方式未點選發送驗證時，整組亮起紅框線 */
+        .ship-group.error { box-shadow: 0 0 0 2px #f44336; background: #fff5f5; }
+        .ship-btn { flex: 1; padding: 16px; background: #f2f4f6; border-radius: 20px; text-align: center; font-weight: 700; color: #4e5968; cursor: pointer; transition: 0.2s; }
         .ship-btn.active { background: #28b0eb; color: #fff; }
 
         /* 總計摘要與彈窗 */
@@ -184,9 +184,12 @@
                 <div class="form-item"><label class="form-label">取件姓名<span class="req-tag" id="tag-ship-name">*必填</span></label><input type="text" id="ship-name" class="input-box" placeholder="收件人姓名" oninput="clearError(this)"></div>
                 <div class="form-item"><label class="form-label">聯絡電話<span class="req-tag" id="tag-ship-tel">*必填</span></label><input type="tel" id="ship-tel" class="input-box" placeholder="09xxxxxxxx" maxlength="10" oninput="clearError(this)"><div style="font-size:12px; color:#f44336; margin-top:8px; line-height:1.5;">*請提供正確的取件人資訊，資料有誤導致無法取件概不負責。</div></div>
                 <div class="form-item">
-                    <label class="form-label">配送方式</label>
-                    <div class="ship-group"><div class="ship-btn active" id="btn-face" onclick="setShipping('face')">面交</div><div class="ship-btn" id="btn-711" onclick="setShipping('711')">7-11 取件</div></div>
-                    <div id="hint-face" style="font-size:12px; color:#28b0eb; margin-top:12px; width:calc(100% - 24px);">面交僅限台中大雅、梧棲、沙鹿區。</div>
+                    <label class="form-label">配送方式<span class="req-tag" id="tag-ship-method">*必填</span></label>
+                    <div class="ship-group" id="ship-method-group">
+                        <div class="ship-btn" id="btn-face" onclick="setShipping('face')">面交</div>
+                        <div class="ship-btn" id="btn-711" onclick="setShipping('711')">7-11 取件</div>
+                    </div>
+                    <div id="hint-face" style="display:none; font-size:12px; color:#28b0eb; margin-top:12px; width:calc(100% - 24px);">面交僅限台中大雅、梧棲、沙鹿區。</div>
                     <div id="form-711" style="display:none; margin-top:15px; width:100%;">
                         <div class="form-item"><label class="form-label">取件門市<span class="req-tag" id="tag-ship-store">*必填</span></label><input type="text" id="ship-store" class="input-box" placeholder="取件門市" oninput="clearError(this)"></div>
                         <div class="form-item"><label class="form-label">門市代碼<span class="req-tag" id="tag-ship-code">*必填</span></label><input type="text" id="ship-code" class="input-box" placeholder="門市代碼" oninput="clearError(this)"></div>
@@ -300,7 +303,8 @@
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml2cGN0eXFscmtqc3Rmc293ZWVoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTk1MTksImV4cCI6MjA4ODc3NTUxOX0.DYgzhaTH3_5NFwv009ZfZAshfUnCW2PeTuNcJ9feyMU';
         
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        let userLineId = "", userLinePicture = "", userData = null, selectedGender = "", allProducts = [], cart = {}, shipMethod = 'face', packingQty = 1, currentRawOrderId = "";
+        // 修正：shipMethod 預設值調整為空字串，取消預設點擊
+        let userLineId = "", userLinePicture = "", userData = null, selectedGender = "", allProducts = [], cart = {}, shipMethod = '', packingQty = 1, currentRawOrderId = "";
 
         async function init() {
             try {
@@ -394,10 +398,32 @@
             feather.replace();
         }
 
-        function setShipping(m) { shipMethod=m; document.getElementById('btn-face').classList.toggle('active',m==='face'); document.getElementById('btn-711').classList.toggle('active',m==='711'); document.getElementById('hint-face').style.display=m==='face'?'block':'none'; document.getElementById('form-711').style.display=m==='711'?'block':'none'; if(m==='711'&&packingQty<1) packingQty=1; calculateFinal(); }
+        // 修正：當配送方式被點選時，會精準計算商品與其運費金額
+        function setShipping(m) { 
+            shipMethod=m; 
+            document.getElementById('ship-method-group').classList.remove('error');
+            document.getElementById('tag-ship-method').style.display='none';
+            document.getElementById('btn-face').classList.toggle('active',m==='face'); 
+            document.getElementById('btn-711').classList.toggle('active',m==='711'); 
+            document.getElementById('hint-face').style.display=m==='face'?'block':'none'; 
+            document.getElementById('form-711').style.display=m==='711'?'block':'none'; 
+            if(m==='711' && packingQty<1) packingQty=1; 
+            calculateFinal(); 
+        }
+        
         function toggleSummary() { document.getElementById('shipping-summary').classList.toggle('expanded'); }
         function updatePacking(d) { const min=shipMethod==='711'?1:0; packingQty=Math.max(min, packingQty+d); document.getElementById('qty-packing').innerText=packingQty; calculateFinal(); }
-        function calculateFinal() { let it=Object.values(cart).reduce((s,i)=>s+(i.price*i.qty),0); let sf=shipMethod==='711'?(80*packingQty):0; let pf=packingQty*10; document.getElementById('sum-items').innerText=`NT$ ${it.toLocaleString()}`; document.getElementById('sum-shipping').innerText=`NT$ ${sf.toLocaleString()}`; document.getElementById('sum-packing').innerText=`NT$ ${pf.toLocaleString()}`; document.getElementById('sum-total').innerText=`NT$ ${(it+sf+pf).toLocaleString()}`; }
+        
+        // 修正：重新計算總金額，不論是否有點選配送，前台商品的金額都會主動加總渲染出來
+        function calculateFinal() { 
+            let it=Object.values(cart).reduce((s,i)=>s+(i.price*i.qty),0); 
+            let sf=shipMethod==='711'?(80*packingQty):0; 
+            let pf=packingQty*10; 
+            document.getElementById('sum-items').innerText=`NT$ ${it.toLocaleString()}`; 
+            document.getElementById('sum-shipping').innerText=`NT$ ${sf.toLocaleString()}`; 
+            document.getElementById('sum-packing').innerText=`NT$ ${pf.toLocaleString()}`; 
+            document.getElementById('sum-total').innerText=`NT$ ${(it+sf+pf).toLocaleString()}`; 
+        }
 
         function initBirthSelects() {
             const sy = document.getElementById('reg-birth-y'), sm = document.getElementById('reg-birth-m'), sd = document.getElementById('reg-birth-d');
@@ -434,12 +460,21 @@
             } else { alert('失敗：'+error.message); btn.disabled=false; btn.innerText="確認登錄"; }
         }
 
+        // 修正：下單資料欄位校驗，將「配送方式」納入嚴格的必選校驗中
         async function submitFinalOrder() {
             const btn = document.getElementById('confirm-submit-btn'); if(btn.disabled) return;
             const name = document.getElementById('ship-name'), tel = document.getElementById('ship-tel'), store = document.getElementById('ship-store'), code = document.getElementById('ship-code');
             let isValid = true;
             if(!name.value.trim()){ name.classList.add('error'); isValid=false; }
             if(!/^09\d{8}$/.test(tel.value.trim())){ tel.classList.add('error'); isValid=false; }
+            
+            // 修正：驗證用戶是否有點選配送方式
+            if(!shipMethod){
+                document.getElementById('ship-method-group').classList.add('error');
+                document.getElementById('tag-ship-method').style.display='inline';
+                isValid=false;
+            }
+            
             if(shipMethod==='711'){ if(!store.value.trim()){ store.classList.add('error'); isValid=false; } if(!code.value.trim()){ code.classList.add('error'); isValid=false; } }
             if(!isValid) return; btn.disabled=true; btn.innerText="下單中...";
             let itemsStr = Object.values(cart).filter(i=>i.qty>0).map(i=>`${i.name}*${i.qty}`).join(', ');
@@ -513,6 +548,10 @@
             document.getElementById('cart-bar').style.display=(t>0&&p=='shop')?'flex':'none';
             if(p === 'shop') renderProducts(allProducts);
             if(p === 'checkout') renderCheckout();
+            
+            // 修正：切換至結帳取件資料分頁時，主動計算商品本身的底層總計，避免出現 NT$ 0
+            if(p === 'shipping') calculateFinal();
+            
             window.scrollTo(0,0); feather.replace();
         }
 
