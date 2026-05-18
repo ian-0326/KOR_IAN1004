@@ -18,24 +18,18 @@
         /* 強制登入天藍色開屏安全牆 */
         #login-gate { position: fixed; inset: 0; background: #28b0eb; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         
-        #loader-content { text-align: center; animation: fadeInOut 2s ease-in-out infinite; }
+        /* 核心動效：飛機與文字整體同頻呼吸淡入淡出，並且加上優雅的上下浮動 */
+        #loader-content { text-align: center; animation: fadeInOutFloat 2s ease-in-out infinite; }
         
-        /* 修正：精準對齊 512 視窗比例，徹底根除手機與全網頁環境下的變形壓扁 Bug */
-        .custom-airplane { width: 95px; height: 95px; display: block; margin: 0 auto; fill: #ffffff; animation: floatAnimation 2s ease-in-out infinite; }
+        /* 修正：直接讀取你上傳的原始圖片檔案，設定寬度 90px，高度自適應 auto 確保永不變形 */
+        .custom-airplane-img { width: 90px; height: auto; display: block; margin: 0 auto; }
         .gate-text { font-size: 14px; font-weight: 700; color: #ffffff; margin-top: 24px; letter-spacing: 2px; opacity: 0.95; }
         
-        /* 專屬飛機上下浮動的呼吸效果 */
-        @keyframes floatAnimation {
-            0% { transform: translateY(0); }
-            50% { transform: translateY(-12px); }
-            100% { transform: translateY(0); }
-        }
-        
-        /* 整體文字與飛機的同頻呼吸淡入淡出 */
-        @keyframes fadeInOut {
-            0% { opacity: 0.4; }
-            50% { opacity: 1; }
-            100% { opacity: 0.4; }
+        /* 全新整合動畫：同時滿足「上下浮動」與「同頻出現、同頻結束」的淡入淡出 */
+        @keyframes fadeInOutFloat {
+            0% { transform: translateY(0); opacity: 0.4; }
+            50% { transform: translateY(-12px); opacity: 1; }
+            100% { transform: translateY(0); opacity: 0.4; }
         }
 
         /* 頂部固定 Header */
@@ -147,9 +141,7 @@
 
     <div id="login-gate">
         <div id="loader-content">
-            <svg class="custom-airplane" viewBox="0 0 512 512" version="1.1" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
-                <path d="M442.56 185.6L303.17 130.34 216.86 45.07c-5.61-5.61-14.44-7.22-21.86-4.01-7.42 3.21-11.68 10.82-10.47 18.85l14.3 94.88-80 22.22-60.86-39.67c-5.11-3.34-11.68-3.42-16.88-0.21-5.21 3.21-8.07 9.12-7.33 15.22l6.56 53.79-6.01 1.67c-5.77 1.6-9.77 6.84-9.77 12.84s4 11.24 9.77 12.84l6.01 1.67-6.56 53.79c-0.74 6.09 2.12 12.01 7.33 15.22 2.58 1.6 5.5 2.4 8.41 2.4 2.93 0 5.86-0.81 8.47-2.5l60.86-39.67 80 22.22-14.3 94.88c-1.21 8.03 3.05 15.64 10.47 18.85 2.65 1.15 5.45 1.71 8.21 1.71 4.7 0 9.29-2.07 12.39-5.86l87.56-106.6 139.39-38.72c13.48-3.75 21.46-17.66 17.72-31.14-2.96-10.64-12.63-17.7-23.26-17.7z" />
-            </svg>
+            <img src="airplain loading.png" alt="Loading Airplane" class="custom-airplane-img">
             <div class="gate-text">飛行中請繫好安全帶</div>
         </div>
     </div>
@@ -463,7 +455,7 @@
             initTextareas(); 
         }
 
-        function closeModal(id) { document.body.classList.remove('modal-open'); document.getElementById(id).style.display='none'; }
+        function closeModal(id) { document.body.classList.remove('modal-open'); document.getElementById(id).style.none'; }
         function initTextareas() { const ts = document.querySelectorAll('textarea.input-box'); ts.forEach(t => { t.style.height = '48px'; }); }
         function autoGrow(element) { element.style.height = '48px'; if (element.scrollHeight > 48) { element.style.height = (element.scrollHeight) + "px"; } }
         function changeCat(el) { clearError(el); }
