@@ -40,7 +40,7 @@
         .page-content.active { display: block; }
         
         /* 分類選單固定 */
-        .category-wrapper { position: sticky; top: 75px; background: #f2f4f6; margin: 0 -1px 20px -16px; padding: 10px 16px; overflow-x: auto; display: flex; gap: 8px; scrollbar-width: none; z-index: 90; }
+        .category-wrapper { position: sticky; top: 75px; background: #f2f4f6; margin: 0 -16px 20px -16px; padding: 10px 16px; overflow-x: auto; display: flex; gap: 8px; scrollbar-width: none; z-index: 90; }
         .cat-pill { white-space: nowrap; padding: 10px 20px; background: #fff; border-radius: 50px; font-size: 14px; font-weight: 700; color: #4e5968; box-shadow: 0 2px 6px rgba(0,0,0,0.05); flex-shrink: 0; cursor: pointer; }
         .cat-pill.active { background: #28b0eb; color: #fff; }
 
@@ -74,7 +74,6 @@
         textarea.input-box { padding-top: 14px; padding-bottom: 14px; resize: none; overflow-y: hidden; min-height: 48px; padding-left: 20px !important; padding-right: 20px !important; }
 
         .ship-group { display: flex; gap: 12px; width: calc(100% - 24px); transition: 0.2s; border-radius: 20px; }
-        /* 修正：當配送方式未點選發送驗證時，整組亮起紅框線 */
         .ship-group.error { box-shadow: 0 0 0 2px #f44336; background: #fff5f5; }
         .ship-btn { flex: 1; padding: 16px; background: #f2f4f6; border-radius: 20px; text-align: center; font-weight: 700; color: #4e5968; cursor: pointer; transition: 0.2s; }
         .ship-btn.active { background: #28b0eb; color: #fff; }
@@ -108,12 +107,12 @@
         .pass-row { display: flex; flex-direction: column; line-height: 1.2; }
         .pass-label { font-size: 10px; font-weight: 700; color: #adb5bd; text-transform: uppercase; margin-bottom: 1px; }
         .pass-val { font-size: 16px; font-weight: 900; color: #191f28; word-break: break-all; }
-        .pass-no-val { font-size: 13px; font-weight: 900; color: #28b0eb; }
 
-        /* 護照功能按鈕 */
+        /* 護照功能方形按鈕：修正為具備 Flex 佈局以利圖示與文字水平對齊 */
         .passport-btn-group { display: flex; gap: 12px; margin-top: 15px; width: 100%; padding: 0 8px; box-sizing: border-box; }
-        .passport-action-btn { flex: 1; background: #f2f4f6; border: 1px solid #e5e8eb; border-radius: 18px; padding: 16px; font-size: 15px; font-weight: 700; color: #4e5968; cursor: pointer; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.02); transition: 0.15s; }
+        .passport-action-btn { flex: 1; background: #f2f4f6; border: 1px solid #e5e8eb; border-radius: 18px; padding: 16px; font-size: 15px; font-weight: 700; color: #4e5968; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.02); transition: 0.15s; }
         .passport-action-btn:active { background: #e5e8eb; transform: scale(0.98); }
+        .passport-action-btn svg { width: 16px; height: 16px; color: #4e5968; }
 
         /* 報到櫃檯特定樣式 */
         .row-flex { display: flex; width: calc(100% - 24px); gap: 10px; align-items: flex-end; }
@@ -208,11 +207,7 @@
             <h3 style="font-weight: 900; text-align: center; margin: 0 0 15px 0; letter-spacing: 1px;">PASSPORT / 護照</h3>
             <div class="card-box" style="padding: 24px 16px;">
                 <div class="passport-inner-card">
-                    <div class="passport-photo-box">
-                        <div class="pass-row" style="align-items: center; margin-bottom: 8px; width: 100%;">
-                            <span class="pass-label" style="font-size: 9px;">PASSPORT NO.</span>
-                            <span id="pass-no" class="pass-val pass-no-val">---</span>
-                        </div>
+                    <div class="passport-photo-box" style="padding-top: 22px;">
                         <img id="pass-avatar" src="" alt="Avatar" class="passport-photo">
                     </div>
                     <div class="passport-fields" style="padding-top: 22px;">
@@ -223,9 +218,10 @@
                     </div>
                 </div>
             </div>
+
             <div class="passport-btn-group">
-                <button class="passport-action-btn" onclick="console.log('下單流程點擊')">下單流程</button>
-                <button class="passport-action-btn" onclick="console.log('我的訂單點擊')">我的訂單</button>
+                <button class="passport-action-btn" onclick="console.log('下單流程點擊')"><i data-feather="help-circle"></i>下單流程</button>
+                <button class="passport-action-btn" onclick="console.log('我的訂單點擊')"><i data-feather="file-text"></i>我的訂單</button>
             </div>
         </section>
 
@@ -303,7 +299,6 @@
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml2cGN0eXFscmtqc3Rmc293ZWVoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTk1MTksImV4cCI6MjA4ODc3NTUxOX0.DYgzhaTH3_5NFwv009ZfZAshfUnCW2PeTuNcJ9feyMU';
         
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        // 修正：shipMethod 預設值調整為空字串，取消預設點擊
         let userLineId = "", userLinePicture = "", userData = null, selectedGender = "", allProducts = [], cart = {}, shipMethod = '', packingQty = 1, currentRawOrderId = "";
 
         async function init() {
@@ -398,7 +393,6 @@
             feather.replace();
         }
 
-        // 修正：當配送方式被點選時，會精準計算商品與其運費金額
         function setShipping(m) { 
             shipMethod=m; 
             document.getElementById('ship-method-group').classList.remove('error');
@@ -414,7 +408,6 @@
         function toggleSummary() { document.getElementById('shipping-summary').classList.toggle('expanded'); }
         function updatePacking(d) { const min=shipMethod==='711'?1:0; packingQty=Math.max(min, packingQty+d); document.getElementById('qty-packing').innerText=packingQty; calculateFinal(); }
         
-        // 修正：重新計算總金額，不論是否有點選配送，前台商品的金額都會主動加總渲染出來
         function calculateFinal() { 
             let it=Object.values(cart).reduce((s,i)=>s+(i.price*i.qty),0); 
             let sf=shipMethod==='711'?(80*packingQty):0; 
@@ -460,7 +453,6 @@
             } else { alert('失敗：'+error.message); btn.disabled=false; btn.innerText="確認登錄"; }
         }
 
-        // 修正：下單資料欄位校驗，將「配送方式」納入嚴格的必選校驗中
         async function submitFinalOrder() {
             const btn = document.getElementById('confirm-submit-btn'); if(btn.disabled) return;
             const name = document.getElementById('ship-name'), tel = document.getElementById('ship-tel'), store = document.getElementById('ship-store'), code = document.getElementById('ship-code');
@@ -468,7 +460,6 @@
             if(!name.value.trim()){ name.classList.add('error'); isValid=false; }
             if(!/^09\d{8}$/.test(tel.value.trim())){ tel.classList.add('error'); isValid=false; }
             
-            // 修正：驗證用戶是否有點選配送方式
             if(!shipMethod){
                 document.getElementById('ship-method-group').classList.add('error');
                 document.getElementById('tag-ship-method').style.display='inline';
@@ -511,16 +502,16 @@
             if(!error) location.reload(); else { alert("失敗：" + error.message); btn.disabled = false; btn.innerText = "登機報到"; }
         }
 
+        // 修正：讀取 profiles 的新欄位「會員等級」並完美渲染
         function renderUserProfile() { 
             if(!userData) return;
             document.getElementById('pass-avatar').src = userLinePicture;
             document.getElementById('pass-name').innerText = userData.full_name || "---"; 
             document.getElementById('pass-sex').innerText = userData.gender === 'M' ? '男 / M' : (userData.gender === 'F' ? '女 / F' : '---');
             document.getElementById('pass-birth').innerText = userData.birthday || "---";
-            const rawId = userData.user_id ? String(userData.user_id) : "";
-            const lastEight = rawId.slice(-8).toUpperCase();
-            document.getElementById('pass-no').innerText = lastEight ? "TW-" + lastEight : "TW---------";
-            document.getElementById('pass-class').innerText = userData.passport_class || "REGULAR";
+            
+            // 修正：精準對齊 profiles 中的「會員等級」新欄位名稱，預設為 REGULAR
+            document.getElementById('pass-class').innerText = userData.會員等級 || "REGULAR";
         }
         
         function clearError(el) { 
@@ -548,10 +539,7 @@
             document.getElementById('cart-bar').style.display=(t>0&&p=='shop')?'flex':'none';
             if(p === 'shop') renderProducts(allProducts);
             if(p === 'checkout') renderCheckout();
-            
-            // 修正：切換至結帳取件資料分頁時，主動計算商品本身的底層總計，避免出現 NT$ 0
             if(p === 'shipping') calculateFinal();
-            
             window.scrollTo(0,0); feather.replace();
         }
 
