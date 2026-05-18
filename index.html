@@ -21,11 +21,11 @@
         /* 核心動效：飛機與文字整體同頻呼吸淡入淡出，並且加上優雅的上下浮動 */
         #loader-content { text-align: center; animation: fadeInOutFloat 2s ease-in-out infinite; }
         
-        /* 修正：直接讀取你上傳的原始圖片檔案，設定寬度 90px，高度自適應 auto 確保永不變形 */
+        /* 採用您上傳的原始圖片檔案，設定寬度 90px，高度自適應 auto 確保永不變形 */
         .custom-airplane-img { width: 90px; height: auto; display: block; margin: 0 auto; }
         .gate-text { font-size: 14px; font-weight: 700; color: #ffffff; margin-top: 24px; letter-spacing: 2px; opacity: 0.95; }
         
-        /* 全新整合動畫：同時滿足「上下浮動」與「同頻出現、同頻結束」的淡入淡出 */
+        /* 整合動畫：同時滿足「上下浮動」與「同頻出現、同頻結束」的淡入淡出 */
         @keyframes fadeInOutFloat {
             0% { transform: translateY(0); opacity: 0.4; }
             50% { transform: translateY(-12px); opacity: 1; }
@@ -455,7 +455,12 @@
             initTextareas(); 
         }
 
-        function closeModal(id) { document.body.classList.remove('modal-open'); document.getElementById(id).style.none'; }
+        // 修正：完美閉合 closeModal 函式並更正內嵌屬性語法錯誤，徹底打破編譯崩潰死結
+        function closeModal(id) { 
+            document.body.classList.remove('modal-open'); 
+            document.getElementById(id).style.display = 'none'; 
+        }
+        
         function initTextareas() { const ts = document.querySelectorAll('textarea.input-box'); ts.forEach(t => { t.style.height = '48px'; }); }
         function autoGrow(element) { element.style.height = '48px'; if (element.scrollHeight > 48) { element.style.height = (element.scrollHeight) + "px"; } }
         function changeCat(el) { clearError(el); }
@@ -530,7 +535,7 @@
             }
             allUserOrders = data;
             container.innerHTML = data.map((order, index) => `
-                <div class="order-list-item" onclick="showOrderDetail(allUserOrders[${index}])">
+                <div class="order-list-item" onclick="showOrderDetail(allUserOrders[index])">
                     <div class="order-icon-box"><i data-feather="package"></i></div>
                     <div class="order-info">
                         <div class="order-id-title">TW-${order.id.slice(-10).toUpperCase()}</div>
