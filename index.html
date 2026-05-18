@@ -18,13 +18,11 @@
         /* 強制登入天藍色開屏安全牆 */
         #login-gate { position: fixed; inset: 0; background: #28b0eb; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         
-        /* 核心動效優化：讓整體內容只做同頻率的淡入淡出（不參與位置晃動） */
+        /* 核心動效：整體內容做純粹的同頻淡入淡出（不含位移，文字完全固定） */
         #loader-content { text-align: center; animation: fadeInOut 2s ease-in-out infinite; }
         
-        /* 修正：單獨為飛機圖片檔案加入獨立的上下浮動呼吸動畫，寬度 90px，高度 auto 永不變形 */
+        /* 單獨為飛機圖片檔案加入獨立的上下浮動呼吸動畫，寬度 90px，高度 auto 永不變形 */
         .custom-airplane-img { width: 90px; height: auto; display: block; margin: 0 auto; animation: floatAnimation 2s ease-in-out infinite; }
-        
-        /* 修正：文字維持原有的內距與透明度，因為外層沒有位移動畫，位置將會完美固定，絕不跟著飛機晃動 */
         .gate-text { font-size: 14px; font-weight: 700; color: #ffffff; margin-top: 24px; letter-spacing: 2px; opacity: 0.95; }
         
         /* 飛機專屬：純粹的位置上下浮動效果 */
@@ -53,7 +51,7 @@
         .page-content.active { display: block; }
         
         /* 分類選單固定 */
-        .category-wrapper { position: sticky; top: 75px; background: #f2f4f6; margin: 0 -16px 20px -16px; padding: 10px 16px; overflow-x: auto; display: flex; gap: 8px; scrollbar-width: none; z-index: 90; }
+        .category-wrapper { position: sticky; top: 75px; background: #f2f4f6; margin: 0 -1px 20px -16px; padding: 10px 16px; overflow-x: auto; display: flex; gap: 8px; scrollbar-width: none; z-index: 90; }
         .cat-pill { white-space: nowrap; padding: 10px 20px; background: #fff; border-radius: 50px; font-size: 14px; font-weight: 700; color: #4e5968; box-shadow: 0 2px 6px rgba(0,0,0,0.05); flex-shrink: 0; cursor: pointer; }
         .cat-pill.active { background: #28b0eb; color: #fff; }
 
@@ -134,6 +132,10 @@
         .order-info { flex: 1; }
         .order-id-title { font-size: 16px; font-weight: 900; color: #191f28; margin-bottom: 4px; }
         .order-meta { font-size: 12px; color: #adb5bd; display: flex; justify-content: space-between; }
+
+        /* 全新：下單流程專屬圖片卡片樣式 */
+        .process-img-box { background: #ffffff; border-radius: 28px; padding: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.04); display: flex; justify-content: center; overflow: hidden; margin-top: 10px; }
+        .process-image { width: 100%; height: auto; border-radius: 20px; display: block; object-fit: contain; }
 
         /* 按鈕規格定義 */
         .btn-main { background: #28b0eb; color: #fff; border: none; padding: 18px; width: 100%; border-radius: 20px; font-weight: 700; font-size: 17px; cursor: pointer; display: block; box-sizing: border-box; text-align: center; }
@@ -231,7 +233,7 @@
             </div>
 
             <div class="passport-btn-group">
-                <button class="passport-action-btn" onclick="console.log('下單流程點擊')">
+                <button class="passport-action-btn" onclick="switchPage('process')">
                     <i data-feather="help-circle"></i>
                     <span>下單流程</span>
                 </button>
@@ -248,6 +250,16 @@
                 <div class="page-title">訂單追蹤</div>
             </div>
             <div id="order-list-container" style="padding-top: 10px;"></div>
+        </section>
+
+        <section id="page-process" class="page-content">
+            <div class="nav-header">
+                <button class="back-btn" onclick="switchPage('passport')"><i data-feather="chevron-left"></i></button>
+                <div class="page-title">下單流程</div>
+            </div>
+            <div class="process-img-box">
+                <img src="網站下單.jpg" alt="Order Process Instruction" class="process-image">
+            </div>
         </section>
 
         <div id="cart-bar" style="display:none; position:fixed; bottom:95px; left:16px; right:16px; background:#191f28; color:#fff; padding:18px 24px; border-radius:20px; justify-content:space-between; align-items:center; z-index:250; cursor:pointer;" onclick="switchPage('checkout')"><span>已選 <span id="cart-qty" style="color:#28b0eb; font-weight:900;">0</span> 件商品</span><span style="font-weight:900;">查看清單 →</span></div>
