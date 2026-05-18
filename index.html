@@ -119,7 +119,7 @@
         .pass-label { font-size: 10px; font-weight: 700; color: #adb5bd; text-transform: uppercase; margin-bottom: 1px; }
         .pass-val { font-size: 16px; font-weight: 900; color: #191f28; word-break: break-all; }
 
-        /* 護照功能方形按鈕（依據參考圖風格） */
+        /* 護照功能方形按鈕 */
         .passport-btn-group { display: flex; gap: 16px; margin-top: 24px; width: 100%; box-sizing: border-box; }
         .passport-action-btn { flex: 1; aspect-ratio: 1 / 1; background: #ffffff; border: none; border-radius: 28px; padding: 20px; font-size: 16px; font-weight: 900; color: #191f28; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.04); border: 1px solid rgba(0,0,0,0.01); transition: 0.15s ease-in-out; }
         .passport-action-btn:active { background: #f8f9fa; transform: translateY(2px); }
@@ -133,7 +133,7 @@
         .order-id-title { font-size: 16px; font-weight: 900; color: #191f28; margin-bottom: 4px; }
         .order-meta { font-size: 12px; color: #adb5bd; display: flex; justify-content: space-between; }
 
-        /* 全新：下單流程專屬圖片卡片樣式 */
+        /* 下單流程專屬圖片卡片樣式 */
         .process-img-box { background: #ffffff; border-radius: 28px; padding: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.04); display: flex; justify-content: center; overflow: hidden; margin-top: 10px; }
         .process-image { width: 100%; height: auto; border-radius: 20px; display: block; object-fit: contain; }
 
@@ -212,7 +212,7 @@
             <div class="bottom-summary" id="shipping-summary">
                 <div class="summary-details"><div class="row-sm"><span>小計</span><span id="sum-items">NT$ 0</span></div><div class="row-sm"><span>運費</span><span id="sum-shipping">NT$ 0</span></div><div class="row-sm"><span>包材</span><span id="sum-packing">NT$ 10</span></div></div>
                 <div class="row-lg" onclick="toggleSummary()"><span>匯款總金額</span><div style="display:flex; align-items:center; gap:8px;"><span class="price-lg" id="sum-total">NT$ 0</span><i data-feather="chevron-up"></i></div></div>
-                <div class="btn-main" id="confirm-submit-btn" onclick="submitFinalOrder()">確認下單</div>
+                <button class="btn-main" id="confirm-submit-btn" onclick="submitFinalOrder()">確認下單</button>
             </div>
         </section>
 
@@ -326,7 +326,7 @@
                 </div>
                 <p style="font-size: 12px; color: var(--gray); text-align: center; line-height: 1.5; margin: 10px 0;">請截圖此畫面回傳至 LINE@<br>核對金額無誤後即可進行匯款。</p>
             </div>
-            <div class="modal-footer"><div class="btn-main" onclick="document.getElementById('order-detail-modal').style.display='none'">我知道了</div></div>
+            <div class="modal-footer"><div class="btn-main" onclick="closeOrderDetailModal()">我知道了</div></div>
         </div>
     </div>
 
@@ -524,7 +524,7 @@
                 for(let i of Object.values(cart)){ if(i.qty>0) await supabaseClient.rpc('increment_order_count',{row_id:i.id, inc_val:parseInt(i.qty)}); }
                 showOrderDetail(data[0]); 
                 cart={}; renderProducts(allProducts); 
-            } catch(e){ alert("失敗："+e.message); btn.disabled=false; }
+            } catch(e){ alert("失敗："+e.message); btn.disabled=false; btn.innerText="確認下單"; }
         }
 
         function showOrderDetail(order) {
@@ -543,6 +543,17 @@
             `).join('');
             document.getElementById('order-detail-modal').style.display = 'flex';
             feather.replace();
+        }
+
+        // 修正：當關閉訂單明細時，完美解凍按鈕並跳轉回主畫面
+        function closeOrderDetailModal() {
+            document.getElementById('order-detail-modal').style.display = 'none';
+            const btn = document.getElementById('confirm-submit-btn');
+            if (btn) {
+                btn.disabled = false;
+                btn.innerText = "確認下單";
+            }
+            switchPage('shop');
         }
 
         async function fetchUserOrders() {
