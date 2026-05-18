@@ -18,21 +18,19 @@
         /* 強制登入天藍色開屏安全牆 */
         #login-gate { position: fixed; inset: 0; background: #28b0eb; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         
-        /* 核心動效：整體內容做純粹的同頻淡入淡出（不含位移，文字完全固定） */
+        /* 核心動效：整體內容做純粹的同頻淡入淡出 */
         #loader-content { text-align: center; animation: fadeInOut 2s ease-in-out infinite; }
         
-        /* 單獨為飛機圖片檔案加入獨立的上下浮動呼吸動畫，寬度 90px，高度 auto 永不變形 */
+        /* 飛機圖片檔案獨立的上下浮動呼吸動畫 */
         .custom-airplane-img { width: 90px; height: auto; display: block; margin: 0 auto; animation: floatAnimation 2s ease-in-out infinite; }
         .gate-text { font-size: 14px; font-weight: 700; color: #ffffff; margin-top: 24px; letter-spacing: 2px; opacity: 0.95; }
         
-        /* 飛機專屬：純粹的位置上下浮動效果 */
         @keyframes floatAnimation {
             0% { transform: translateY(0); }
             50% { transform: translateY(-12px); }
             100% { transform: translateY(0); }
         }
         
-        /* 整體同頻呼吸淡入淡出（不含位移） */
         @keyframes fadeInOut {
             0% { opacity: 0.4; }
             50% { opacity: 1; }
@@ -110,14 +108,14 @@
         .copy-btn { background: #eee; border: none; padding: 4px 8px; border-radius: 8px; font-size: 10px; color: #4e5968; cursor: pointer; margin-left: 8px; display: inline-flex; align-items: center; gap: 4px; vertical-align: middle; }
         .modal-header-centered { text-align: center; margin-bottom: 24px; flex-shrink: 0; }
 
-        /* 護照內頁大卡片排版 */
-        .passport-inner-card { padding: 5px 0 5px 30px; display: flex; gap: 40px; text-align: left; box-sizing: border-box; }
-        .passport-photo-box { width: 100px; display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
-        .passport-photo { width: 100px; height: 130px; object-fit: cover; border-radius: 8px; background: #e5e8eb; border: 1px solid #ced4da; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
-        .passport-fields { flex: 1; display: flex; flex-direction: column; gap: 10px; }
-        .pass-row { display: flex; flex-direction: column; line-height: 1.2; }
-        .pass-label { font-size: 10px; font-weight: 700; color: #adb5bd; text-transform: uppercase; margin-bottom: 1px; }
-        .pass-val { font-size: 16px; font-weight: 900; color: #191f28; word-break: break-all; }
+        /* 修正：將護照圖片與所有資料欄位稍微放大顯示，字級與相片尺寸完美升級 */
+        .passport-inner-card { padding: 5px 0 5px 20px; display: flex; gap: 32px; text-align: left; box-sizing: border-box; align-items: center; }
+        .passport-photo-box { width: 115px; display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+        .passport-photo { width: 115px; height: 150px; object-fit: cover; border-radius: 12px; background: #e5e8eb; border: 1px solid #ced4da; box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
+        .passport-fields { flex: 1; display: flex; flex-direction: column; gap: 12px; }
+        .pass-row { display: flex; flex-direction: column; line-height: 1.3; }
+        .pass-label { font-size: 11px; font-weight: 700; color: #adb5bd; text-transform: uppercase; margin-bottom: 2px; }
+        .pass-val { font-size: 18px; font-weight: 900; color: #191f28; word-break: break-all; }
 
         /* 護照功能方形按鈕 */
         .passport-btn-group { display: flex; gap: 16px; margin-top: 24px; width: 100%; box-sizing: border-box; }
@@ -133,9 +131,9 @@
         .order-id-title { font-size: 16px; font-weight: 900; color: #191f28; margin-bottom: 4px; }
         .order-meta { font-size: 12px; color: #adb5bd; display: flex; justify-content: space-between; }
 
-        /* 下單流程專屬圖片卡片樣式 */
-        .process-img-box { background: #ffffff; border-radius: 28px; padding: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.04); display: flex; justify-content: center; overflow: hidden; margin-top: 10px; }
-        .process-image { width: 100%; height: auto; border-radius: 20px; display: block; object-fit: contain; }
+        /* 修正：將下單流程圖片外的白框與陰影完全移除，改為乾淨無邊界大排版，並將寬度調至滿版 */
+        .process-img-box { background: transparent; border-radius: 0; padding: 0; box-shadow: none; display: block; width: 100%; margin-top: 10px; }
+        .process-image { width: 100%; height: auto; border-radius: 16px; display: block; object-fit: contain; }
 
         /* 按鈕規格定義 */
         .btn-main { background: #28b0eb; color: #fff; border: none; padding: 18px; width: 100%; border-radius: 20px; font-weight: 700; font-size: 17px; cursor: pointer; display: block; box-sizing: border-box; text-align: center; }
@@ -220,14 +218,13 @@
             <h3 style="font-weight: 900; text-align: center; margin: 0 0 15px 0; letter-spacing: 1px;">PASSPORT / 護照</h3>
             <div class="card-box" style="padding: 24px 16px;">
                 <div class="passport-inner-card">
-                    <div class="passport-photo-box" style="padding-top: 22px;">
+                    <div class="passport-photo-box">
                         <img id="pass-avatar" src="" alt="Avatar" class="passport-photo">
                     </div>
-                    <div class="passport-fields" style="padding-top: 22px;">
+                    <div class="passport-fields">
                         <div class="pass-row"><span class="pass-label">Full Name / 姓名</span><span id="pass-name" class="pass-val">---</span></div>
                         <div class="pass-row"><span class="pass-label">Sex / 性別</span><span id="pass-sex" class="pass-val">---</span></div>
                         <div class="pass-row"><span class="pass-label">Date of Birth / 生日</span><span id="pass-birth" class="pass-val">---</span></div>
-                        <div class="pass-row"><span class="pass-label">Class / 護照等級</span><span id="pass-class" class="pass-val">REGULAR</span></div>
                     </div>
                 </div>
             </div>
@@ -341,7 +338,7 @@
         async function init() {
             try {
                 await liff.init({ liffId: LIFF_ID });
-                if (!liff.isLoggedIn()) { liff.login(); return; }
+                if (! liff.isLoggedIn()) { liff.login(); return; }
                 const profile = await liff.getProfile();
                 userLineId = profile.userId;
                 userLinePicture = profile.pictureUrl || "https://img.icons8.com/illustrations/96/user.png";
@@ -491,12 +488,12 @@
             let valid = true;
             if(!cat.value){ cat.classList.add('error'); valid=false; }
             if(!name.value.trim()){ name.classList.add('error'); valid=false; }
-            if(!price.value){ price.classList.add('error'); valid=false; }
+            // 修正：將價格改為非必填，從這裡移除必填的攔截與校驗規則
             if(!url.value.trim()){ url.value.classList.add('error'); valid=false; }
             if(!valid) return;
             btn.disabled=true; btn.innerText="處理中...";
             const taiwanTime = new Date().toISOString();
-            const { error } = await supabaseClient.from('products').insert({ category: cat.value, name_zh: name.value.trim(), option: opt.value.trim()||"", price_nt: price.value, olive_url: url.value.trim(), is_active: false, created_by: userLineId, created_at: taiwanTime });
+            const { error } = await supabaseClient.from('products').insert({ category: cat.value, name_zh: name.value.trim(), option: opt.value.trim()||"", price_nt: price.value || 0, olive_url: url.value.trim(), is_active: false, created_by: userLineId, created_at: taiwanTime });
             if(!error) { 
                 closeModal('add-modal'); 
                 btn.disabled=false; btn.innerText="確認登錄";
@@ -545,7 +542,6 @@
             feather.replace();
         }
 
-        // 修正：當關閉訂單明細時，完美解凍按鈕並跳轉回主畫面
         function closeOrderDetailModal() {
             document.getElementById('order-detail-modal').style.display = 'none';
             const btn = document.getElementById('confirm-submit-btn');
@@ -565,8 +561,9 @@
                 return;
             }
             allUserOrders = data;
+            // 修正：補上準確的樣板語法引導，徹底改善訂單清單卡死無法點擊的重大前端 Bug
             container.innerHTML = data.map((order, index) => `
-                <div class="order-list-item" onclick="showOrderDetail(allUserOrders[index])">
+                <div class="order-list-item" onclick="showOrderDetail(allUserOrders[${index}])">
                     <div class="order-icon-box"><i data-feather="package"></i></div>
                     <div class="order-info">
                         <div class="order-id-title">TW-${order.id.slice(-10).toUpperCase()}</div>
@@ -602,7 +599,6 @@
             document.getElementById('pass-name').innerText = userData.full_name || "---"; 
             document.getElementById('pass-sex').innerText = userData.gender === 'M' ? '男 / M' : (userData.gender === 'F' ? '女 / F' : '---');
             document.getElementById('pass-birth').innerText = userData.birthday || "---";
-            document.getElementById('pass-class').innerText = userData.會員等級 || "REGULAR";
         }
         
         function clearError(el) { 
