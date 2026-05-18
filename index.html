@@ -18,14 +18,13 @@
         /* 強制登入天藍色開屏安全牆 */
         #login-gate { position: fixed; inset: 0; background: #28b0eb; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         
-        /* 核心優化：將淡入淡出與上下浮動分層處理，確保最完美的動態流暢度 */
         #loader-content { text-align: center; animation: fadeInOut 2s ease-in-out infinite; }
         
-        /* 修正：將你提供的新飛機剪影加入獨立的上下浮動呼吸動畫 */
-        .custom-airplane { width: 80px; height: 80px; display: block; margin: 0 auto; fill: #ffffff; animation: floatAnimation 2s ease-in-out infinite; }
+        /* 修正：限制最大寬高並配合向量比例鎖定，徹底解決飛機變形問題 */
+        .custom-airplane { width: 90px; height: 90px; display: block; margin: 0 auto; fill: #ffffff; animation: floatAnimation 2s ease-in-out infinite; }
         .gate-text { font-size: 14px; font-weight: 700; color: #ffffff; margin-top: 24px; letter-spacing: 2px; opacity: 0.95; }
         
-        /* 全新：專屬飛機上下浮動的呼吸效果 */
+        /* 專屬飛機上下浮動的呼吸效果 */
         @keyframes floatAnimation {
             0% { transform: translateY(0); }
             50% { transform: translateY(-12px); }
@@ -148,7 +147,7 @@
 
     <div id="login-gate">
         <div id="loader-content">
-            <svg class="custom-airplane" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+            <svg class="custom-airplane" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
                 <path d="M885.11 371.2L606.33 260.67 433.72 90.13c-11.23-11.23-28.87-14.44-43.72-8.02-14.85 6.42-23.36 21.65-20.94 37.71l28.61 189.77-160.01 44.45-121.72-79.35c-10.23-6.67-23.35-6.84-33.75-0.43-10.41 6.42-16.14 18.25-14.65 30.43l13.11 107.57-12.02 3.34c-11.53 3.2-19.53 13.68-19.53 25.68s8 22.48 19.53 25.68l12.02 3.34-13.11 107.57c-1.49 12.18 4.24 24.01 14.65 30.43 5.16 3.19 10.99 4.79 16.82 4.79 5.86 0 11.73-1.62 16.93-5l121.72-79.35 160.01 44.45-28.61 189.77c-2.42 16.06 6.09 31.29 20.94 37.71 5.3 2.29 10.89 3.41 16.42 3.41 9.4 0 18.57-4.14 24.78-11.71l175.13-213.19 278.78-77.45c26.96-7.49 42.92-35.31 35.43-62.27-5.91-21.28-25.26-35.4-46.52-35.4z" />
             </svg>
             <div class="gate-text">飛行中請繫好安全帶</div>
@@ -324,7 +323,7 @@
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml2cGN0eXFscmtqc3Rmc293ZWVoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTk1MTksImV4cCI6MjA4ODc3NTUxOX0.DYgzhaTH3_5NFwv009ZfZAshfUnCW2PeTuNcJ9feyMU';
         
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        let userLineId = "", userLinePicture = "", userData = null, selectedGender = "", allProducts = [], cart = {}, shipMethod = '', packingQty = 1, currentRawOrderId = "";
+        let userLineId = "", userLinePicture = "", userData = null, selectedGender = "", allProducts = [], cart = {}, shipMethod = '', packingQty = 1, currentRawOrderId = "", allUserOrders = [];
 
         async function init() {
             try {
