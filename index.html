@@ -11,16 +11,20 @@
     
     <style>
         :root { --primary: #28b0eb; --pink: #ff85a2; --bg: #f2f4f6; --white: #ffffff; --text: #191f28; --sub: #4e5968; --gray: #adb5bd; --error: #f44336; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Helvetica, Arial, "PingFang TC", "Hiragino Sans GB", "Microsoft JhengHei", sans-serif; background-color: #f2f4f6; margin: 0; padding: 0; color: #191f28; -webkit-font-smoothing: antialiased; touch-action: manipulation; }
+        
+        /* 修正：全站套用圖片中的進階質感字體（英文襯線體 Georgia/Garamond + 中文原生黑體族群） */
+        body { font-family: Georgia, Garamond, "Times New Roman", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", "Helvetica Neue", "Microsoft JhengHei", sans-serif; background-color: #f2f4f6; margin: 0; padding: 0; color: #191f28; -webkit-font-smoothing: antialiased; touch-action: manipulation; }
         body.modal-open { overflow: hidden; }
 
         /* 強制登入天藍色開屏安全牆 */
         #login-gate { position: fixed; inset: 0; background: #28b0eb; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        
+        /* 修正：飛機輪廓動畫與文字優化 */
         .airplane-loader { color: #ffffff; animation: fly 1.5s ease-in-out infinite; }
-        .gate-text { font-size: 13px; font-weight: 700; color: #ffffff; margin-top: 15px; letter-spacing: 1px; opacity: 0.9; }
+        .gate-text { font-size: 14px; font-weight: 700; color: #ffffff; margin-top: 18px; letter-spacing: 2px; opacity: 0.95; }
         @keyframes fly {
             0% { transform: translateY(0) rotate(0deg); opacity: 0.6; }
-            50% { transform: translateY(-12px) rotate(5deg); opacity: 1; }
+            50% { transform: translateY(-12px) rotate(3deg); opacity: 1; }
             100% { transform: translateY(0) rotate(0deg); opacity: 0.6; }
         }
 
@@ -81,7 +85,6 @@
         .row-lg { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; cursor: pointer; }
         .price-lg { font-size: 24px; font-weight: 900; }
 
-        /* 修正：將報到櫃檯彈窗的層級調高於天藍色安全牆(z-index: 9999)，使其在天藍背景上層顯示 */
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 10000; align-items: center; justify-content: center; padding: 20px; }
         .modal-card { background: #fff; border-radius: 36px; padding: 24px 20px 28px 20px; width: 100%; max-width: 360px; max-height: 85vh; box-sizing: border-box; display: flex; flex-direction: column; box-shadow: 0 15px 50px rgba(0,0,0,0.2); }
         .modal-body { overflow-y: auto; flex-grow: 1; width: 100%; margin-bottom: 10px; }
@@ -135,8 +138,8 @@
 
     <div id="login-gate">
         <div id="loader-content" style="text-align:center;">
-            <div class="airplane-loader"><i data-feather="send" style="width:48px; height:48px; transform: rotate(45deg);"></i></div>
-            <div class="gate-text">KOR.IAN 連線準備中...</div>
+            <div class="airplane-loader"><i data-feather="navigation" style="width:48px; height:48px; transform: rotate(45deg);"></i></div>
+            <div class="gate-text">飛行中請繫好安全帶</div>
         </div>
     </div>
 
@@ -192,7 +195,7 @@
             <div class="bottom-summary" id="shipping-summary">
                 <div class="summary-details"><div class="row-sm"><span>小計</span><span id="sum-items">NT$ 0</span></div><div class="row-sm"><span>運費</span><span id="sum-shipping">NT$ 0</span></div><div class="row-sm"><span>包材</span><span id="sum-packing">NT$ 10</span></div></div>
                 <div class="row-lg" onclick="toggleSummary()"><span>匯款總金額</span><div style="display:flex; align-items:center; gap:8px;"><span class="price-lg" id="sum-total">NT$ 0</span><i data-feather="chevron-up"></i></div></div>
-                <button class="btn-main" id="confirm-submit-btn" onclick="submitFinalOrder()">確認下單</button>
+                <div class="btn-main" id="confirm-submit-btn" onclick="submitFinalOrder()">確認下單</div>
             </div>
         </section>
 
@@ -285,7 +288,7 @@
                 </div>
                 <p style="font-size: 12px; color: var(--gray); text-align: center; line-height: 1.5; margin: 10px 0;">請截圖此畫面回傳至 LINE@<br>核對金額無誤後即可進行匯款。</p>
             </div>
-            <div class="modal-footer"><button class="btn-main" onclick="location.reload()">我知道了</button></div>
+            <div class="modal-footer"><div class="btn-main" onclick="location.reload()">我知道了</div></div>
         </div>
     </div>
 
@@ -314,18 +317,15 @@
                 if (data && data.length > 0) {
                     userData = data[0]; 
                     renderUserProfile(); 
-                    document.getElementById('login-gate').style.display = 'none'; // 舊會員：直接解鎖隱藏天藍牆放行
+                    document.getElementById('login-gate').style.display = 'none';
                     const lastPage = localStorage.getItem('korian_last_page') || 'passport';
                     switchPage(lastPage);
                 } else {
                     initBirthSelects();
                     switchPage('passport'); 
-                    
-                    // 修正：當報到表單出現時，將天藍牆內的載入文字與飛機清空，使背景保持完美的純天藍色
                     document.getElementById('loader-content').style.display = 'none'; 
-                    
                     document.body.classList.add('modal-open');
-                    document.getElementById('register-modal').style.display = 'flex'; // 彈出表單
+                    document.getElementById('register-modal').style.display = 'flex';
                 }
                 feather.replace();
             } catch (e) { console.error(e); }
@@ -419,7 +419,7 @@
             if(!cat.value){ cat.classList.add('error'); valid=false; }
             if(!name.value.trim()){ name.classList.add('error'); valid=false; }
             if(!price.value){ price.classList.add('error'); valid=false; }
-            if(!url.value.trim()){ url.value.classList.add('error'); valid=false; }
+            if(!url.value.trim()){ url.classList.add('error'); valid=false; }
             if(!valid) return;
             btn.disabled=true; btn.innerText="處理中...";
             const taiwanTime = new Date().toISOString();
@@ -494,7 +494,6 @@
             if(el.id.startsWith('reg-birth')) ['y','m','d'].forEach(suffix => document.getElementById('reg-birth-'+suffix).classList.remove('error'));
         }
         
-        // 修正：openAddModal 鎖定背景滾動
         function openAddModal() { document.body.classList.add('modal-open'); document.getElementById('add-modal').style.display='flex'; initTextareas(); }
         function closeModal(id) { document.body.classList.remove('modal-open'); document.getElementById(id).style.display='none'; }
         function initTextareas() { const ts = document.querySelectorAll('textarea.input-box'); ts.forEach(t => { t.style.height = '48px'; }); }
