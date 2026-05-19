@@ -41,7 +41,7 @@
         .fixed-header { position: sticky; top: 0; background: #f2f4f6; z-index: 110; padding: 20px 16px 10px 16px; display: flex; justify-content: space-between; align-items: center; }
         .page-logo { height: 52px; width: auto; object-fit: contain; }
         
-        /* 修正：提升至最高層級，並預防 SVG 點擊穿透問題 */
+        /* 提升至最高層級，並預防 SVG 點擊穿透問題 */
         .add-btn { width: 44px; height: 44px; background: #28b0eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; border: none; box-shadow: 0 4px 12px rgba(40, 176, 235, 0.2); cursor: pointer; position: relative; z-index: 9999; }
         .add-btn * { pointer-events: none; } /* 阻擋 icon 吃掉點擊事件 */
 
@@ -220,7 +220,7 @@
 
         <section id="page-passport" class="page-content" style="padding-top: 40px;">
             <h3 style="font-weight: 900; text-align: center; margin: 0 0 15px 0; letter-spacing: 1px;">PASSPORT / 護照</h3>
-            <div class="card-box" style="padding: 24px 16px;">
+            <div class="card-box" style="padding: 24px 16px; background: url('KOR.IAN CARD.png') center/cover no-repeat; box-shadow: 0 8px 30px rgba(0,0,0,0.1);">
                 <div class="passport-inner-card">
                     <div class="passport-photo-box">
                         <img id="pass-avatar" src="" alt="Avatar" class="passport-photo">
@@ -557,7 +557,6 @@
             }
         }
 
-        // 修正：建立獨立且安全的 viewOrder 函式代理，避開手機版字串解析與單引號的雷區
         function viewOrder(idx) {
             if (allUserOrders && allUserOrders[idx]) {
                 showOrderDetail(allUserOrders[idx], false);
@@ -574,7 +573,6 @@
             }
             allUserOrders = data;
             
-            // 修正：徹底改用 onclick="viewOrder(${index})" 來觸發事件，保證百發百中
             container.innerHTML = data.map((order, index) => `
                 <div class="order-list-item" onclick="viewOrder(${index})">
                     <div class="order-icon-box"><i data-feather="package"></i></div>
