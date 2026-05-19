@@ -39,7 +39,8 @@
 
         /* 頂部固定 Header */
         .fixed-header { position: sticky; top: 0; background: #f2f4f6; z-index: 110; padding: 20px 16px 10px 16px; display: flex; justify-content: space-between; align-items: center; }
-        .page-logo { height: 45px; width: auto; object-fit: contain; }
+        /* 修正：頁面左上角的 Logo 稍微放大一點點（由 45px 提升至 52px） */
+        .page-logo { height: 52px; width: auto; object-fit: contain; }
         .add-btn { width: 44px; height: 44px; background: #28b0eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; border: none; box-shadow: 0 4px 12px rgba(40, 176, 235, 0.2); cursor: pointer; }
 
         .nav-header { display: flex; align-items: center; padding: 20px 16px; background: #f2f4f6; position: sticky; top: 0; z-index: 100; }
@@ -95,20 +96,7 @@
         .row-lg { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; cursor: pointer; }
         .price-lg { font-size: 24px; font-weight: 900; }
 
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 10000; align-items: center; justify-content: center; padding: 20px; }
-        .modal-card { background: #fff; border-radius: 36px; padding: 24px 20px 28px 20px; width: 100%; max-width: 360px; max-height: 85vh; box-sizing: border-box; display: flex; flex-direction: column; box-shadow: 0 15px 50px rgba(0,0,0,0.2); }
-        .modal-body { overflow-y: auto; flex-grow: 1; width: 100%; margin-bottom: 10px; }
-        .modal-section { text-align: left; margin-bottom: 16px; padding: 16px; background: #f8f9fa; border-radius: 24px; }
-        .modal-section-title { font-size: 12px; font-weight: 900; color: #adb5bd; margin-bottom: 10px; display: block; }
-        .order-item-row { display: flex; justify-content: space-between; align-items: flex-start; font-size: 14px; margin-bottom: 8px; line-height: 1.4; }
-        .order-item-name { text-align: left; font-weight: 700; color: #191f28; padding-right: 15px; flex: 1; }
-        .order-item-qty { text-align: right; font-weight: 900; color: #28b0eb; white-space: nowrap; }
-        .detail-item { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; }
-        .detail-val { font-weight: 700; text-align: right; flex: 1; margin-left: 20px; word-break: break-all; }
-        .copy-btn { background: #eee; border: none; padding: 4px 8px; border-radius: 8px; font-size: 10px; color: #4e5968; cursor: pointer; margin-left: 8px; display: inline-flex; align-items: center; gap: 4px; vertical-align: middle; }
-        .modal-header-centered { text-align: center; margin-bottom: 24px; flex-shrink: 0; }
-
-        /* 護照圖卡樣式放大 */
+        /* 護照圖卡樣式 */
         .passport-inner-card { padding: 5px 0 5px 20px; display: flex; gap: 32px; text-align: left; box-sizing: border-box; align-items: center; }
         .passport-photo-box { width: 115px; display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
         .passport-photo { width: 115px; height: 150px; object-fit: cover; border-radius: 12px; background: #e5e8eb; border: 1px solid #ced4da; box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
@@ -139,11 +127,6 @@
         .btn-main { background: #28b0eb; color: #fff; border: none; padding: 18px; width: 100%; border-radius: 20px; font-weight: 700; font-size: 17px; cursor: pointer; display: block; box-sizing: border-box; text-align: center; }
         .btn-main:disabled { background: #adb5bd; opacity: 0.7; }
         .btn-sub-small { background: #28b0eb; color: #fff; border: none; padding: 12px 40px; width: auto; min-width: 140px; border-radius: 50px; font-weight: 700; font-size: 15px; cursor: pointer; margin: 0 auto; display: block; }
-
-        /* 底部選單導覽 */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; padding: 12px 0 calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid #e5e8eb; z-index: 200; }
-        .nav-item { color: #adb5bd; text-align: center; flex: 1; font-size: 11px; font-weight: 900; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; }
-        .nav-item.active { color: #28b0eb; }
     </style>
 </head>
 <body>
@@ -333,7 +316,6 @@
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml2cGN0eXFscmtqc3Rmc293ZWVoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTk1MTksImV4cCI6MjA4ODc3NTUxOX0.DYgzhaTH3_5NFwv009ZfZAshfUnCW2PeTuNcJ9feyMU';
         
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        // 修正：引進全域變態追蹤旗標 isFromCheckout，掌控明細彈窗的呼叫來源
         let userLineId = "", userLinePicture = "", userData = null, selectedGender = "", allProducts = [], cart = {}, shipMethod = '', packingQty = 1, currentRawOrderId = "", allUserOrders = [], isFromCheckout = false;
 
         async function init() {
@@ -518,13 +500,11 @@
                 const { data, error } = await supabaseClient.from('orders').insert({ items_summary: itemsStr, user_id: userLineId, customer_name: name.value, customer_tel: tel.value, shipping_method: finalMethod, shipping_store: finalStore, packing_qty: packingQty, total_amount: document.getElementById('sum-total').innerText, created_at: taiwanTime }).select();
                 if(error) throw error;
                 for(let i of Object.values(cart)){ if(i.qty>0) await supabaseClient.rpc('increment_order_count',{row_id:i.id, inc_val:parseInt(i.qty)}); }
-                // 修正：帶入 true，告知此明細彈窗是結帳成功的流程
                 showOrderDetail(data[0], true); 
                 cart={}; renderProducts(allProducts); 
             } catch(e){ alert("失敗："+e.message); btn.disabled=false; btn.innerText="確認下單"; }
         }
 
-        // 修正：擴充 flag 機制，主動接收當前明細是「剛結帳完 (true)」還是「單純列表查閱 (false)」
         function showOrderDetail(order, fromCheckout = false) {
             isFromCheckout = fromCheckout; 
             currentRawOrderId = order.id.slice(-10).toUpperCase();
@@ -544,12 +524,9 @@
             feather.replace();
         }
 
-        // 修正：精準改善彈窗關閉的執行緒，完成智能防跳轉分流
         function closeOrderDetailModal() {
             document.getElementById('order-detail-modal').style.display = 'none';
-            
             if (isFromCheckout) {
-                // 如果是剛下完單，才執行解凍按鈕、切換至 shop 頁面
                 const btn = document.getElementById('confirm-submit-btn');
                 if (btn) {
                     btn.disabled = false;
@@ -557,7 +534,6 @@
                 }
                 switchPage('shop');
             }
-            // 如果 isFromCheckout 為 false (代表是從歷史清單點進來的)，則完全不執行 switchPage，畫面會完美停留在「訂單追蹤」頁
         }
 
         async function fetchUserOrders() {
@@ -569,12 +545,12 @@
                 return;
             }
             allUserOrders = data;
-            // 修正：帶入第二參數 false，精確宣告這只是純歷史紀錄翻閱，不需要在關閉時強制跳轉
+            // 修正：徹底拿掉訂單清單大標題編號拼接的 "TW-" 前綴，保持俐落極簡風格
             container.innerHTML = data.map((order, index) => `
                 <div class="order-list-item" onclick="showOrderDetail(allUserOrders[${index}], false)">
                     <div class="order-icon-box"><i data-feather="package"></i></div>
                     <div class="order-info">
-                        <div class="order-id-title">TW-${order.id.slice(-10).toUpperCase()}</div>
+                        <div class="order-id-title">${order.id.slice(-10).toUpperCase()}</div>
                         <div class="order-meta">
                             <span>${new Date(order.created_at).toLocaleDateString()}</span>
                             <span style="color:var(--primary); font-weight:900;">${order.total_amount}</span>
