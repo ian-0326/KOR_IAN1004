@@ -41,7 +41,7 @@
         .fixed-header { position: sticky; top: 0; background: #f2f4f6; z-index: 110; padding: 20px 16px 10px 16px; display: flex; justify-content: space-between; align-items: center; }
         .page-logo { height: 52px; width: auto; object-fit: contain; }
         
-        /* 修正：提升至最高層級，並預防 SVG 點擊穿透問題 */
+        /* 提升至最高層級，並預防 SVG 點擊穿透問題 */
         .add-btn { width: 44px; height: 44px; background: #28b0eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; border: none; box-shadow: 0 4px 12px rgba(40, 176, 235, 0.2); cursor: pointer; position: relative; z-index: 9999; }
         .add-btn * { pointer-events: none; } /* 阻擋 icon 吃掉點擊事件 */
 
@@ -111,14 +111,15 @@
         .copy-btn { background: #eee; border: none; padding: 4px 8px; border-radius: 8px; font-size: 10px; color: #4e5968; cursor: pointer; margin-left: 8px; display: inline-flex; align-items: center; gap: 4px; vertical-align: middle; }
         .modal-header-centered { text-align: center; margin-bottom: 24px; flex-shrink: 0; }
 
-        /* 護照圖卡樣式放大 */
-        .passport-inner-card { padding: 5px 0 5px 20px; display: flex; gap: 32px; text-align: left; box-sizing: border-box; align-items: center; }
+        /* 修正：將護照白框卡片移除，直接套用 KOR.IAN CARD.png 背景大圖，並更新金黃色標籤與白色資料 */
+        .passport-card-container { background: url('KOR.IAN CARD.png') center/cover no-repeat; border-radius: 32px; padding: 30px 20px; box-shadow: 0 8px 30px rgba(0,0,0,0.15); margin-top: 10px; }
+        .passport-inner-card { display: flex; gap: 32px; text-align: left; box-sizing: border-box; align-items: center; }
         .passport-photo-box { width: 115px; display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
-        .passport-photo { width: 115px; height: 150px; object-fit: cover; border-radius: 12px; background: #e5e8eb; border: 1px solid #ced4da; box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
+        .passport-photo { width: 115px; height: 150px; object-fit: cover; border-radius: 12px; border: 2px solid rgba(255,255,255,0.3); }
         .passport-fields { flex: 1; display: flex; flex-direction: column; gap: 12px; }
         .pass-row { display: flex; flex-direction: column; line-height: 1.3; }
-        .pass-label { font-size: 11px; font-weight: 700; color: #adb5bd; text-transform: uppercase; margin-bottom: 2px; }
-        .pass-val { font-size: 18px; font-weight: 900; color: #191f28; word-break: break-all; }
+        .pass-label { font-size: 11px; font-weight: 900; color: #d4af37; text-transform: uppercase; margin-bottom: 2px; }
+        .pass-val { font-size: 18px; font-weight: 900; color: #ffffff; word-break: break-all; text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
 
         /* 護照功能方形按鈕 */
         .passport-btn-group { display: flex; gap: 16px; margin-top: 24px; width: 100%; box-sizing: border-box; }
@@ -220,7 +221,7 @@
 
         <section id="page-passport" class="page-content" style="padding-top: 40px;">
             <h3 style="font-weight: 900; text-align: center; margin: 0 0 15px 0; letter-spacing: 1px;">PASSPORT / 護照</h3>
-            <div class="card-box" style="padding: 24px 16px;">
+            <div class="passport-card-container">
                 <div class="passport-inner-card">
                     <div class="passport-photo-box">
                         <img id="pass-avatar" src="" alt="Avatar" class="passport-photo">
@@ -299,7 +300,7 @@
                     <div class="form-item"><label class="form-label">價格 NT$</label><input type="number" id="in-price" class="input-box" placeholder="金額" oninput="clearError(this)"></div>
                     <div class="form-item"><label class="form-label">來源網址<span class="req-tag" id="tag-in-url">*必填</span></label><input type="url" id="in-url" class="input-box" placeholder="請輸入網址" oninput="clearError(this)"></div>
                 </div>
-                <div class="modal-footer"><button class="btn-main" id="btn-upload" onclick="upload()">確認登錄</button></div>
+                <div class="modal-footer"><button type="button" class="btn-main" onclick="upload()">確認登錄</button></div>
             </div>
         </div>
     </div>
@@ -485,23 +486,39 @@
         function autoGrow(element) { element.style.height = '48px'; if (element.scrollHeight > 48) { element.style.height = (element.scrollHeight) + "px"; } }
         function changeCat(el) { clearError(el); }
 
+        // 修正：全面補齊上傳資料所需的完整 Supabase 結構欄位與前端資料防重載點擊校驗
         async function upload() {
-            const btn = document.getElementById('btn-upload');
+            const btn = document.querySelector('#add-modal .btn-main');
             const cat = document.getElementById('in-cat'), name = document.getElementById('in-name'), price = document.getElementById('in-price'), url = document.getElementById('in-url'), opt = document.getElementById('in-option');
             let valid = true;
             if(!cat.value){ cat.classList.add('error'); valid=false; }
             if(!name.value.trim()){ name.classList.add('error'); valid=false; }
             if(!url.value.trim()){ url.value.classList.add('error'); valid=false; }
             if(!valid) return;
-            btn.disabled=true; btn.innerText="處理中...";
+            
+            if(btn) { btn.disabled = true; btn.innerText = "處理中..."; }
             const taiwanTime = new Date().toISOString();
-            const { error } = await supabaseClient.from('products').insert({ category: cat.value, name_zh: name.value.trim(), option: opt.value.trim()||"", price_nt: price.value || 0, olive_url: url.value.trim(), is_active: false, created_by: userLineId, created_at: taiwanTime });
+            
+            const { error } = await supabaseClient.from('products').insert({ 
+                category: cat.value, 
+                name_zh: name.value.trim(), 
+                option: opt.value.trim() || "", 
+                price_nt: price.value || 0, 
+                olive_url: url.value.trim(), 
+                is_active: false, 
+                created_by: userLineId, 
+                created_at: taiwanTime 
+            });
+            
             if(!error) { 
                 closeModal('add-modal'); 
-                btn.disabled=false; btn.innerText="確認登錄";
+                if(btn) { btn.disabled = false; btn.innerText = "確認登錄"; }
                 [name, opt, price, url].forEach(el => el.value = ""); cat.value = "";
                 await fetchProducts(); 
-            } else { alert('失敗：'+error.message); btn.disabled=false; btn.innerText="確認登錄"; }
+            } else { 
+                alert('失敗：' + error.message); 
+                if(btn) { btn.disabled = false; btn.innerText = "確認登錄"; }
+            }
         }
 
         async function submitFinalOrder() {
@@ -557,7 +574,6 @@
             }
         }
 
-        // 修正：建立獨立且安全的 viewOrder 函式代理，避開手機版字串解析與單引號的雷區
         function viewOrder(idx) {
             if (allUserOrders && allUserOrders[idx]) {
                 showOrderDetail(allUserOrders[idx], false);
@@ -574,7 +590,6 @@
             }
             allUserOrders = data;
             
-            // 修正：徹底改用 onclick="viewOrder(${index})" 來觸發事件，保證百發百中
             container.innerHTML = data.map((order, index) => `
                 <div class="order-list-item" onclick="viewOrder(${index})">
                     <div class="order-icon-box"><i data-feather="package"></i></div>
