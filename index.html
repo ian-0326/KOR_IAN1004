@@ -40,8 +40,10 @@
         /* 頂部固定 Header */
         .fixed-header { position: sticky; top: 0; background: #f2f4f6; z-index: 110; padding: 20px 16px 10px 16px; display: flex; justify-content: space-between; align-items: center; }
         .page-logo { height: 52px; width: auto; object-fit: contain; }
-        /* 提升 z-index 層級至 120，確保加號按鈕不被 Header 隱形遮罩壓到，完美恢復點擊功能 */
-        .add-btn { width: 44px; height: 44px; background: #28b0eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; border: none; box-shadow: 0 4px 12px rgba(40, 176, 235, 0.2); cursor: pointer; position: relative; z-index: 120; }
+        
+        /* 修正：提升至最高層級，並預防 SVG 點擊穿透問題 */
+        .add-btn { width: 44px; height: 44px; background: #28b0eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; border: none; box-shadow: 0 4px 12px rgba(40, 176, 235, 0.2); cursor: pointer; position: relative; z-index: 9999; }
+        .add-btn * { pointer-events: none; } /* 阻擋 icon 吃掉點擊事件 */
 
         .nav-header { display: flex; align-items: center; padding: 20px 16px; background: #f2f4f6; position: sticky; top: 0; z-index: 100; }
         .back-btn { background: none; border: none; padding: 10px; cursor: pointer; color: #191f28; display: flex; align-items: center; }
@@ -50,7 +52,7 @@
         .page-content.active { display: block; }
         
         /* 分類選單固定 */
-        .category-wrapper { position: sticky; top: 75px; background: #f2f4f6; margin: 0 -1px 20px -16px; padding: 10px 16px; overflow-x: auto; display: flex; gap: 8px; scrollbar-width: none; z-index: 90; }
+        .category-wrapper { position: sticky; top: 75px; background: #f2f4f6; margin: 0 -16px 20px -16px; padding: 10px 16px; overflow-x: auto; display: flex; gap: 8px; scrollbar-width: none; z-index: 90; }
         .cat-pill { white-space: nowrap; padding: 10px 20px; background: #fff; border-radius: 50px; font-size: 14px; font-weight: 700; color: #4e5968; box-shadow: 0 2px 6px rgba(0,0,0,0.05); flex-shrink: 0; cursor: pointer; }
         .cat-pill.active { background: #28b0eb; color: #fff; }
 
@@ -96,7 +98,20 @@
         .row-lg { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; cursor: pointer; }
         .price-lg { font-size: 24px; font-weight: 900; }
 
-        /* 護照圖卡樣式 */
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 10000; align-items: center; justify-content: center; padding: 20px; }
+        .modal-card { background: #fff; border-radius: 36px; padding: 24px 20px 28px 20px; width: 100%; max-width: 360px; max-height: 85vh; box-sizing: border-box; display: flex; flex-direction: column; box-shadow: 0 15px 50px rgba(0,0,0,0.2); }
+        .modal-body { overflow-y: auto; flex-grow: 1; width: 100%; margin-bottom: 10px; }
+        .modal-section { text-align: left; margin-bottom: 16px; padding: 16px; background: #f8f9fa; border-radius: 24px; }
+        .modal-section-title { font-size: 12px; font-weight: 900; color: #adb5bd; margin-bottom: 10px; display: block; }
+        .order-item-row { display: flex; justify-content: space-between; align-items: flex-start; font-size: 14px; margin-bottom: 8px; line-height: 1.4; }
+        .order-item-name { text-align: left; font-weight: 700; color: #191f28; padding-right: 15px; flex: 1; }
+        .order-item-qty { text-align: right; font-weight: 900; color: #28b0eb; white-space: nowrap; }
+        .detail-item { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; }
+        .detail-val { font-weight: 700; text-align: right; flex: 1; margin-left: 20px; word-break: break-all; }
+        .copy-btn { background: #eee; border: none; padding: 4px 8px; border-radius: 8px; font-size: 10px; color: #4e5968; cursor: pointer; margin-left: 8px; display: inline-flex; align-items: center; gap: 4px; vertical-align: middle; }
+        .modal-header-centered { text-align: center; margin-bottom: 24px; flex-shrink: 0; }
+
+        /* 護照圖卡樣式放大 */
         .passport-inner-card { padding: 5px 0 5px 20px; display: flex; gap: 32px; text-align: left; box-sizing: border-box; align-items: center; }
         .passport-photo-box { width: 115px; display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
         .passport-photo { width: 115px; height: 150px; object-fit: cover; border-radius: 12px; background: #e5e8eb; border: 1px solid #ced4da; box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
@@ -112,8 +127,9 @@
         .passport-action-btn svg { width: 28px; height: 28px; color: #4e5968; stroke-width: 2.3; }
 
         /* 訂單列表追蹤樣式 */
-        .order-list-item { background: #fff; padding: 20px; border-radius: 24px; margin-bottom: 12px; cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.03之); display: flex; align-items: center; gap: 15px; border: 1px solid transparent; transition: 0.2s; }
+        .order-list-item { background: #fff; padding: 20px; border-radius: 24px; margin-bottom: 12px; cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.03); display: flex; align-items: center; gap: 15px; border: 1px solid transparent; transition: 0.2s; }
         .order-list-item:active { background: #f8f9fa; border-color: #eee; }
+        .order-list-item * { pointer-events: none; } /* 阻擋 icon 吃掉點擊事件 */
         .order-icon-box { width: 44px; height: 44px; background: #f2f4f6; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #28b0eb; }
         .order-info { flex: 1; }
         .order-id-title { font-size: 16px; font-weight: 900; color: #191f28; margin-bottom: 4px; }
@@ -147,7 +163,7 @@
         <section id="page-shop" class="page-content">
             <div class="fixed-header">
                 <img src="https://raw.githubusercontent.com/ian-0326/KOR_IAN1004/main/KORIAN.png" alt="Logo" class="page-logo">
-                <button class="add-btn" onclick="openAddModal()"><i data-feather="plus"></i></button>
+                <button type="button" class="add-btn" onclick="openAddModal()"><i data-feather="plus"></i></button>
             </div>
             <div class="category-wrapper" id="category-bar">
                 <div class="cat-pill active" onclick="filterCategory('全部', this)">全部</div>
@@ -439,7 +455,6 @@
             document.getElementById('sum-total').innerText=`NT$ ${(it+sf+pf).toLocaleString()}`; 
         }
 
-        // 修正：補回漏掉的大括號、引號與完美閉合 join('')，徹底打破加加載畫面死結
         function initBirthSelects() {
             const sy = document.getElementById('reg-birth-y'), sm = document.getElementById('reg-birth-m'), sd = document.getElementById('reg-birth-d');
             sy.innerHTML = '<option value="">年</option>' + Array.from({length: 87}, (_, i) => `<option value="${1940+i}">${1940+i}</option>`).reverse().join('');
@@ -542,6 +557,13 @@
             }
         }
 
+        // 修正：建立獨立且安全的 viewOrder 函式代理，避開手機版字串解析與單引號的雷區
+        function viewOrder(idx) {
+            if (allUserOrders && allUserOrders[idx]) {
+                showOrderDetail(allUserOrders[idx], false);
+            }
+        }
+
         async function fetchUserOrders() {
             const container = document.getElementById('order-list-container');
             container.innerHTML = '<p style="text-align:center; padding:40px; color:#999;">努力載入訂單中...</p>';
@@ -551,9 +573,10 @@
                 return;
             }
             allUserOrders = data;
-            // 修正：將範本標籤正確更正為 ${index}，徹底恢復點擊開啟明細彈窗的功能！
+            
+            // 修正：徹底改用 onclick="viewOrder(${index})" 來觸發事件，保證百發百中
             container.innerHTML = data.map((order, index) => `
-                <div class="order-list-item" onclick="showOrderDetail(allUserOrders[${index}], false)">
+                <div class="order-list-item" onclick="viewOrder(${index})">
                     <div class="order-icon-box"><i data-feather="package"></i></div>
                     <div class="order-info">
                         <div class="order-id-title">${order.id.slice(-10).toUpperCase()}</div>
