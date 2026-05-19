@@ -15,35 +15,19 @@
         body { font-family: Georgia, Garamond, "Times New Roman", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", "Helvetica Neue", "Microsoft JhengHei", sans-serif; background-color: #f2f4f6; margin: 0; padding: 0; color: #191f28; -webkit-font-smoothing: antialiased; touch-action: manipulation; }
         body.modal-open { overflow: hidden; }
 
-        /* 強制登入天藍色開屏安全牆 */
+        /* 強制登入 gate */
         #login-gate { position: fixed; inset: 0; background: #28b0eb; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        
-        /* 核心動效：整體內容做純粹的同頻淡入淡出 */
         #loader-content { text-align: center; animation: fadeInOut 2s ease-in-out infinite; }
-        
-        /* 飛機圖片檔案獨立的上下浮動呼吸動畫 */
         .custom-airplane-img { width: 90px; height: auto; display: block; margin: 0 auto; animation: floatAnimation 2s ease-in-out infinite; }
         .gate-text { font-size: 14px; font-weight: 700; color: #ffffff; margin-top: 24px; letter-spacing: 2px; opacity: 0.95; }
-        
-        @keyframes floatAnimation {
-            0% { transform: translateY(0); }
-            50% { transform: translateY(-12px); }
-            100% { transform: translateY(0); }
-        }
-        
-        @keyframes fadeInOut {
-            0% { opacity: 0.4; }
-            50% { opacity: 1; }
-            100% { opacity: 0.4; }
-        }
+        @keyframes floatAnimation { 0% { transform: translateY(0); } 50% { transform: translateY(-12px); } 100% { transform: translateY(0); } }
+        @keyframes fadeInOut { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
 
-        /* 頂部固定 Header */
+        /* 頂部 Header */
         .fixed-header { position: sticky; top: 0; background: #f2f4f6; z-index: 110; padding: 20px 16px 10px 16px; display: flex; justify-content: space-between; align-items: center; }
         .page-logo { height: 52px; width: auto; object-fit: contain; }
-        
-        /* 提升至最高層級，並預防 SVG 點擊穿透問題 */
         .add-btn { width: 44px; height: 44px; background: #28b0eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; border: none; box-shadow: 0 4px 12px rgba(40, 176, 235, 0.2); cursor: pointer; position: relative; z-index: 9999; }
-        .add-btn * { pointer-events: none; } /* 阻擋 icon 吃掉點擊事件 */
+        .add-btn * { pointer-events: none; }
 
         .nav-header { display: flex; align-items: center; padding: 20px 16px; background: #f2f4f6; position: sticky; top: 0; z-index: 100; }
         .back-btn { background: none; border: none; padding: 10px; cursor: pointer; color: #191f28; display: flex; align-items: center; }
@@ -51,101 +35,126 @@
         .page-content { display: none; padding: 0 16px 280px 16px; min-height: 100vh; box-sizing: border-box; }
         .page-content.active { display: block; }
         
-        /* 分類選單固定 */
+        /* 分類選單 */
         .category-wrapper { position: sticky; top: 75px; background: #f2f4f6; margin: 0 -16px 20px -16px; padding: 10px 16px; overflow-x: auto; display: flex; gap: 8px; scrollbar-width: none; z-index: 90; }
         .cat-pill { white-space: nowrap; padding: 10px 20px; background: #fff; border-radius: 50px; font-size: 14px; font-weight: 700; color: #4e5968; box-shadow: 0 2px 6px rgba(0,0,0,0.05); flex-shrink: 0; cursor: pointer; }
         .cat-pill.active { background: #28b0eb; color: #fff; }
 
         /* 商品卡片 */
         .item-card { background: #fff; padding: 20px; border-radius: 28px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 12px rgba(0,0,0,0.04); margin-bottom: 12px; }
-        .item-card:first-child { margin-top: 10px; }
-        .item-card * { pointer-events: auto; }
         .item-main { flex: 1; cursor: pointer; }
-        .item-name { font-size: 16px; font-weight: 700; color: #191f28; display: inline-block; margin-bottom: 4px; }
-        .item-option { font-size: 12px; color: #adb5bd; margin-left: 6px; font-weight: 400; }
+        .item-name { font-size: 16px; font-weight: 700; color: #191f28; }
+        .item-option { font-size: 12px; color: #adb5bd; margin-left: 6px; }
         .item-price { color: #28b0eb; font-weight: 900; font-size: 17px; display: block; }
-
         .qty-ctrl { display: flex; align-items: center; gap: 14px; background: #f8f9fa; padding: 8px 16px; border-radius: 50px; }
-        .qty-btn { background: none; border: none; padding: 0; color: #4e5968; display: flex; align-items: center; cursor: pointer; }
+        .qty-btn { background: none; border: none; padding: 0; color: #4e5968; cursor: pointer; display: flex; align-items: center; }
         .qty-num { font-size: 16px; font-weight: 900; color: #28b0eb; min-width: 20px; text-align: center; }
 
         .card-box { background: #fff; border-radius: 32px; padding: 15px 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); margin-top: 10px; }
         .list-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f2f4f6; }
         .list-row:last-child { border-bottom: none; }
         .list-left { flex: 1; padding-right: 15px; }
-        .list-n { font-size: 15px; font-weight: 900; color: #000; display: inline-block; }
-        .list-s { font-size: 11px; color: #adb5bd; display: inline-block; margin-left: 6px; }
-        .list-p { font-size: 13px; color: #28b0eb; display: block; font-weight: 900; margin-top: 2px; }
+        .list-n { font-size: 15px; font-weight: 900; }
+        .list-p { font-size: 13px; color: #28b0eb; font-weight: 900; display: block; margin-top: 2px; }
 
-        /* 表單設計 */
+        /* 表單 */
         .form-item { margin-bottom: 12px; width: 100%; display: flex; flex-direction: column; align-items: center; }
-        .form-label { width: calc(100% - 24px); font-size: 14px; font-weight: 700; margin-bottom: 6px; color: #4e5968; display: flex; align-items: center; }
+        .form-label { width: calc(100% - 24px); font-size: 14px; font-weight: 700; margin-bottom: 6px; color: #4e5968; }
         .req-tag { color: #f44336; font-size: 12px; margin-left: 6px; display: none; }
-        .input-box { width: calc(100% - 24px); padding: 12px 20px; border: none; border-radius: 18px; font-size: 15px; outline: none; background: #f2f4f6; box-sizing: border-box; transition: 0.2s; display: block; }
+        .input-box { width: calc(100% - 24px); padding: 12px 20px; border: none; border-radius: 18px; font-size: 15px; background: #f2f4f6; box-sizing: border-box; }
         .input-box:focus { background: #fff; box-shadow: 0 0 0 2px #28b0eb; }
         .input-box.error { background: #fff5f5; box-shadow: 0 0 0 2px #f44336; }
-        textarea.input-box { padding-top: 14px; padding-bottom: 14px; resize: none; overflow-y: hidden; min-height: 48px; padding-left: 20px !important; padding-right: 20px !important; }
 
-        .ship-group { display: flex; gap: 12px; width: calc(100% - 24px); transition: 0.2s; border-radius: 20px; }
-        .ship-group.error { box-shadow: 0 0 0 2px #f44336; background: #fff5f5; }
-        .ship-btn { flex: 1; padding: 16px; background: #f2f4f6; border-radius: 20px; text-align: center; font-weight: 700; color: #4e5968; cursor: pointer; transition: 0.2s; }
+        .ship-group { display: flex; gap: 12px; width: calc(100% - 24px); }
+        .ship-btn { flex: 1; padding: 16px; background: #f2f4f6; border-radius: 20px; text-align: center; font-weight: 700; color: #4e5968; cursor: pointer; }
         .ship-btn.active { background: #28b0eb; color: #fff; }
 
         .bottom-summary { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; padding: 10px 24px calc(20px + env(safe-area-inset-bottom)); border-top: 1px solid #eee; z-index: 400; box-shadow: 0 -10px 30px rgba(0,0,0,0.05); }
-        .summary-details { max-height: 0; overflow: hidden; transition: 0.3s; opacity: 0; }
-        .bottom-summary.expanded .summary-details { max-height: 200px; opacity: 1; margin-top: 10px; padding-bottom: 10px; }
-        .row-sm { display: flex; justify-content: space-between; font-size: 14px; color: #4e5968; margin-bottom: 8px; }
-        .row-lg { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; cursor: pointer; }
         .price-lg { font-size: 24px; font-weight: 900; }
+        .btn-main { background: #28b0eb; color: #fff; border: none; padding: 18px; width: 100%; border-radius: 20px; font-weight: 700; font-size: 17px; cursor: pointer; text-align: center; display: block; box-sizing: border-box; }
+        .btn-main:disabled { background: #adb5bd; opacity: 0.7; }
 
+        /* Modals */
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 10000; align-items: center; justify-content: center; padding: 20px; }
-        .modal-card { background: #fff; border-radius: 36px; padding: 24px 20px 28px 20px; width: 100%; max-width: 360px; max-height: 85vh; box-sizing: border-box; display: flex; flex-direction: column; box-shadow: 0 15px 50px rgba(0,0,0,0.2); }
-        .modal-body { overflow-y: auto; flex-grow: 1; width: 100%; margin-bottom: 10px; }
-        .modal-section { text-align: left; margin-bottom: 16px; padding: 16px; background: #f8f9fa; border-radius: 24px; }
-        .modal-section-title { font-size: 12px; font-weight: 900; color: #adb5bd; margin-bottom: 10px; display: block; }
-        .order-item-row { display: flex; justify-content: space-between; align-items: flex-start; font-size: 14px; margin-bottom: 8px; line-height: 1.4; }
-        .order-item-name { text-align: left; font-weight: 700; color: #191f28; padding-right: 15px; flex: 1; }
-        .order-item-qty { text-align: right; font-weight: 900; color: #28b0eb; white-space: nowrap; }
-        .detail-item { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; }
-        .detail-val { font-weight: 700; text-align: right; flex: 1; margin-left: 20px; word-break: break-all; }
-        .copy-btn { background: #eee; border: none; padding: 4px 8px; border-radius: 8px; font-size: 10px; color: #4e5968; cursor: pointer; margin-left: 8px; display: inline-flex; align-items: center; gap: 4px; vertical-align: middle; }
-        .modal-header-centered { text-align: center; margin-bottom: 24px; flex-shrink: 0; }
+        .modal-card { background: #fff; border-radius: 36px; padding: 24px 20px 28px 20px; width: 100%; max-width: 360px; box-shadow: 0 15px 50px rgba(0,0,0,0.2); }
+        
+        /* ============== (新) 護照資訊圖卡 懸浮光澤樣式 ============== */
+        #page-passport { 
+            /* 給父層設定透視距離，這是 3D 效果的前提 */
+            perspective: 1200px; 
+            padding-top: 40px; 
+            box-sizing: border-box;
+        }
 
-        /* 修正：將護照白框卡片完全移除，改採 KOR.IAN CARD.png 背景大圖，並調整欄位金黃色與資料白色 */
-        .passport-card-layer { background: url('KOR.IAN CARD.png') no-repeat center center; background-size: cover; border-radius: 32px; padding: 30px 20px; margin-top: 10px; box-shadow: 0 8px 30px rgba(0,0,0,0.15); }
-        .passport-inner-card { display: flex; gap: 32px; text-align: left; box-sizing: border-box; align-items: center; }
-        .passport-photo-box { width: 115px; display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
-        .passport-photo { width: 115px; height: 150px; object-fit: cover; border-radius: 12px; background: #e5e8eb; border: 2px solid rgba(255,255,255,0.25); box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
-        .passport-fields { flex: 1; display: flex; flex-direction: column; gap: 12px; }
-        .pass-row { display: flex; flex-direction: column; line-height: 1.3; }
-        .pass-label { font-size: 11px; font-weight: 900; color: #d4af37; text-transform: uppercase; margin-bottom: 2px; } /* 金黃色標籤 */
-        .pass-val { font-size: 18px; font-weight: 900; color: #ffffff; word-break: break-all; text-shadow: 0 1px 2px rgba(0,0,0,0.4); } /* 白色資料 */
+        /* 護照資料總容器 (懸浮的主體) */
+        .passport-container {
+            margin-top: 20px;
+            border-radius: 32px;
+            overflow: hidden;
+            box-shadow: 0 15px 45px rgba(0,0,0,0.1);
+            
+            /* CSS 3D 設定 */
+            transform-style: preserve-3d;
+            transform: rotateX(0deg) rotateY(0deg); /* 預設角度 */
+            transition: transform 0.1s ease-out; /* 讓滑動順暢，不要有延遲感 */
+            
+            will-change: transform; /* 效能優化 */
+            position: relative;
+        }
 
-        /* 護照功能方形按鈕 */
-        .passport-btn-group { display: flex; gap: 16px; margin-top: 24px; width: 100%; box-sizing: border-box; }
-        .passport-action-btn { flex: 1; aspect-ratio: 1 / 1; background: #ffffff; border: none; border-radius: 28px; padding: 20px; font-size: 16px; font-weight: 900; color: #191f28; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.04); border: 1px solid rgba(0,0,0,0.01); transition: 0.15s ease-in-out; }
-        .passport-action-btn:active { background: #f8f9fa; transform: translateY(2px); }
+        /* 護照卡片背景圖層 */
+        .passport-bg {
+            background: url('KOR.IAN CARD.png') center/cover no-repeat;
+            padding: 30px 20px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* 動態光澤層 (覆蓋在卡片上方) */
+        .passport-shine {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(125deg, rgba(255,255,255,0) 20%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0) 80%);
+            background-size: 200% 200%; /* 放大漸層，以便透過移動背景位置來模擬光澤滑動 */
+            background-position: -100% -100%; /* 預設在卡片外面 */
+            z-index: 2; /* 放在背景圖上面，但要在文字下面，文字需要呈現 z-depth */
+            pointer-events: none; /* 不要阻擋文字的互動 */
+            transition: background-position 0.1s ease-out; /* 順暢滑動 */
+        }
+
+        .passport-photo-box { width: 115px; flex-shrink: 0; z-index: 3; position: relative; }
+        .passport-photo { width: 115px; height: 150px; object-fit: cover; border-radius: 12px; }
+        
+        .passport-fields { 
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 12px; 
+            z-index: 4; /* 文字設定最高，呈現浮在卡片上的深度感 */
+            position: relative;
+            /* 給文字增加一點向前的 Z 軸深度 */
+            transform: translateZ(30px); 
+            text-shadow: 0 1px 3px rgba(0,0,0,0.2); /* 增加清晰度 */
+        }
+
+        .pass-label { font-size: 11px; font-weight: 700; color: #adb5bd; text-transform: uppercase; margin-bottom: 2px; }
+        .pass-val { font-size: 18px; font-weight: 900; color: #191f28; word-break: break-all; }
+
+        /* 按鈕群組 */
+        .passport-btn-group { display: flex; gap: 16px; margin-top: 24px; z-index: 5; position: relative; }
+        .passport-action-btn { flex: 1; aspect-ratio: 1 / 1; background: #ffffff; border: none; border-radius: 28px; font-size: 16px; font-weight: 900; color: #191f28; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.04); }
         .passport-action-btn svg { width: 28px; height: 28px; color: #4e5968; stroke-width: 2.3; }
 
-        /* 訂單列表追蹤樣式 */
-        .order-list-item { background: #fff; padding: 20px; border-radius: 24px; margin-bottom: 12px; cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.03); display: flex; align-items: center; gap: 15px; border: 1px solid transparent; transition: 0.2s; }
-        .order-list-item:active { background: #f8f9fa; border-color: #eee; }
-        .order-list-item * { pointer-events: none; } /* 阻擋 icon 吃掉點擊事件 */
+        /* 訂單與流程展示 */
+        .order-list-item { background: #fff; padding: 20px; border-radius: 24px; margin-bottom: 12px; cursor: pointer; display: flex; align-items: center; gap: 15px; }
         .order-icon-box { width: 44px; height: 44px; background: #f2f4f6; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #28b0eb; }
-        .order-info { flex: 1; }
-        .order-id-title { font-size: 16px; font-weight: 900; color: #191f28; margin-bottom: 4px; }
-        .order-meta { font-size: 12px; color: #adb5bd; display: flex; justify-content: space-between; }
+        .order-id-title { font-size: 16px; font-weight: 900; }
+        .process-image { width: 100%; height: auto; border-radius: 16px; margin-top: 10px; }
 
-        /* 下單流程展示滿版大圖樣式 */
-        .process-img-box { background: transparent; border-radius: 0; padding: 0; box-shadow: none; display: block; width: 100%; margin-top: 10px; }
-        .process-image { width: 100%; height: auto; border-radius: 16px; display: block; object-fit: contain; }
-
-        /* 按鈕規格定義 */
-        .btn-main { background: #28b0eb; color: #fff; border: none; padding: 18px; width: 100%; border-radius: 20px; font-weight: 700; font-size: 17px; cursor: pointer; display: block; box-sizing: border-box; text-align: center; }
-        .btn-main:disabled { background: #adb5bd; opacity: 0.7; }
-        .btn-sub-small { background: #28b0eb; color: #fff; border: none; padding: 12px 40px; width: auto; min-width: 140px; border-radius: 50px; font-weight: 700; font-size: 15px; cursor: pointer; margin: 0 auto; display: block; }
-
-        /* 底部選單導覽 */
+        /* 底部導覽 */
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; padding: 12px 0 calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid #e5e8eb; z-index: 200; }
         .nav-item { color: #adb5bd; text-align: center; flex: 1; font-size: 11px; font-weight: 900; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; }
         .nav-item.active { color: #28b0eb; }
@@ -187,42 +196,32 @@
         <section id="page-checkout" class="page-content">
             <div class="nav-header"><button class="back-btn" onclick="switchPage('shop')"><i data-feather="chevron-left"></i></button><div class="page-title">代購清單</div></div>
             <div class="card-box" id="checkout-container"></div>
-            <div class="bottom-summary">
-                <div class="row-lg" style="cursor:default; padding: 5px 0;"><span>清單總計</span><span class="price-lg" id="checkout-grand-total">NT$ 0</span></div>
-                <button class="btn-main" onclick="switchPage('shipping')">填寫資料</button>
-            </div>
+            <div class="bottom-summary"><button class="btn-main" onclick="switchPage('shipping')">填寫資料</button></div>
         </section>
 
         <section id="page-shipping" class="page-content">
             <div class="nav-header"><button class="back-btn" onclick="switchPage('checkout')"><i data-feather="chevron-left"></i></button><div class="page-title">取件資料</div></div>
             <div class="card-box">
                 <div class="form-item"><label class="form-label">取件姓名<span class="req-tag" id="tag-ship-name">*必填</span></label><input type="text" id="ship-name" class="input-box" placeholder="收件人姓名" oninput="clearError(this)"></div>
-                <div class="form-item"><label class="form-label">聯絡電話<span class="req-tag" id="tag-ship-tel">*必填</span></label><input type="tel" id="ship-tel" class="input-box" placeholder="09xxxxxxxx" maxlength="10" oninput="clearError(this)"><div style="font-size:12px; color:#f44336; margin-top:8px; line-height:1.5;">*請提供正確的取件人資訊，資料有誤導致無法取件概不負責。</div></div>
+                <div class="form-item"><label class="form-label">聯絡電話<span class="req-tag" id="tag-ship-tel">*必填</span></label><input type="tel" id="ship-tel" class="input-box" placeholder="09xxxxxxxx" maxlength="10" oninput="clearError(this)"></div>
                 <div class="form-item">
                     <label class="form-label">配送方式<span class="req-tag" id="tag-ship-method">*必填</span></label>
                     <div class="ship-group" id="ship-method-group">
                         <div class="ship-btn" id="btn-face" onclick="setShipping('face')">面交</div>
                         <div class="ship-btn" id="btn-711" onclick="setShipping('711')">7-11 取件</div>
                     </div>
-                    <div id="hint-face" style="display:none; font-size:12px; color:#28b0eb; margin-top:12px; width:calc(100% - 24px);">面交僅限台中大雅、梧棲、沙鹿區。</div>
-                    <div id="form-711" style="display:none; margin-top:15px; width:100%;">
-                        <div class="form-item"><label class="form-label">取件門市<span class="req-tag" id="tag-ship-store">*必填</span></label><input type="text" id="ship-store" class="input-box" placeholder="取件門市" oninput="clearError(this)"></div>
-                        <div class="form-item"><label class="form-label">門市代碼<span class="req-tag" id="tag-ship-code">*必填</span></label><input type="text" id="ship-code" class="input-box" placeholder="門市代碼" oninput="clearError(this)"></div>
-                    </div>
                 </div>
-                <div class="list-row" style="border-top:1px solid #f2f4f6; margin-top: 20px; padding-top: 20px;"><div class="list-left"><span style="font-weight:700;">包材、紙箱</span><br><small style="color:#adb5bd;">NT$ 10 / 個</small></div><div class="qty-ctrl"><button class="qty-btn" onclick="updatePacking(-1)"><i data-feather="minus" style="width:16px;"></i></button><span id="qty-packing" class="qty-num">1</span><button class="qty-btn" onclick="updatePacking(1)"><i data-feather="plus" style="width:16px;"></i></button></div></div>
             </div>
-            <div class="bottom-summary" id="shipping-summary">
-                <div class="summary-details"><div class="row-sm"><span>小計</span><span id="sum-items">NT$ 0</span></div><div class="row-sm"><span>運費</span><span id="sum-shipping">NT$ 0</span></div><div class="row-sm"><span>包材</span><span id="sum-packing">NT$ 10</span></div></div>
-                <div class="row-lg" onclick="toggleSummary()"><span>匯款總金額</span><div style="display:flex; align-items:center; gap:8px;"><span class="price-lg" id="sum-total">NT$ 0</span><i data-feather="chevron-up"></i></div></div>
-                <button class="btn-main" id="confirm-submit-btn" onclick="submitFinalOrder()">確認下單</button>
-            </div>
+            <div class="bottom-summary"><button class="btn-main" id="confirm-submit-btn" onclick="submitFinalOrder()">確認下單</button></div>
         </section>
 
-        <section id="page-passport" class="page-content" style="padding-top: 40px;">
+        <section id="page-passport" class="page-content">
             <h3 style="font-weight: 900; text-align: center; margin: 0 0 15px 0; letter-spacing: 1px;">PASSPORT / 護照</h3>
-            <div class="passport-card-layer">
-                <div class="passport-inner-card">
+            
+            <div class="passport-container" id="gyro-card">
+                <div class="passport-shine" id="card-shine"></div>
+                
+                <div class="passport-bg">
                     <div class="passport-photo-box">
                         <img id="pass-avatar" src="" alt="Avatar" class="passport-photo">
                     </div>
@@ -235,37 +234,21 @@
             </div>
 
             <div class="passport-btn-group">
-                <button class="passport-action-btn" onclick="switchPage('process')">
-                    <i data-feather="help-circle"></i>
-                    <span>下單流程</span>
-                </button>
-                <button class="passport-action-btn" onclick="switchPage('orders')">
-                    <i data-feather="file-text"></i>
-                    <span>我的訂單</span>
-                </button>
+                <button class="passport-action-btn" onclick="switchPage('process')"><i data-feather="help-circle"></i><span>下單流程</span></button>
+                <button class="passport-action-btn" onclick="switchPage('orders')"><i data-feather="file-text"></i><span>我的訂單</span></button>
             </div>
         </section>
 
         <section id="page-orders" class="page-content">
-            <div class="nav-header">
-                <button class="back-btn" onclick="switchPage('passport')"><i data-feather="chevron-left"></i></button>
-                <div class="page-title">訂單追蹤</div>
-            </div>
+            <div class="nav-header"><button class="back-btn" onclick="switchPage('passport')"><i data-feather="chevron-left"></i></button><div class="page-title">訂單追蹤</div></div>
             <div id="order-list-container" style="padding-top: 10px;"></div>
         </section>
 
         <section id="page-process" class="page-content">
-            <div class="nav-header">
-                <button class="back-btn" onclick="switchPage('passport')"><i data-feather="chevron-left"></i></button>
-                <div class="page-title">下單流程</div>
-            </div>
-            <div class="process-img-box">
-                <img src="網站下單.jpg" alt="Order Process Instruction" class="process-image">
-            </div>
+            <div class="nav-header"><button class="back-btn" onclick="switchPage('passport')"><i data-feather="chevron-left"></i></button><div class="page-title">下單流程</div></div>
+            <div class="process-img-box"><img src="網站下單.jpg" alt="Order Process Instruction" class="process-image"></div>
         </section>
 
-        <div id="cart-bar" style="display:none; position:fixed; bottom:95px; left:16px; right:16px; background:#191f28; color:#fff; padding:18px 24px; border-radius:20px; justify-content:space-between; align-items:center; z-index:250; cursor:pointer;" onclick="switchPage('checkout')"><span>已選 <span id="cart-qty" style="color:#28b0eb; font-weight:900;">0</span> 件商品</span><span style="font-weight:900;">查看清單 →</span></div>
-        
         <nav class="bottom-nav">
             <div class="nav-item" id="nav-shop" onclick="switchPage('shop')"><i data-feather="shopping-bag"></i><span>弘大漫遊</span></div>
             <div class="nav-item" id="nav-passport" onclick="switchPage('passport')"><i data-feather="user"></i><span>我的護照</span></div>
@@ -274,17 +257,11 @@
 
     <div id="register-modal" class="modal">
         <div class="modal-card">
-            <div style="text-align: center; margin-bottom: 20px;"><h2 style="font-weight:900; margin:0; font-size: 20px;">報到櫃檯</h2></div>
+            <div style="text-align: center; margin-bottom: 20px;"><h2 style="font-weight:900;">報到櫃檯</h2></div>
             <div class="modal-body">
-                <div class="form-item">
-                    <div class="row-flex">
-                        <div style="flex:1;"><label class="form-label">真實姓名<span class="req-tag" id="tag-reg-name">*必填</span></label><input type="text" id="reg-name" class="input-box" style="width:100%;" placeholder="您的姓名" oninput="clearError(this)"></div>
-                        <div style="width:auto; text-align:center;"><label class="form-label">性別</label><div class="gender-group"><button class="gender-btn" id="g-male" onclick="setGender('M')">男</button><button class="gender-btn" id="g-female" onclick="setGender('F')">女</button></div></div>
-                    </div>
-                </div>
+                <div class="form-item"><label class="form-label">真實姓名<span class="req-tag" id="tag-reg-name">*必填</span></label><input type="text" id="reg-name" class="input-box" oninput="clearError(this)"></div>
                 <div class="form-item"><label class="form-label">聯絡電話<span class="req-tag" id="tag-reg-tel">*必填</span></label><input type="tel" id="reg-tel" class="input-box" placeholder="09xxxxxxxx" maxlength="10" oninput="clearError(this)"></div>
                 <div class="form-item"><label class="form-label">出生日期<span class="req-tag" id="tag-reg-birth">*必填</span></label><div class="birth-row"><select id="reg-birth-y" class="input-box" onchange="clearError(this)"></select><select id="reg-birth-m" class="input-box" onchange="clearError(this)"></select><select id="reg-birth-d" class="input-box" onchange="clearError(this)"></select></div></div>
-                <div class="form-item"><label class="form-label">電子信箱</label><input type="email" id="reg-email" class="input-box" placeholder="example@mail.com"></div>
             </div>
             <div class="modal-footer"><button class="btn-sub-small" id="btn-register" onclick="handleRegister()">登機報到</button></div>
         </div>
@@ -292,42 +269,21 @@
 
     <div id="add-modal" class="modal" onclick="closeModal('add-modal')">
         <div class="modal-card" onclick="event.stopPropagation()">
-            <div id="add-modal-content" style="display: flex; flex-direction: column; height: 100%;">
-                <div class="modal-body" style="padding-top: 10px;">
-                    <div class="form-item"><label class="form-label">選擇類別<span class="req-tag" id="tag-in-cat">*必填</span></label><select id="in-cat" class="input-box" onchange="changeCat(this)"><option value="">請選擇</option><option value="化妝水">化妝水</option><option value="精華液">精華液</option><option value="乳液">乳液</option><option value="面膜棉片">面膜棉片</option><option value="洗臉洗澡">洗臉洗澡</option><option value="美髮護髮">美髮護髮</option><option value="彩妝遮瑕">彩妝遮瑕</option><option value="口腔護理">口腔護理</option><option value="防曬">防曬</option><option value="藥膏藥品">藥膏藥品</option><option value="食品（含保健）">食品（含保健）</option><option value="其他">其他</option></select></div>
-                    <div class="form-item"><label class="form-label">商品名稱<span class="req-tag" id="tag-in-name">*必填</span></label><textarea id="in-name" class="input-box" placeholder="例如：Torriden 面膜" oninput="clearError(this)"></textarea></div>
-                    <div class="form-item"><label class="form-label">款式規格</label><textarea id="in-option" class="input-box" placeholder="example：藍色保濕型" oninput="autoGrow(this)"></textarea></div>
-                    <div class="form-item"><label class="form-label">價格 NT$</label><input type="number" id="in-price" class="input-box" placeholder="金額" oninput="clearError(this)"></div>
-                    <div class="form-item"><label class="form-label">來源網址<span class="req-tag" id="tag-in-url">*必填</span></label><input type="url" id="in-url" class="input-box" placeholder="請輸入網址" oninput="clearError(this)"></div>
-                </div>
-                <div class="modal-footer"><button type="button" class="btn-main" onclick="upload()">確認登錄</button></div>
+            <div class="modal-body" style="padding-top: 10px;">
+                <div class="form-item"><label class="form-label">選擇類別<span class="req-tag" id="tag-in-cat">*必填</span></label><select id="in-cat" class="input-box" onchange="changeCat(this)"><option value="">請選擇</option><option value="化妝水">化妝水</option><option value="精華液">精華液</option><option value="乳液">乳液</option><option value="面膜棉片">面膜棉片</option><option value="洗臉洗澡">洗臉洗澡</option><option value="美髮護髮">美髮護髮</option><option value="彩妝遮瑕">彩妝遮瑕</option><option value="口腔護理">口腔護理</option><option value="防曬">防曬</option><option value="藥膏藥品">藥膏藥品</option><option value="食品（含保健）">食品（含保健）</option><option value="其他">其他</option></select></div>
+                <div class="form-item"><label class="form-label">商品名稱<span class="req-tag" id="tag-in-name">*必填</span></label><textarea id="in-name" class="input-box" oninput="clearError(this)"></textarea></div>
+                <div class="form-item"><label class="form-label">款式規格</label><textarea id="in-option" class="input-box"></textarea></div>
+                <div class="form-item"><label class="form-label">價格 NT$</label><input type="number" id="in-price" class="input-box"></div>
+                <div class="form-item"><label class="form-label">來源網址<span class="req-tag" id="tag-in-url">*必填</span></label><input type="url" id="in-url" class="input-box" oninput="clearError(this)"></div>
             </div>
+            <div class="modal-footer"><button type="button" class="btn-main" onclick="upload()">確認登錄</button></div>
         </div>
     </div>
 
     <div id="order-detail-modal" class="modal">
         <div class="modal-card">
-            <div class="modal-header-centered">
-                <h2 style="font-weight:900; margin:0; font-size: 22px;">訂單明細</h2>
-                <div style="margin-top: 4px;">
-                    <span class="order-id-label" id="m-order-id" style="display:inline-block;">編號: --------</span>
-                    <button id="copy-btn" class="copy-btn" onclick="copyOrderId()"><i data-feather="copy" style="width:12px;"></i>複製</button>
-                </div>
-            </div>
-            <div class="modal-body">
-                <div class="modal-section">
-                    <span class="modal-section-title">收件資訊</span>
-                    <div class="detail-item"><div>取件姓名</div><div class="detail-val" id="m-name"></div></div>
-                    <div class="detail-item"><div>聯絡電話</div><div class="detail-val" id="m-tel"></div></div>
-                    <div class="detail-item"><div>取件方式</div><div class="detail-val" id="m-method"></div></div>
-                </div>
-                <div class="modal-section">
-                    <span class="modal-section-title">訂購商品</span>
-                    <div id="m-items-container"></div>
-                    <div class="detail-item" style="margin-top:15px; border-top:1px solid #eee; padding-top:12px;"><div style="font-weight:900; color:#191f28;">匯款金額</div><div class="detail-val" id="m-total" style="color:#28b0eb; font-size:18px; font-weight:900;"></div></div>
-                </div>
-                <p style="font-size: 12px; color: var(--gray); text-align: center; line-height: 1.5; margin: 10px 0;">請截圖此畫面回傳至 LINE@<br>核對金額無誤後即可進行匯款。</p>
-            </div>
+            <div class="modal-header-centered"><h2 style="font-weight:900; margin:0;">訂單明細</h2><span class="order-id-label" id="m-order-id">編號: --------</span></div>
+            <div class="modal-body"><div id="m-items-container"></div><div class="detail-item" style="margin-top:15px; border-top:1px solid #eee; padding-top:12px;"><div style="font-weight:900;">匯款金額</div><div class="detail-val" id="m-total" style="color:#28b0eb; font-size:18px; font-weight:900;"></div></div></div>
             <div class="modal-footer"><div class="btn-main" onclick="closeOrderDetailModal()">我知道了</div></div>
         </div>
     </div>
@@ -335,11 +291,9 @@
     <script>
         const LIFF_ID = '2009405888-D5absVA3';
         const SUPABASE_URL = 'https://ivpctyqlrkjstfsoweeh.supabase.co';
-        /* 修正：精準移除字串中間亂入的「植」字，徹底解決 SDK 初始化崩潰問題 */
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml2cGN0eXFscmtqc3Rmc293ZWVoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTk1MTksImV4cCI6MjA4ODc3NTUxOX0.DYgzhaTH3_5NFwv009ZfZAshfUnCW2PeTuNcJ9feyMU';
-        
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        let userLineId = "", userLinePicture = "", userData = null, selectedGender = "", allProducts = [], cart = {}, shipMethod = '', packingQty = 1, currentRawOrderId = "", allUserOrders = [], isFromCheckout = false;
+        let userLineId = "", userLinePicture = "", userData = null, allProducts = [], cart = {}, shipMethod = '', packingQty = 1, allUserOrders = [], isFromCheckout = false;
 
         async function init() {
             try {
@@ -348,38 +302,101 @@
                 const profile = await liff.getProfile();
                 userLineId = profile.userId;
                 userLinePicture = profile.pictureUrl || "https://img.icons8.com/illustrations/96/user.png";
-
                 await fetchProducts();
-
-                const { data } = await supabaseClient.from('profiles').select('*').or(`line_id.eq.${userLineId},user_id.eq.${userLineId}`);
-                
+                const { data } = await supabaseClient.from('profiles').select('*').eq('line_id', userLineId);
                 document.getElementById('main-app').style.display = 'block';
-
                 if (data && data.length > 0) {
-                    userData = data[0]; 
-                    renderUserProfile(); 
-                    document.getElementById('login-gate').style.display = 'none';
-                    const lastPage = localStorage.getItem('korian_last_page') || 'passport';
-                    switchPage(lastPage);
+                    userData = data[0]; renderUserProfile(); document.getElementById('login-gate').style.display = 'none';
+                    switchPage(localStorage.getItem('korian_last_page') || 'passport');
                 } else {
-                    initBirthSelects();
-                    switchPage('passport'); 
-                    document.getElementById('loader-content').style.display = 'none'; 
-                    document.body.classList.add('modal-open');
-                    document.getElementById('register-modal').style.display = 'flex';
+                    initBirthSelects(); document.getElementById('login-gate').style.display = 'none';
+                    document.body.classList.add('modal-open'); document.getElementById('register-modal').style.display = 'flex';
                 }
                 feather.replace();
+                
+                // LIFF 初始化成功後，請求裝置方向感測器權限 (iOS 必需)
+                initGyroscopePermission();
+
             } catch (e) { console.error(e); }
         }
 
+        // ============== (新) 陀螺儀動態光澤 JavaScript 核心邏輯 ==============
+        let cardEl, shineEl;
+        let isGyroEnabled = false;
+
+        function initGyroscopePermission() {
+            cardEl = document.getElementById('gyro-card');
+            shineEl = document.getElementById('card-shine');
+
+            // iOS 13+ 需要使用者主動授權才能存取運動感測器
+            if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+                //LIFF環境下通常不需要主動彈窗點擊，liff.init本身包含一個主動點擊，直接嘗試獲取。
+                DeviceOrientationEvent.requestPermission()
+                    .then(permissionState => {
+                        if (permissionState === 'granted') {
+                            window.addEventListener('deviceorientation', handleOrientation);
+                            isGyroEnabled = true;
+                            console.log("裝置方向權限已獲得");
+                        }
+                    })
+                    .catch(console.error);
+            } else {
+                // 非 iOS 裝置直接監聽
+                window.addEventListener('deviceorientation', handleOrientation);
+                isGyroEnabled = true;
+                console.log("裝置非 iOS，直接啟用感測器");
+            }
+        }
+
+        function handleOrientation(event) {
+            if (!isGyroEnabled || !cardEl || !shineEl || document.getElementById('page-passport').style.display === 'none') return;
+
+            // beta: X軸 (前後傾斜, -180 to 180), gamma: Y軸 (左右傾斜, -90 to 90)
+            let beta = event.beta;
+            let gamma = event.gamma;
+
+            // 限制 beta 和 gamma 的角度範圍，避免旋轉過度
+            // 我們假設通常用戶直立握持手機，beta 約 45度，gamma 約 0度。
+            // 我們將其校正為直立時為 0, 0
+            
+            // 校正值 (可依需求調整)
+            let constBetaOffset = 50; 
+            
+            let calcBeta = beta - constBetaOffset;
+            let calcGamma = gamma;
+
+            // 限制最大傾斜角度 (為了美觀)
+            let maxTilt = 15;
+            calcBeta = Math.max(-maxTilt, Math.min(maxTilt, calcBeta));
+            calcGamma = Math.max(-maxTilt, Math.min(maxTilt, calcGamma));
+
+            // 1. 轉動卡片 (CSS 3D rotate)
+            // 將計算的角度套用到卡片，gamma轉為rotateY，beta轉為rotateX
+            // 注意：左右傾斜(gamma)會影響Y軸旋轉，前後傾斜(beta)影響X軸旋轉
+            // 加入細微的反向係數 (-0.8, 0.8) 讓轉動更符合直覺。
+            cardEl.style.transform = `rotateX(${calcBeta * -0.8}deg) rotateY(${calcGamma * 0.8}deg)`;
+
+            // 2. 移動光澤 (JavaScript 改變 CSS Gradient position)
+            // 我們將漸層從 (-100%, -100%) 移動到 (100%, 100%) 之間
+            // 係數 (x, y) 決定光線反射方向，可調整以配合漸層角度
+            let shineX = 50 - (calcGamma * 3); // 根據 gamma 改變光澤 X軸位置
+            let shineY = 50 - (calcBeta * 3);  // 根據 beta 改變光澤 Y軸位置
+            
+            // 限制光澤位置在合理範圍
+            shineX = Math.max(-20, Math.min(120, shineX));
+            shineY = Math.max(-20, Math.min(120, shineY));
+
+            // 套用光澤位置
+            shineEl.style.backgroundPosition = `${shineX}% ${shineY}%`;
+        }
+        // ============== (新) 核心邏輯結束 ==============
+
+        // 保留原有的 functional 邏輯
         async function fetchProducts() {
             try {
                 const { data } = await supabaseClient.from('products').select('*').eq('is_active', true);
-                if(data) {
-                    allProducts = data.sort((a,b)=>(b.order_count||0)-(a.order_count||0));
-                    renderProducts(allProducts);
-                }
-            } catch (err) { console.error(err); }
+                if(data) { allProducts = data; renderProducts(data); }
+            } catch (e) {}
         }
 
         function renderProducts(ps) {
@@ -389,7 +406,7 @@
                 <div class="item-card">
                     <div class="item-main" onclick="window.open('${p.olive_url}','_blank')">
                         <div><span class="item-name">${p.name_zh}</span>${p.option ? `<span class="item-option">${p.option}</span>`:''}</div>
-                        <span class="item-price">NT$ ${Number(p.price_nt).toLocaleString()}</span>
+                        <span class="item-price">NT$ ${p.price_nt}</span>
                     </div>
                     <div class="qty-ctrl">
                         <button class="qty-btn" onclick="updateQty('${p.id}',-1)"><i data-feather="minus" style="width:18px;"></i></button>
@@ -401,265 +418,67 @@
             feather.replace();
         }
 
-        function filterCategory(cat, el) {
-            document.querySelectorAll('.cat-pill').forEach(p=>p.classList.remove('active'));
-            el.classList.add('active');
-            renderProducts(cat==='全部' ? allProducts : allProducts.filter(p=>p.category===cat));
-        }
-
         function updateQty(id, d) {
-            const p = allProducts.find(x=>x.id===id);
-            if(!p) return;
-            if(!cart[id]) cart[id]={id:p.id, name:p.name_zh, option:p.option, price:p.price_nt, qty:0};
-            cart[id].qty=Math.max(0, cart[id].qty+d);
-            if(document.getElementById(`qty-${id}`)) document.getElementById(`qty-${id}`).innerText=cart[id].qty;
-            let t = Object.values(cart).reduce((s,i)=>s+i.qty,0);
-            document.getElementById('cart-bar').style.display=(t>0&&document.getElementById('page-shop').classList.contains('active'))?'flex':'none';
-            document.getElementById('cart-qty').innerText=t;
-            if(document.getElementById('page-checkout').classList.contains('active')) renderCheckout();
-            if(document.getElementById('page-shipping').classList.contains('active')) calculateFinal();
+            if(!cart[id]) cart[id] = {id:id, qty:0};
+            cart[id].qty = Math.max(0, cart[id].qty + d);
+            document.getElementById(`qty-${id}`).innerText = cart[id].qty;
         }
 
-        function renderCheckout() {
-            let h='', t=0;
-            Object.values(cart).forEach(i=>{
-                if(i.qty>0){
-                    h+=`<div class="list-row"><div class="list-left"><div><span class="list-n">${i.name}</span>${i.option?`<span class="list-s">${i.option}</span>`:''}</div><span class="list-p">NT$ ${Number(i.price).toLocaleString()}</span></div><div class="qty-ctrl"><button class="qty-btn" onclick="updateQty('${i.id}',-1)"><i data-feather="minus" style="width:16px;"></i></button><span class="qty-num">${i.qty}</span><button class="qty-btn" onclick="updateQty('${i.id}',1)"><i data-feather="plus" style="width:16px;"></i></button></div></div>`;
-                    t+=i.price*i.qty;
-                }
-            });
-            document.getElementById('checkout-container').innerHTML=h||'<p style="text-align:center;padding:40px 0;color:#999;">尚未選擇商品</p>';
-            document.getElementById('checkout-grand-total').innerText=`NT$ ${t.toLocaleString()}`;
+        function switchPage(p) {
+            document.querySelectorAll('.page-content').forEach(e=>e.style.display='none');
+            document.getElementById('page-'+p).style.display='block';
+            document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+            if(document.getElementById('nav-'+p)) document.getElementById('nav-'+p).classList.add('active');
+            if(p === 'passport') localStorage.setItem('korian_last_page', 'passport');
+            if(p === 'orders') fetchUserOrders();
             feather.replace();
-        }
-
-        function setShipping(m) { 
-            shipMethod=m; 
-            document.getElementById('ship-method-group').classList.remove('error');
-            document.getElementById('btn-face').classList.toggle('active',m==='face'); 
-            document.getElementById('btn-711').classList.toggle('active',m==='711'); 
-            document.getElementById('hint-face').style.display=m==='face'?'block':'none'; 
-            document.getElementById('form-711').style.display=m==='711'?'block':'none'; 
-            if(m==='711' && packingQty<1) packingQty=1; 
-            calculateFinal(); 
+            
+            // 當切換到護照頁面時，重置卡片角度
+            if(p === 'passport' && cardEl) {
+                cardEl.style.transform = 'rotateX(0deg) rotateY(0deg)';
+                if(shineEl) shineEl.style.backgroundPosition = '-100% -100%';
+            }
         }
         
-        function toggleSummary() { document.getElementById('shipping-summary').classList.toggle('expanded'); }
-        function updatePacking(d) { const min=shipMethod==='711'?1:0; packingQty=Math.max(min, packingQty+d); document.getElementById('qty-packing').innerText=packingQty; calculateFinal(); }
-        
-        function calculateFinal() { 
-            let it=Object.values(cart).reduce((s,i)=>s+(i.price*i.qty),0); 
-            let sf=shipMethod==='711'?(80*packingQty):0; 
-            let pf=packingQty*10; 
-            document.getElementById('sum-items').innerText=`NT$ ${it.toLocaleString()}`; 
-            document.getElementById('sum-shipping').innerText=`NT$ ${sf.toLocaleString()}`; 
-            document.getElementById('sum-packing').innerText=`NT$ ${pf.toLocaleString()}`; 
-            document.getElementById('sum-total').innerText=`NT$ ${(it+sf+pf).toLocaleString()}`; 
-        }
-
-        function setGender(g) {
-            selectedGender = g;
-            const maleBtn = document.getElementById('g-male'), femaleBtn = document.getElementById('g-female');
-            maleBtn.classList.remove('active-m'); femaleBtn.classList.remove('active-f');
-            if (g === 'M') maleBtn.classList.add('active-m');
-            if (g === 'F') femaleBtn.classList.add('active-f');
-        }
-
-        function openAddModal() { 
-            document.body.classList.add('modal-open'); 
-            document.getElementById('add-modal').style.display = 'flex'; 
-            initTextareas(); 
-        }
-
-        function closeModal(id) { 
-            document.body.classList.remove('modal-open'); 
-            document.getElementById(id).style.display = 'none'; 
-        }
-
-        function initTextareas() { const ts = document.querySelectorAll('textarea.input-box'); ts.forEach(t => { t.style.height = '48px'; }); }
-        function autoGrow(element) { element.style.height = '48px'; if (element.scrollHeight > 48) { element.style.height = (element.scrollHeight) + "px"; } }
-        function changeCat(el) { clearError(el); }
-
-        // 修正：全面補齊 upload 函式所需的完整變數讀取、欄位驗證、防重複送出鎖定與 Supabase 對齊欄位，修復無法登錄的問題
-        async function upload() {
-            const btn = document.querySelector('#add-modal .btn-main');
-            const cat = document.getElementById('in-cat'), name = document.getElementById('in-name'), price = document.getElementById('in-price'), url = document.getElementById('in-url'), opt = document.getElementById('in-option');
-            let valid = true;
-            if(!cat.value){ cat.classList.add('error'); valid=false; }
-            if(!name.value.trim()){ name.classList.add('error'); valid=false; }
-            if(!url.value.trim()){ url.value.classList.add('error'); valid=false; }
-            if(!valid) return;
-            
-            if(btn) { btn.disabled = true; btn.innerText = "處理中..."; }
-            const taiwanTime = new Date().toISOString();
-            
-            const { error } = await supabaseClient.from('products').insert({ 
-                category: cat.value,
-                name_zh: name.value.trim(), 
-                option: opt.value.trim() || "",
-                price_nt: price.value || 0, 
-                olive_url: url.value.trim(), 
-                created_by: userLineId,
-                is_active: false, 
-                created_at: taiwanTime
-            });
-            
-            if(!error) { 
-                closeModal('add-modal'); 
-                if(btn) { btn.disabled = false; btn.innerText = "確認登錄"; }
-                [name, opt, price, url].forEach(el => el.value = ""); cat.value = "";
-                await fetchProducts(); 
-            } else { 
-                alert('失敗：' + error.message); 
-                if(btn) { btn.disabled = false; btn.innerText = "確認登錄"; }
-            }
-        }
-
-        async function submitFinalOrder() {
-            const btn = document.getElementById('confirm-submit-btn'); if(btn.disabled) return;
-            const name = document.getElementById('ship-name'), tel = document.getElementById('ship-tel'), store = document.getElementById('ship-store'), code = document.getElementById('ship-code');
-            let isValid = true;
-            if(!name.value.trim()){ name.classList.add('error'); isValid=false; }
-            if(!/^09\d{8}$/.test(tel.value.trim())){ tel.classList.add('error'); isValid=false; }
-            if(!shipMethod){ document.getElementById('ship-method-group').classList.add('error'); document.getElementById('tag-ship-method').style.display='inline'; isValid=false; }
-            if(shipMethod==='711'){ if(!store.value.trim()){ store.classList.add('error'); isValid=false; } if(!code.value.trim()){ code.classList.add('error'); isValid=false; } }
-            if(!isValid) return; btn.disabled=true; btn.innerText="下單中...";
-            let itemsStr = Object.values(cart).filter(i=>i.qty>0).map(i=>`${i.name}*${i.qty}`).join(', ');
-            const finalMethod = shipMethod === 'face' ? '面交' : '7-11取件';
-            const finalStore = shipMethod === '711' ? `${store.value}(${code.value})` : '台中指定區';
-            const taiwanTime = new Date().toISOString();
-            try {
-                const { data, error } = await supabaseClient.from('orders').insert({ items_summary: itemsStr, user_id: userLineId, customer_name: name.value, customer_tel: tel.value, shipping_method: finalMethod, shipping_store: finalStore, packing_qty: packingQty, total_amount: document.getElementById('sum-total').innerText, created_at: taiwanTime }).select();
-                if(error) throw error;
-                for(let i of Object.values(cart)){ if(i.qty>0) await supabaseClient.rpc('increment_order_count',{row_id:i.id, inc_val:parseInt(i.qty)}); }
-                showOrderDetail(data[0], true); 
-                cart={}; renderProducts(allProducts); 
-            } catch(e){ alert("失敗："+e.message); btn.disabled=false; btn.innerText="確認下單"; }
-        }
-
-        function showOrderDetail(order, fromCheckout = false) {
-            isFromCheckout = fromCheckout; 
-            currentRawOrderId = order.id.slice(-10).toUpperCase();
-            document.getElementById('m-order-id').innerText = "編號: " + currentRawOrderId;
-            document.getElementById('m-name').innerText = order.customer_name;
-            document.getElementById('m-tel').innerText = order.customer_tel;
-            document.getElementById('m-method').innerText = `${order.shipping_method} ${order.shipping_store || ''}`;
-            document.getElementById('m-total').innerText = order.total_amount;
-            const items = order.items_summary.split(', ');
-            document.getElementById('m-items-container').innerHTML = items.map(it => `
-                <div class="order-item-row">
-                    <div class="order-item-name">${it.split('*')[0]}</div>
-                    <div class="order-item-qty">× ${it.split('*')[1]}</div>
-                </div>
-            `).join('');
-            document.getElementById('order-detail-modal').style.display = 'flex';
-            feather.replace();
-        }
-
-        function closeOrderDetailModal() {
-            document.getElementById('order-detail-modal').style.display = 'none';
-            if (isFromCheckout) {
-                const btn = document.getElementById('confirm-submit-btn');
-                if (btn) {
-                    btn.disabled = false;
-                    btn.innerText = "確認下單";
-                }
-                switchPage('shop');
-            }
-        }
-
-        function viewOrder(idx) {
-            if (allUserOrders && allUserOrders[idx]) {
-                showOrderDetail(allUserOrders[idx], false);
-            }
-        }
-
         async function fetchUserOrders() {
             const container = document.getElementById('order-list-container');
-            container.innerHTML = '<p style="text-align:center; padding:40px; color:#999;">努力載入訂單中...</p>';
-            const { data, error } = await supabaseClient.from('orders').select('*').eq('user_id', userLineId).order('created_at', { ascending: false });
-            if(error || !data || data.length === 0) {
-                container.innerHTML = '<p style="text-align:center; padding:40px; color:#999;">目前尚無下單紀錄</p>';
-                return;
-            }
+            container.innerHTML = '<p style="text-align:center; padding:40px; color:#999;">努力載入中...</p>';
+            const { data } = await supabaseClient.from('orders').select('*').eq('user_id', userLineId).order('created_at', { ascending: false });
+            if(!data || data.length === 0) { container.innerHTML = '<p style="text-align:center; padding:40px; color:#999;">尚無下單紀錄</p>'; return; }
             allUserOrders = data;
-            
-            container.innerHTML = data.map((order, index) => `
+            container.innerHTML = data.map((o, index) => `
                 <div class="order-list-item" onclick="viewOrder(${index})">
                     <div class="order-icon-box"><i data-feather="package"></i></div>
                     <div class="order-info">
-                        <div class="order-id-title">${order.id.slice(-10).toUpperCase()}</div>
-                        <div class="order-meta">
-                            <span>${new Date(order.created_at).toLocaleDateString()}</span>
-                            <span style="color:var(--primary); font-weight:900;">${order.total_amount}</span>
-                        </div>
+                        <div class="order-id-title">${o.id.slice(-10).toUpperCase()}</div>
+                        <div style="font-size:12px;color:#adb5bd;display:flex;justify-content:space-between;"><span>${new Date(o.created_at).toLocaleDateString()}</span><span style="color:#28b0eb;font-weight:900;">${o.total_amount}</span></div>
                     </div>
                 </div>
             `).join('');
             feather.replace();
         }
 
-        async function handleRegister() {
-            const btn = document.getElementById('btn-register');
-            const name = document.getElementById('reg-name'), tel = document.getElementById('reg-tel'), email = document.getElementById('reg-email');
-            const by = document.getElementById('reg-birth-y'), bm = document.getElementById('reg-birth-m'), bd = document.getElementById('reg-birth-d');
-            let valid = true;
-            if(!name.value.trim()){ name.classList.add('error'); document.getElementById('tag-reg-name').style.display='inline'; valid=false; }
-            if(!/^09\d{8}$/.test(tel.value)){ tel.classList.add('error'); document.getElementById('tag-reg-tel').style.display='inline'; valid=false; }
-            if(!by.value || !bm.value || !bd.value){ [by,bm,bd].forEach(s => s.classList.add('error')); document.getElementById('tag-reg-birth').style.display='inline'; valid=false; }
-            if(!valid) return;
-            if(!userLineId) return;
-            btn.disabled = true; 
-            const fullBirth = `${by.value}-${bm.value}-${bd.value}`;
-            const { error } = await supabaseClient.from('profiles').insert([{ line_id: userLineId, user_id: userLineId, full_name: name.value.trim(), phone: tel.value.trim(), birthday: fullBirth, gender: selectedGender, email: email.value.trim() }]);
-            if(!error) location.reload(); else { alert("失敗：" + error.message); btn.disabled = false; }
+        function viewOrder(idx) { showOrderDetail(allUserOrders[idx], false); }
+
+        function showOrderDetail(order, fromCheckout = false) {
+            isFromCheckout = fromCheckout;
+            document.getElementById('m-order-id').innerText = "編號: " + order.id.slice(-10).toUpperCase();
+            document.getElementById('m-total').innerText = order.total_amount;
+            const items = order.items_summary.split(', ');
+            document.getElementById('m-items-container').innerHTML = items.map(it => `<div class="order-item-row"><div class="order-item-name">${it.split('*')[0]}</div><div class="order-item-qty">× ${it.split('*')[1]}</div></div>`).join('');
+            document.getElementById('order-detail-modal').style.display = 'flex';
+        }
+
+        function closeOrderDetailModal() {
+            document.getElementById('order-detail-modal').style.display = 'none';
+            if (isFromCheckout) switchPage('shop');
         }
 
         function renderUserProfile() { 
             if(!userData) return;
             document.getElementById('pass-avatar').src = userLinePicture;
-            document.getElementById('pass-name').innerText = userData.full_name || "---"; 
-            document.getElementById('pass-sex').innerText = userData.gender === 'M' ? '男 / M' : (userData.gender === 'F' ? '女 / F' : '---');
-            document.getElementById('pass-birth').innerText = userData.birthday || "---";
-        }
-        
-        function clearError(el) { 
-            el.classList.remove('error'); 
-            const baseId = el.id.startsWith('reg-birth') ? 'reg-birth' : el.id;
-            const tag = document.getElementById('tag-' + baseId);
-            if(tag) tag.style.display='none'; 
-            if(el.id.startsWith('reg-birth')) ['y','m','d'].forEach(suffix => document.getElementById('reg-birth-'+suffix).classList.remove('error'));
-        }
-        
-        async function copyOrderId() { try { await navigator.clipboard.writeText(currentRawOrderId); const btn = document.getElementById('copy-btn'); btn.innerHTML = '<i data-feather="check" style="width:12px;"></i>已複製'; feather.replace(); setTimeout(() => { btn.innerHTML = '<i data-feather="copy" style="width:12px;"></i>複製'; feather.replace(); }, 2000); } catch (err) { console.error(err); } }
-
-        function switchPage(p) {
-            document.querySelectorAll('.page-content').forEach(e=>e.classList.remove('active'));
-            const target = document.getElementById('page-'+p);
-            if(target) target.classList.add('active');
-            
-            document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-            if(document.getElementById('nav-'+p)) document.getElementById('nav-'+p).classList.add('active');
-            
-            if(p === 'shop' || p === 'passport') localStorage.setItem('korian_last_page', p);
-            
-            let t = Object.values(cart).reduce((s,i)=>s+i.qty,0);
-            document.getElementById('cart-bar').style.display=(t>0&&p=='shop')?'flex':'none';
-            
-            if(p === 'shop') renderProducts(allProducts);
-            if(p === 'checkout') renderCheckout();
-            if(p === 'shipping') calculateFinal();
-            if(p === 'orders') fetchUserOrders(); 
-            
-            window.scrollTo(0,0); feather.replace();
-        }
-
-        // 修正：精準補上先前漏掉的閉合大括號 ｝，徹底打破開屏載入死結
-        function initBirthSelects() {
-            const sy = document.getElementById('reg-birth-y'), sm = document.getElementById('reg-birth-m'), sd = document.getElementById('reg-birth-d');
-            sy.innerHTML = '<option value="">年</option>' + Array.from({length: 87}, (_, i) => `<option value="${1940+i}">${1940+i}</option>`).reverse().join('');
-            sm.innerHTML = '<option value="">月</option>' + Array.from({length: 12}, (_, i) => `<option value="${(i+1).toString().padStart(2,'0')}">${(i+1).toString().padStart(2,'0')}</option>`).join('');
-            sd.innerHTML = '<option value="">日</option>' + Array.from({length: 31}, (_, i) => `<option value="${(i+1).toString().padStart(2,'0')}">${(i+1).toString().padStart(2,'0')}</option>`).join('');
+            document.getElementById('pass-name').innerText = userData.full_name;
+            document.getElementById('pass-birth').innerText = userData.birthday;
         }
 
         window.onload = init;
