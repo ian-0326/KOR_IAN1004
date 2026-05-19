@@ -23,9 +23,7 @@
         
         /* 飛機圖片檔案獨立的上下浮動呼吸動畫 */
         .custom-airplane-img { width: 75px; height: auto; display: block; margin: 35px auto 0 auto; animation: floatAnimation 2s ease-in-out infinite; }
-        
-        /* 修正：將開屏提示文字稍微放大一點點（由 14px 放大至 17px） */
-        .gate-text { font-size: 17px; font-weight: 700; color: #ffffff; margin-top: 24px; letter-spacing: 2px; opacity: 0.95; }
+        .gate-text { font-size: 14px; font-weight: 700; color: #ffffff; margin-top: 24px; letter-spacing: 2px; opacity: 0.95; }
         
         @keyframes floatAnimation {
             0% { transform: translateY(0); }
@@ -41,8 +39,7 @@
 
         /* 頂部固定 Header */
         .fixed-header { position: sticky; top: 0; background: #f2f4f6; z-index: 110; padding: 20px 16px 10px 16px; display: flex; justify-content: space-between; align-items: center; }
-        /* 修正：將 Logo 圖片再稍微放大一點（由 52px 提升至 60px） */
-        .page-logo { height: 60px; width: auto; object-fit: contain; }
+        .page-logo { height: 52px; width: auto; object-fit: contain; }
         
         /* 提升至最高層級，並預防 SVG 點擊穿透問題 */
         .add-btn { width: 44px; height: 44px; background: #28b0eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; border: none; box-shadow: 0 4px 12px rgba(40, 176, 235, 0.2); cursor: pointer; position: relative; z-index: 9999; }
@@ -60,16 +57,13 @@
         .cat-pill.active { background: #28b0eb; color: #fff; }
 
         /* 商品卡片 */
-        .item-card { background: #fff; padding: 20px; border-radius: 28px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 12px rgba(0,0,0,0.04); margin-bottom: 12px; position: relative; } /* 確保相對定位 */
+        .item-card { background: #fff; padding: 20px; border-radius: 28px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 12px rgba(0,0,0,0.04); margin-bottom: 12px; }
         .item-card:first-child { margin-top: 10px; }
         .item-card * { pointer-events: auto; }
         .item-main { flex: 1; cursor: pointer; }
         .item-name { font-size: 16px; font-weight: 700; color: #191f28; display: inline-block; margin-bottom: 4px; }
         .item-option { font-size: 12px; color: #adb5bd; margin-left: 6px; font-weight: 400; }
         .item-price { color: #28b0eb; font-weight: 700; font-size: 17px; display: block; }
-
-        /* 修正：新增熱銷黃色皇冠 icon 懸浮標籤樣式 */
-        .crown-badge { position: absolute; top: -6px; left: 16px; background: #ffffff; font-size: 14px; padding: 2px 6px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); display: flex; align-items: center; justify-content: center; z-index: 10; }
 
         .qty-ctrl { display: flex; align-items: center; gap: 14px; background: #f8f9fa; padding: 8px 16px; border-radius: 50px; }
         .qty-btn { background: none; border: none; padding: 0; color: #4e5968; display: flex; align-items: center; cursor: pointer; }
@@ -341,6 +335,7 @@
     <script>
         const LIFF_ID = '2009405888-D5absVA3';
         const SUPABASE_URL = 'https://ivpctyqlrkjstfsoweeh.supabase.co';
+        /* 修正：將金鑰內部亂入損壞的「xH鏡像與中文字」精準剔除，恢復成正確的官方金鑰，解決全站通訊無反應問題 */
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml2cGN0eXFscmtqc3Rmc293ZWVoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTk1MTksImV4cCI6MjA4ODc3NTUxOX0.DYgzhaTH3_5NFwv009ZfZAshfUnCW2PeTuNcJ9feyMU';
         
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -387,13 +382,11 @@
             } catch (err) { console.error(err); }
         }
 
-        // 修正：增加黃色皇冠人氣判斷 (購買數量 >= 5 的商品會自動顯示標籤)
         function renderProducts(ps) {
             const container = document.getElementById('item-list');
             if(!container) return;
             container.innerHTML = ps.map(p => `
                 <div class="item-card">
-                    ${(p.order_count >= 5) ? '<div class="crown-badge">👑</div>' : ''}
                     <div class="item-main" onclick="window.open('${p.olive_url}','_blank')">
                         <div><span class="item-name">${p.name_zh}</span>${p.option ? `<span class="item-option">${p.option}</span>`:''}</div>
                         <span class="item-price">NT$ ${Number(p.price_nt).toLocaleString()}</span>
@@ -472,7 +465,6 @@
             if (g === 'F') femaleBtn.classList.add('active-f');
         }
 
-        UX_add_modal = function() { openAddModal(); }
         function openAddModal() { 
             document.body.classList.add('modal-open'); 
             document.getElementById('add-modal').style.display = 'flex'; 
@@ -488,8 +480,6 @@
         function autoGrow(element) { element.style.height = '48px'; if (element.scrollHeight > 48) { element.style.height = (element.scrollHeight) + "px"; } }
         function changeCat(el) { clearError(el); }
 
-        /* 修正：「確認登錄」按鈕無法送出資料的 Bug。
-           補齊所有表單欄位（包括類別與款式規格）、輸入驗證、防重複點擊鎖定以及對齊 Supabase 資料庫欄位結構 */
         async function upload() {
             const btn = document.querySelector('#add-modal .btn-main');
             const cat = document.getElementById('in-cat'), name = document.getElementById('in-name'), price = document.getElementById('in-price'), url = document.getElementById('in-url'), opt = document.getElementById('in-option');
@@ -534,7 +524,7 @@
             if(shipMethod==='711'){ if(!store.value.trim()){ store.classList.add('error'); isValid=false; } if(!code.value.trim()){ code.classList.add('error'); isValid=false; } }
             if(!isValid) return; btn.disabled=true; btn.innerText="下單中...";
             let itemsStr = Object.values(cart).filter(i=>i.qty>0).map(i=>`${i.name}*${i.qty}`).join(', ');
-            const finalMethod = shipMethod === 'face' ? '面交' : '7-11取件';
+            const finalMethod = shipMethod === 'face' ? '面交' : '7-11 取件';
             const finalStore = shipMethod === '711' ? `${store.value}(${code.value})` : '台中指定區';
             const taiwanTime = new Date().toISOString();
             try {
