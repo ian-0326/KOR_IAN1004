@@ -45,7 +45,6 @@
 
         .card-box { background: #fff; border-radius: 32px; padding: 15px 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); margin-top: 10px; }
         .list-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f2f4f6; }
-        .list-left { flex: 1; }
         .list-n { font-size: 15px; font-weight: 900; color: #000; }
         .list-p { font-size: 13px; color: #28b0eb; font-weight: 900; display: block; }
 
@@ -218,15 +217,18 @@
                 userLinePicture = profile.pictureUrl || "";
                 await fetchProducts();
                 const { data } = await supabaseClient.from('profiles').select('*').eq('line_id', userLineId);
-                document.getElementById('main-app').style.display = 'block';
+                
+                // 確保登入 gate 在初始化完成後一定會消失
                 if (data && data.length > 0) {
                     userData = data[0];
                     renderUserProfile();
                     document.getElementById('login-gate').style.display = 'none';
+                    document.getElementById('main-app').style.display = 'block';
                     switchPage(localStorage.getItem('korian_last_page') || 'passport');
                 } else {
                     initBirthSelects();
                     document.getElementById('login-gate').style.display = 'none';
+                    document.getElementById('main-app').style.display = 'block';
                     document.getElementById('register-modal').style.display = 'flex';
                 }
                 feather.replace();
@@ -304,6 +306,8 @@
 
         function initBirthSelects() {
             document.getElementById('reg-birth-y').innerHTML = Array.from({length:80}, (_,i)=>`<option value="${1946+i}">${1946+i}</option>`).join('');
+            document.getElementById('reg-birth-m').innerHTML = Array.from({length:12}, (_,i)=>`<option value="${i+1}">${i+1}</option>`).join('');
+            document.getElementById('reg-birth-d').innerHTML = Array.from({length:31}, (_,i)=>`<option value="${i+1}">${i+1}</option>`).join('');
         }
 
         window.onload = init;
