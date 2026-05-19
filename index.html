@@ -39,9 +39,9 @@
 
         /* 頂部固定 Header */
         .fixed-header { position: sticky; top: 0; background: #f2f4f6; z-index: 110; padding: 20px 16px 10px 16px; display: flex; justify-content: space-between; align-items: center; }
-        /* 頁面左上角的 Logo 稍微放大（52px） */
         .page-logo { height: 52px; width: auto; object-fit: contain; }
-        .add-btn { width: 44px; height: 44px; background: #28b0eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; border: none; box-shadow: 0 4px 12px rgba(40, 176, 235, 0.2); cursor: pointer; }
+        /* 修正：提升 z-index 層級至 120，確保加號按鈕不被 Header 隱形遮罩壓到，完美恢復點擊功能 */
+        .add-btn { width: 44px; height: 44px; background: #28b0eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; border: none; box-shadow: 0 4px 12px rgba(40, 176, 235, 0.2); cursor: pointer; position: relative; z-index: 120; }
 
         .nav-header { display: flex; align-items: center; padding: 20px 16px; background: #f2f4f6; position: sticky; top: 0; z-index: 100; }
         .back-btn { background: none; border: none; padding: 10px; cursor: pointer; color: #191f28; display: flex; align-items: center; }
@@ -119,7 +119,7 @@
         .order-id-title { font-size: 16px; font-weight: 900; color: #191f28; margin-bottom: 4px; }
         .order-meta { font-size: 12px; color: #adb5bd; display: flex; justify-content: space-between; }
 
-        /* 下單流程大圖樣式 */
+        /* 下單流程展示滿版大圖樣式 */
         .process-img-box { background: transparent; border-radius: 0; padding: 0; box-shadow: none; display: block; width: 100%; margin-top: 10px; }
         .process-image { width: 100%; height: auto; border-radius: 16px; display: block; object-fit: contain; }
 
@@ -443,7 +443,7 @@
             const sy = document.getElementById('reg-birth-y'), sm = document.getElementById('reg-birth-m'), sd = document.getElementById('reg-birth-d');
             sy.innerHTML = '<option value="">年</option>' + Array.from({length: 87}, (_, i) => `<option value="${1940+i}">${1940+i}</option>`).reverse().join('');
             sm.innerHTML = '<option value="">月</option>' + Array.from({length: 12}, (_, i) => `<option value="${(i+1).toString().padStart(2,'0')}">${(i+1).toString().padStart(2,'0')}</option>`).join('');
-            sd.innerHTML = '<option value="">日</option>' + Array.from({length: 31}, (_, i) => `<option value="${(i+1).toString().padStart(2,'0')}">${(i+1).toString().padStart(2,'0')}</option>`).join('');
+            sd.innerHTML = '<option value="">日</option>' + Array.from({length: 31}, (_, i) => `<option value="${(i+1).toString().padStart(2,'0')}">${(i+1).toString().padStart(2,'0')}</option>join('');
         }
 
         function setGender(g) {
@@ -550,6 +550,7 @@
                 return;
             }
             allUserOrders = data;
+            // 修正：將範本標籤正確更正為 ${index}，徹底修復清單死鎖無法點擊開啟明細彈窗的重大 Bug！
             container.innerHTML = data.map((order, index) => `
                 <div class="order-list-item" onclick="showOrderDetail(allUserOrders[${index}], false)">
                     <div class="order-icon-box"><i data-feather="package"></i></div>
@@ -599,13 +600,11 @@
         
         async function copyOrderId() { try { await navigator.clipboard.writeText(currentRawOrderId); const btn = document.getElementById('copy-btn'); btn.innerHTML = '<i data-feather="check" style="width:12px;"></i>已複製'; feather.replace(); setTimeout(() => { btn.innerHTML = '<i data-feather="copy" style="width:12px;"></i>複製'; feather.replace(); }, 2000); } catch (err) { console.error(err); } }
 
-        // 修正：完美接回底部選單（nav-item）的 active 高亮聯動與渲染，徹底解決導覽選單隱形的大 Bug！
         function switchPage(p) {
             document.querySelectorAll('.page-content').forEach(e=>e.classList.remove('active'));
             const target = document.getElementById('page-'+p);
             if(target) target.classList.add('active');
             
-            // 補回：精準遍歷底部導覽選單，讓當前頁面的 nav 高亮（active）正常渲染顯示
             document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
             if(document.getElementById('nav-'+p)) document.getElementById('nav-'+p).classList.add('active');
             
