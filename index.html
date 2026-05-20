@@ -2,509 +2,645 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>黑盒子維修中心 - 官方網站</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>KOR.IAN | 韓國連線清單</title>
+    
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.0/feather.min.js"></script>
+    <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
     
     <style>
-        :root {
-            --primary-black: #1a1a1a;
-            --secondary-black: #2d2d2d;
-            --gold-accent: #d4af37;
-            --bg-light: #f9f9f9;
-            --text-dark: #333333;
-            --text-muted: #999999;
-            --shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Noto Sans TC', sans-serif; }
-        body { background-color: var(--bg-light); color: var(--text-dark); line-height: 1.6; }
-
-        /* --- 導覽列 --- */
-        header {
-            position: fixed; top: 0; left: 0; width: 100%; height: 85px;
-            background-color: #ffffff; box-shadow: var(--shadow);
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 0 24px; z-index: 1000;
-        }
-        .header-left { display: flex; align-items: center; gap: 15px; }
-        .menu-toggle { font-size: 24px; color: var(--primary-black); cursor: pointer; background: none; border: none; }
-        .logo-img { height: 54px; width: auto; object-fit: contain; display: block; }
-
-        .header-right { display: flex; gap: 15px; }
-        .nav-btn {
-            display: flex; justify-content: center; align-items: center;
-            width: 42px; height: 42px; border-radius: 50%;
-            background-color: var(--primary-black); color: #ffffff;
-            text-decoration: none; font-size: 18px; transition: var(--transition);
-        }
-        .nav-btn:hover { background-color: var(--gold-accent); transform: translateY(-2px); }
-
-        /* --- 側邊選單 (寬度 220px，Logo靠左) --- */
-        .sidebar {
-            position: fixed; top: 0; left: -220px; width: 220px; height: 100%;
-            background-color: #ffffff; z-index: 2000; transition: var(--transition);
-            padding: 24px; box-shadow: 5px 0 25px rgba(0,0,0,0.05);
-            display: flex; flex-direction: column;
-        }
-        .sidebar.active { left: 0; }
+        :root { --primary: #28b0eb; --pink: #ff85a2; --bg: #f2f4f6; --white: #ffffff; --text: #191f28; --sub: #4e5968; --gray: #adb5bd; --error: #f44336; }
         
-        .sidebar-header { 
+        body { font-family: Georgia, Garamond, "Times New Roman", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", "Helvetica Neue", "Microsoft JhengHei", sans-serif; background-color: #f2f4f6; margin: 0; padding: 0; color: #191f28; -webkit-font-smoothing: antialiased; touch-action: manipulation; }
+        body.modal-open { overflow: hidden; }
+
+        /* 強制登入天藍色開屏安全牆 */
+        #login-gate { position: fixed; inset: 0; background: #28b0eb; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        
+        /* 核心動效：整體內容做純粹的同頻淡入淡出 */
+        #loader-content { text-align: center; animation: fadeInOut 2s ease-in-out infinite; }
+        
+        /* 飛機圖片檔案獨立的上下浮動呼吸動畫 */
+        .custom-airplane-img { width: 90px; height: auto; display: block; margin: 0 auto; animation: floatAnimation 2s ease-in-out infinite; }
+        .gate-text { font-size: 14px; font-weight: 700; color: #ffffff; margin-top: 24px; letter-spacing: 2px; opacity: 0.95; }
+        
+        @keyframes floatAnimation {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-12px); }
+            100% { transform: translateY(0); }
+        }
+        
+        @keyframes fadeInOut {
+            0% { opacity: 0.4; }
+            50% { opacity: 1; }
+            100% { opacity: 0.4; }
+        }
+
+        /* 頂部固定 Header */
+        .fixed-header { position: sticky; top: 0; background: #f2f4f6; z-index: 110; padding: 20px 16px 10px 16px; display: flex; justify-content: space-between; align-items: center; }
+        .page-logo { height: 52px; width: auto; object-fit: contain; }
+        
+        /* 提升至最高層級，並預防 SVG 點擊穿透問題 */
+        .add-btn { width: 44px; height: 44px; background: #28b0eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; border: none; box-shadow: 0 4px 12px rgba(40, 176, 235, 0.2); cursor: pointer; position: relative; z-index: 9999; }
+        .add-btn * { pointer-events: none; } /* 阻擋 icon 吃掉點擊事件 */
+
+        .nav-header { display: flex; align-items: center; padding: 20px 16px; background: #f2f4f6; position: sticky; top: 0; z-index: 100; }
+        .back-btn { background: none; border: none; padding: 10px; cursor: pointer; color: #191f28; display: flex; align-items: center; }
+        .page-title { flex: 1; text-align: center; font-weight: 900; font-size: 20px; margin-right: 24px; }
+        .page-content { display: none; padding: 0 16px 280px 16px; min-height: 100vh; box-sizing: border-box; }
+        .page-content.active { display: block; }
+        
+        /* 分類選單固定 */
+        .category-wrapper { position: sticky; top: 75px; background: #f2f4f6; margin: 0 -16px 20px -16px; padding: 10px 16px; overflow-x: auto; display: flex; gap: 8px; scrollbar-width: none; z-index: 90; }
+        .cat-pill { white-space: nowrap; padding: 10px 20px; background: #fff; border-radius: 50px; font-size: 14px; font-weight: 700; color: #4e5968; box-shadow: 0 2px 6px rgba(0,0,0,0.05); flex-shrink: 0; cursor: pointer; }
+        .cat-pill.active { background: #28b0eb; color: #fff; }
+
+        /* 商品卡片 */
+        .item-card { background: #fff; padding: 20px; border-radius: 28px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 12px rgba(0,0,0,0.04); margin-bottom: 12px; position: relative; } 
+        .item-card:first-child { margin-top: 10px; }
+        .item-card * { pointer-events: auto; }
+        .item-main { flex: 1; cursor: pointer; }
+        .item-name { font-size: 16px; font-weight: 700; color: #191f28; display: inline-block; margin-bottom: 4px; }
+        .item-option { font-size: 12px; color: #adb5bd; margin-left: 6px; font-weight: 400; }
+        .item-price { color: #28b0eb; font-weight: 900; font-size: 17px; display: block; }
+
+        /* 熱銷黃色皇冠標籤樣式 */
+        .crown-badge { position: absolute; top: -6px; left: 16px; background: #ffffff; color: #ffca28; padding: 2px 6px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); display: flex; align-items: center; justify-content: center; z-index: 10; }
+
+        .qty-ctrl { display: flex; align-items: center; gap: 14px; background: #f8f9fa; padding: 8px 16px; border-radius: 50px; }
+        .qty-btn { background: none; border: none; padding: 0; color: #4e5968; display: flex; align-items: center; cursor: pointer; }
+        .qty-num { font-size: 16px; font-weight: 900; color: #28b0eb; min-width: 20px; text-align: center; }
+
+        .card-box { background: #fff; border-radius: 32px; padding: 15px 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); margin-top: 10px; }
+        .list-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f2f4f6; }
+        .list-row:last-child { border-bottom: none; }
+        .list-left { flex: 1; padding-right: 15px; }
+        .list-n { font-size: 15px; font-weight: 900; color: #000; display: inline-block; }
+        .list-s { font-size: 11px; color: #adb5bd; display: inline-block; margin-left: 6px; }
+        .list-p { font-size: 13px; color: #28b0eb; display: block; font-weight: 900; margin-top: 2px; }
+
+        /* 表單設計 */
+        .form-item { margin-bottom: 12px; width: 100%; display: flex; flex-direction: column; align-items: center; }
+        .form-label { width: calc(100% - 24px); font-size: 14px; font-weight: 700; margin-bottom: 6px; color: #4e5968; display: flex; align-items: center; }
+        .req-tag { color: #f44336; font-size: 12px; margin-left: 6px; display: none; }
+        .input-box { width: calc(100% - 24px); padding: 12px 20px; border: none; border-radius: 18px; font-size: 15px; outline: none; background: #f2f4f6; box-sizing: border-box; transition: 0.2s; display: block; }
+        .input-box:focus { background: #fff; box-shadow: 0 0 0 2px #28b0eb; }
+        .input-box.error { background: #fff5f5; box-shadow: 0 0 0 2px #f44336; }
+        textarea.input-box { padding-top: 14px; padding-bottom: 14px; resize: none; overflow-y: hidden; min-height: 48px; padding-left: 20px !important; padding-right: 20px !important; }
+
+        .ship-group { display: flex; gap: 12px; width: calc(100% - 24px); transition: 0.2s; border-radius: 20px; }
+        .ship-group.error { box-shadow: 0 0 0 2px #f44336; background: #fff5f5; }
+        .ship-btn { flex: 1; padding: 16px; background: #f2f4f6; border-radius: 20px; text-align: center; font-weight: 700; color: #4e5968; cursor: pointer; transition: 0.2s; }
+        .ship-btn.active { background: #28b0eb; color: #fff; }
+
+        .bottom-summary { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; padding: 10px 24px calc(20px + env(safe-area-inset-bottom)); border-top: 1px solid #eee; z-index: 400; box-shadow: 0 -10px 30px rgba(0,0,0,0.05); }
+        .summary-details { max-height: 0; overflow: hidden; transition: 0.3s; opacity: 0; }
+        .bottom-summary.expanded .summary-details { max-height: 200px; opacity: 1; margin-top: 10px; padding-bottom: 10px; }
+        .row-sm { display: flex; justify-content: space-between; font-size: 14px; color: #4e5968; margin-bottom: 8px; }
+        .row-lg { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; cursor: pointer; }
+        .price-lg { font-size: 24px; font-weight: 900; }
+
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 10000; align-items: center; justify-content: center; padding: 20px; }
+        .modal-card { background: #fff; border-radius: 36px; padding: 24px 20px 28px 20px; width: 100%; max-width: 360px; max-height: 85vh; box-sizing: border-box; display: flex; flex-direction: column; box-shadow: 0 15px 50px rgba(0,0,0,0.2); }
+        .modal-body { overflow-y: auto; flex-grow: 1; width: 100%; margin-bottom: 10px; }
+        .modal-section { text-align: left; margin-bottom: 16px; padding: 16px; background: #f8f9fa; border-radius: 24px; }
+        .modal-section-title { font-size: 12px; font-weight: 900; color: #adb5bd; margin-bottom: 10px; display: block; }
+        .order-item-row { display: flex; justify-content: space-between; align-items: flex-start; font-size: 14px; margin-bottom: 8px; line-height: 1.4; }
+        .order-item-name { text-align: left; font-weight: 700; color: #191f28; padding-right: 15px; flex: 1; }
+        .order-item-qty { text-align: right; font-weight: 900; color: #28b0eb; white-space: nowrap; }
+        .detail-item { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; }
+        .detail-val { font-weight: 700; text-align: right; flex: 1; margin-left: 20px; word-break: break-all; }
+        .copy-btn { background: #eee; border: none; padding: 4px 8px; border-radius: 8px; font-size: 10px; color: #4e5968; cursor: pointer; margin-left: 8px; display: inline-flex; align-items: center; gap: 4px; vertical-align: middle; }
+        .modal-header-centered { text-align: center; margin-bottom: 24px; flex-shrink: 0; }
+
+        /* 護照資料圖卡排版設定（維持無外白框無圓角陰影樣式） */
+        .passport-card-layer { background: url('KOR.IAN CARD.png') no-repeat center center; background-size: cover; padding: 30px 20px; margin-top: 10px; width: 100%; box-sizing: border-box; }
+        .passport-inner-card { display: flex; gap: 32px; text-align: left; box-sizing: border-box; align-items: center; }
+        .passport-photo-box { width: 115px; display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+        .passport-photo { width: 115px; height: 150px; object-fit: cover; border-radius: 12px; background: #e5e8eb; border: 2px solid rgba(255,255,255,0.25); box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
+        .passport-fields { flex: 1; display: flex; flex-direction: column; gap: 12px; }
+        .pass-row { display: flex; flex-direction: column; line-height: 1.3; }
+        .pass-label { font-size: 11px; font-weight: 900; color: #d4af37; text-transform: uppercase; margin-bottom: 2px; } /* 金黃色標籤 */
+        .pass-val { font-size: 18px; font-weight: 900; color: #ffffff; word-break: break-all; text-shadow: 0 1px 2px rgba(0,0,0,0.4); } /* 白色資料 */
+
+        /* 修正 1 & 3：護照頁面指定套用 KIbackground.png，且改為 Flex 沉底置底容器佈局 */
+        #page-passport.active { 
             display: flex; 
-            justify-content: flex-start; 
-            padding-left: 8px; 
-            padding-bottom: 20px; 
-            margin-bottom: 20px; 
-            border-bottom: 1px solid #f0f0f0; 
-        }
-        .sidebar-logo { height: 50px; width: auto; object-fit: contain; display: block; }
-
-        .sidebar-content { display: flex; flex-direction: column; gap: 24px; }
-        .menu-group { display: flex; flex-direction: column; gap: 8px; }
-        .group-title { font-size: 13px; color: var(--text-muted); letter-spacing: 1px; padding-left: 8px; }
-        .menu-item { color: var(--text-dark); text-decoration: none; font-size: 16px; padding: 8px; border-radius: 6px; transition: var(--transition); cursor: pointer; }
-        .menu-item:hover { color: var(--gold-accent); background-color: #fcfbf7; padding-left: 14px; }
-
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.3); z-index: 1500; display: none; }
-        .overlay.active { display: block; }
-
-        /* --- 頁面內容切換核心 --- */
-        main { 
-            margin-top: 85px; 
-            padding: 5px 20px 40px 20px; 
-            max-width: 1200px; 
-            margin-left: auto; 
-            margin-right: auto; 
-            min-height: calc(100vh - 185px); 
-        }
-        
-        .content-section { display: none; animation: fadeIn 0.4s ease forwards; }
-        .content-section.active { display: block; }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* --- 共用容器樣式 --- */
-        .page-container { 
-            background: transparent; 
-            padding: 15px 0 20px 0; 
-            text-align: center; 
+            flex-direction: column; 
+            justify-content: flex-end; 
+            background: url('KIbackground.png') no-repeat center center; 
+            background-size: cover; 
+            padding-bottom: 110px; /* 留出底部導覽選單空間避免重疊 */
         }
 
-        .page-header { 
-            font-size: 28px; 
-            font-weight: 700; 
-            margin-bottom: 6px; 
-            text-align: center; 
-            color: var(--primary-black); 
-        }
-
-        /* 服務流程按鈕排版 */
-        .process-tabs { 
-            display: flex; 
-            justify-content: center; 
-            gap: 8px; 
-            margin-bottom: 20px; 
-            flex-wrap: nowrap; 
-        }
-        
-        .tab-btn { 
-            background: var(--primary-black); 
-            color: #fff; 
-            border: 2px solid var(--primary-black); 
-            padding: 6px 14px; 
-            font-size: 18px; 
-            border-radius: 40px; 
+        /* 修正 2：長方形橫條型選單按鈕，高度降低，橫向 Flex 兩端對齊排列 */
+        .passport-btn-group { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; width: 100%; box-sizing: border-box; }
+        .passport-action-btn { 
+            width: 100%; 
+            height: 54px; /* 高度降低變長方形 */
+            background: #ffffff; 
+            border: none; 
+            border-radius: 18px; 
+            padding: 0 20px; 
+            font-size: 16px; 
+            font-weight: 900; 
+            color: #191f28; 
             cursor: pointer; 
-            transition: var(--transition); 
-            letter-spacing: 1px;
-            white-space: nowrap; 
+            display: flex; 
+            flex-direction: row; /* 水平排列 */
+            align-items: center; 
+            justify-content: space-between; /* 實現：icon靠左、選單名稱靠右顯示 */
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04); 
+            border: 1px solid rgba(0,0,0,0.01); 
+            transition: 0.15s ease-in-out; 
+            box-sizing: border-box;
         }
-        .tab-btn.active { border-color: var(--gold-accent); color: var(--gold-accent); font-weight: 700; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.15); }
-        .tab-btn:hover { transform: translateY(-2px); background-color: var(--secondary-black); }
+        .passport-action-btn:active { background: #f8f9fa; transform: translateY(2px); }
+        .passport-action-btn svg, .passport-action-btn iconify-icon { width: 24px; height: 24px; color: #4e5968; display: flex; align-items: center; justify-content: center; }
 
-        /* 圖片外框維持 600px */
-        .img-box { max-width: 600px; margin: 0 auto; }
-        .display-img { width: 100%; height: auto; display: none; }
-        .display-img.active { display: block; animation: fadeIn 0.4s; }
+        /* 訂單列表追蹤樣式 */
+        .order-list-item { background: #fff; padding: 20px; border-radius: 24px; margin-bottom: 12px; cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.03); display: flex; align-items: center; gap: 15px; border: 1px solid transparent; transition: 0.2s; }
+        .order-list-item:active { background: #f8f9fa; border-color: #eee; }
+        .order-list-item * { pointer-events: none; } /* 阻擋 icon 吃掉點擊事件 */
+        .order-icon-box { width: 44px; height: 44px; background: #f2f4f6; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #28b0eb; }
+        .order-info { flex: 1; }
+        .order-id-title { font-size: 16px; font-weight: 700; color: #191f28; margin-bottom: 4px; }
+        .order-meta { font-size: 12px; color: #adb5bd; display: flex; justify-content: space-between; }
 
-        /* --- 📱 價格查詢 左右滑動手勢選單樣式區 --- */
-        .price-slider-outer {
-            position: relative;
-            width: 100%;
-            max-width: 480px;
-            margin: 25px auto 10px auto;
-            overflow: hidden;
-        }
+        /* 下單流程展示滿版大圖樣式 */
+        .process-img-box { background: transparent; border-radius: 0; padding: 0; box-shadow: none; display: block; width: 100%; margin-top: 10px; }
+        .process-image { width: 100%; height: auto; border-radius: 16px; display: block; object-fit: contain; }
 
-        .price-slider-container {
-            display: flex;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            gap: 20px;
-            padding: 15px calc(50% - 35px); 
-            -webkit-overflow-scrolling: touch;
-            scroll-behavior: smooth;
-        }
-        .price-slider-container::-webkit-scrollbar { display: none; }
+        /* 按鈕規格定義 */
+        .btn-main { background: #28b0eb; color: #fff; border: none; padding: 18px; width: 100%; border-radius: 20px; font-weight: 700; font-size: 17px; cursor: pointer; display: block; box-sizing: border-box; text-align: center; }
+        .btn-main:disabled { background: #adb5bd; opacity: 0.7; }
+        .btn-sub-small { background: #28b0eb; color: #fff; border: none; padding: 12px 40px; width: auto; min-width: 140px; border-radius: 50px; font-weight: 700; font-size: 15px; cursor: pointer; margin: 0 auto; display: block; }
 
-        .price-slider-item {
-            scroll-snap-align: center;
-            flex: 0 0 70px; width: 70px; height: 70px;
-            border-radius: 50%; background-color: #ffffff;
-            display: flex; justify-content: center; align-items: center;
-            cursor: pointer; border: 2px solid #e0e0e0;
-            box-shadow: 0 3px 8px rgba(0,0,0,0.06);
-            transition: transform 0.3s ease, border-color 0.3s ease, opacity 0.3s ease, box-shadow 0.3s ease;
-            opacity: 0.35; transform: scale(0.85);
-        }
-
-        .price-slider-item img { width: 75%; height: 75%; object-fit: contain; }
-        .price-slider-item.active {
-            opacity: 1; transform: scale(1.15);
-            border-color: var(--gold-accent);
-            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.25);
-            background-color: #ffffff;
-        }
-
-        .price-selected-title {
-            font-size: 20px; font-weight: 700; color: var(--primary-black);
-            margin: 10px 0 25px 0; min-height: 30px; letter-spacing: 1px;
-        }
-
-        /* --- 🛂 🛠 「我的護照」全版背景與底部沉浸定位樣式區 --- */
-        .passport-page-container {
-            position: relative;
-            width: 100%;
-            max-width: 450px;
-            height: 720px; /* 給予足夠高度完美呈現 3D 公仔背景 */
-            margin: 0 auto;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-            /* 修改：設置您指定的圖片為該頁面背景 */
-            background-image: url('KIbackground.png');
-            background-size: cover;
-            background-position: center;
-        }
-
-        /* 修改：將整個資料卡與按鈕群組精確定位於頁面最下方位置 */
-        .passport-bottom-group {
-            position: absolute;
-            bottom: 25px;
-            left: 5%;
-            width: 90%;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            z-index: 5;
-        }
-
-        /* 護照資料卡片 */
-        .passport-info-card {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            padding: 16px;
-            border-radius: 14px;
-            text-align: left;
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-        }
-
-        .passport-info-title {
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--primary-black);
-            margin-bottom: 6px;
-            letter-spacing: 0.5px;
-        }
-
-        .passport-info-desc {
-            font-size: 13px;
-            color: #555555;
-        }
-
-        /* 修改：下單流程與我的訂單長方形選單按鈕 */
-        .passport-rect-btn {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            height: 48px; /* 修改：降低高度變成長方形選單 */
-            padding: 0 18px;
-            border-radius: 12px;
-            display: flex;
-            justify-content: space-between; /* 修改：icon靠左、選單名稱靠右顯示 */
-            align-items: center;
-            cursor: pointer;
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-            transition: var(--transition);
-        }
-
-        .passport-rect-btn:hover {
-            background: #ffffff;
-            border-color: var(--gold-accent);
-            transform: translateY(-2px);
-        }
-
-        .passport-rect-btn i {
-            font-size: 18px;
-            color: var(--primary-black); /* icon靠左 */
-        }
-
-        .passport-rect-btn .btn-label {
-            font-size: 15px;
-            font-weight: 500;
-            color: var(--text-dark); /* 選單名稱靠右 */
-        }
+        /* 底部選單導覽 */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; padding: 12px 0 calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid #e5e8eb; z-index: 200; }
+        .nav-item { color: #adb5bd; text-align: center; flex: 1; font-size: 11px; font-weight: 700; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; }
+        .nav-item.active { color: #28b0eb; }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="header-left">
-            <button class="menu-toggle" id="openMenu"><i class="fa-solid fa-bars"></i></button>
-            <div class="logo-container"><img src="site logo.png" alt="Logo" class="logo-img"></div>
+    <div id="login-gate">
+        <div id="loader-content">
+            <img src="airplain loading.png" alt="Loading Airplane" class="custom-airplane-img">
+            <div class="gate-text">飛行中請繫好安全帶</div>
         </div>
-        <div class="header-right">
-            <a href="https://blackboxrepair.github.io/membership/" class="nav-btn"><i class="fa-solid fa-user"></i></a>
-            <a href="https://blackboxrepair.github.io/bookingonline/" class="nav-btn"><i class="fa-solid fa-calendar-check"></i></a>
-        </div>
-    </header>
+    </div>
 
-    <div class="overlay" id="overlay"></div>
-    <nav class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <img src="site logo.png" class="sidebar-logo">
-        </div>
-        <div class="sidebar-content">
-            <div class="menu-group">
-                <div class="menu-item" onclick="navigateTo('home')">首頁</div>
-                <div class="menu-item" onclick="navigateTo('passport')">我的護照</div>
+    <div id="main-app" style="display: none;">
+        <section id="page-shop" class="page-content">
+            <div class="fixed-header">
+                <img src="https://raw.githubusercontent.com/ian-0326/KOR_IAN1004/main/KORIAN.png" alt="Logo" class="page-logo">
+                <button type="button" class="add-btn" onclick="openAddModal()"><iconify-icon icon="si:ai-note-fill" style="font-size: 24px; color: currentColor;"></iconify-icon></button>
             </div>
-            <div class="menu-group">
-                <div class="group-title">服務項目</div>
-                <div class="menu-item" onclick="navigateTo('process')">服務流程</div>
-                <div class="menu-item" onclick="navigateTo('prices')">價格查詢</div>
+            <div class="category-wrapper" id="category-bar">
+                <div class="cat-pill active" onclick="filterCategory('全部', this)">全部</div>
+                <div class="cat-pill" onclick="filterCategory('化妝水', this)">化妝水</div>
+                <div class="cat-pill" onclick="filterCategory('精華液', this)">精華液</div>
+                <div class="cat-pill" onclick="filterCategory('乳液', this)">乳液</div>
+                <div class="cat-pill" onclick="filterCategory('面膜棉片', this)">面膜棉片</div>
+                <div class="cat-pill" onclick="filterCategory('洗臉洗澡', this)">洗臉洗澡</div>
+                <div class="cat-pill" onclick="filterCategory('美髮護髮', this)">美髮護髮</div>
+                <div class="cat-pill" onclick="filterCategory('彩妝遮瑕', this)">彩妝遮瑕</div>
+                <div class="cat-pill" onclick="filterCategory('口腔護理', this)">口腔護理</div>
+                <div class="cat-pill" onclick="filterCategory('防曬', this)">防曬</div>
+                <div class="cat-pill" onclick="filterCategory('藥膏藥品', this)">藥膏藥品</div>
+                <div class="cat-pill" onclick="filterCategory('食品（含保健）', this)">食品（含保健）</div>
+                <div class="cat-pill" onclick="filterCategory('其他', this)">其他</div>
             </div>
-            <div class="menu-group">
-                <div class="group-title">實作紀錄</div>
-                <div class="menu-item" onclick="navigateTo('cases')">維修案例</div>
-            </div>
-            <div class="menu-group">
-                <div class="group-title">門市資訊</div>
-                <div class="menu-item" onclick="navigateTo('locations')">服務站點</div>
-            </div>
-        </div>
-    </nav>
+            <div id="item-list"></div>
+        </section>
 
-    <main>
-        <section id="section-home" class="content-section">
-            <div class="empty-state">
-                <h2 class="page-header">歡迎來到黑盒子維修中心</h2>
-                <p>請從左側選單選擇您需要的服務</p>
+        <section id="page-checkout" class="page-content">
+            <div class="nav-header"><button class="back-btn" onclick="switchPage('shop')"><i data-feather="chevron-left"></i></button><div class="page-title">代購清單</div></div>
+            <div class="card-box" id="checkout-container"></div>
+            <div class="bottom-summary">
+                <div class="row-lg" style="cursor:default; padding: 5px 0;"><span>清單總計</span><span class="price-lg" id="checkout-grand-total">NT$ 0</span></div>
+                <button class="btn-main" onclick="switchPage('shipping')">填寫資料</button>
             </div>
         </section>
 
-        <section id="section-passport" class="content-section">
-            <div class="passport-page-container">
-                
-                <div class="passport-bottom-group">
-                    
-                    <div class="passport-info-card">
-                        <div class="passport-info-title">護照資料</div>
-                        <div class="passport-info-desc">盒芯專屬黑盒子數位維修權益護照</div>
+        <section id="page-shipping" class="page-content">
+            <div class="nav-header"><button class="back-btn" onclick="switchPage('checkout')"><i data-feather="chevron-left"></i></button><div class="page-title">取件資料</div></div>
+            <div class="card-box">
+                <div class="form-item"><label class="form-label">取件姓名<span class="req-tag" id="tag-ship-name">*必填</span></label><input type="text" id="ship-name" class="input-box" placeholder="收件人姓名" oninput="clearError(this)"></div>
+                <div class="form-item"><label class="form-label">聯絡電話<span class="req-tag" id="tag-ship-tel">*必填</span></label><input type="tel" id="ship-tel" class="input-box" placeholder="09xxxxxxxx" maxlength="10" oninput="clearError(this)"><div style="font-size:12px; color:#f44336; margin-top:8px; line-height:1.5;">*請提供正確的取件人資訊，資料有誤導致無法取件概不負責。</div></div>
+                <div class="form-item">
+                    <label class="form-label">配送方式<span class="req-tag" id="tag-ship-method">*必填</span></label>
+                    <div class="ship-group" id="ship-method-group">
+                        <div class="ship-btn" id="btn-face" onclick="setShipping('face')">面交</div>
+                        <div class="ship-btn" id="btn-711" onclick="setShipping('711')">7-11 取件</div>
                     </div>
-
-                    <div class="passport-rect-btn">
-                        <i class="fa-solid fa-route"></i>
-                        <span class="btn-label">下單流程</span>
-                    </div>
-
-                    <div class="passport-rect-btn">
-                        <i class="fa-solid fa-receipt"></i>
-                        <span class="btn-label">我的訂單</span>
-                    </div>
-                    
-                </div>
-            </div>
-        </section>
-
-        <section id="section-process" class="content-section">
-            <div class="page-container">
-                <h2 class="page-header">服務流程</h2>
-                <div class="process-tabs">
-                    <button class="tab-btn active" onclick="changeProcessImg('phone', this)">手機維修</button>
-                    <button class="tab-btn" onclick="changeProcessImg('notebook', this)">筆電維修</button>
-                    <button class="tab-btn" onclick="changeProcessImg('data', this)">資料救援</button>
-                </div>
-                <div class="img-box">
-                    <img src="phone process.png" id="img-process-phone" class="display-img active">
-                    <img src="notebook process.png" id="img-process-notebook" class="display-img">
-                    <img src="data process.png" id="img-process-data" class="display-img">
-                </div>
-            </div>
-        </section>
-
-        <section id="section-prices" class="content-section">
-            <div class="page-container">
-                <h2 class="page-header">價格查詢</h2>
-                
-                <div class="price-slider-outer">
-                    <div class="price-slider-container" id="priceSlider">
-                        <div class="price-slider-item" data-type="na">
-                            <img src="price_icon_na.png">
-                        </div>
-                        <div class="price-slider-item" data-type="applewatch">
-                            <img src="price_icon_apple watch.png">
-                        </div>
-                        <div class="price-slider-item" data-type="capacity">
-                            <img src="price_icon_capacity.png">
-                        </div>
-                        <div class="price-slider-item" data-type="switch">
-                            <img src="price_icon_switch.png">
-                        </div>
-                        <div class="price-slider-item" data-type="vacuum">
-                            <img src="price_icon_vacuum cleaner.png">
-                        </div>
-                        <div class="price-slider-item" data-type="hairdryer">
-                            <img src="price_icon_hair dryer.png">
-                        </div>
-                        <div class="price-slider-item" data-type="data">
-                            <img src="price_icon_data.png">
-                        </div>
+                    <div id="hint-face" style="display:none; font-size:12px; color:#28b0eb; margin-top:12px; width:calc(100% - 24px);">面交僅限台中大雅、梧棲、沙鹿區。</div>
+                    <div id="form-711" style="display:none; margin-top:15px; width:100%;">
+                        <div class="form-item"><label class="form-label">取件門市<span class="req-tag" id="tag-ship-store">*必填</span></label><input type="text" id="ship-store" class="input-box" placeholder="取件門市" oninput="clearError(this)"></div>
+                        <div class="form-item"><label class="form-label">門市代碼<span class="req-tag" id="tag-ship-code">*必填</span></label><input type="text" id="ship-code" class="input-box" placeholder="門市代碼" oninput="clearError(this)"></div>
                     </div>
                 </div>
-
-                <div class="price-selected-title" id="priceSelectedTitle"></div>
-
-                <div class="img-box">
-                    <img src="Price_applewatch.PNG" id="img-price-applewatch" class="display-img">
-                    <img src="Price_memory.PNG" id="img-price-memory" class="display-img">
-                    <img src="" id="img-price-switch" class="display-img">
-                    <img src="" id="img-price-vacuum" class="display-img">
-                    <img src="" id="img-price-hairdryer" class="display-img">
-                    <img src="" id="img-price-data" class="display-img">
-                </div>
+                <div class="list-row" style="border-top:1px solid #f2f4f6; margin-top: 20px; padding-top: 20px;"><div class="list-left"><span style="font-weight:700;">包材、紙箱</span><br><small style="color:#adb5bd;">NT$ 10 / 個</small></div><div class="qty-ctrl"><button class="qty-btn" onclick="updatePacking(-1)"><i data-feather="minus" style="width:16px;"></i></button><span id="qty-packing" class="qty-num">1</span><button class="qty-btn" onclick="updatePacking(1)"><i data-feather="plus" style="width:16px;"></i></button></div></div>
+            </div>
+            <div class="bottom-summary" id="shipping-summary">
+                <div class="summary-details"><div class="row-sm"><span>小計</span><span id="sum-items">NT$ 0</span></div><div class="row-sm"><span>運費</span><span id="sum-shipping">NT$ 0</span></div><div class="row-sm"><span>包材</span><span id="sum-packing">NT$ 10</span></div></div>
+                <div class="row-lg" onclick="toggleSummary()"><span>匯款總金額</span><div style="display:flex; align-items:center; gap:8px;"><span class="price-lg" id="sum-total">NT$ 0</span><i data-feather="chevron-up"></i></div></div>
+                <button class="btn-main" id="confirm-submit-btn" onclick="submitFinalOrder()">確認下單</button>
             </div>
         </section>
 
-        <section id="section-cases" class="content-section">
-            <h2 class="page-header">維修案例</h2>
-            <div class="empty-state">維修案例文章準備中...</div>
+        <section id="page-passport" class="page-content">
+            <h3 style="font-weight: 900; text-align: center; margin: 40px 0 auto 0; letter-spacing: 1px;">PASSPORT / 護照</h3>
+            
+            <div class="passport-card-layer">
+                <div class="passport-inner-card">
+                    <div class="passport-photo-box">
+                        <img id="pass-avatar" src="" alt="Avatar" class="passport-photo">
+                    </div>
+                    <div class="passport-fields">
+                        <div class="pass-row"><span class="pass-label">Full Name / 姓名</span><span id="pass-name" class="pass-val">---</span></div>
+                        <div class="pass-row"><span class="pass-label">Sex / 性別</span><span id="pass-sex" class="pass-val">---</span></div>
+                        <div class="pass-row"><span class="pass-label">Date of Birth / 生日</span><span id="pass-birth" class="pass-val">---</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="passport-btn-group">
+                <button class="passport-action-btn" onclick="switchPage('process')">
+                    <iconify-icon icon="fe:notice-push" style="font-size: 24px; color: currentColor;"></iconify-icon>
+                    <span>下單流程</span>
+                </button>
+                <button class="passport-action-btn" onclick="switchPage('orders')">
+                    <iconify-icon icon="ep:list" style="font-size: 24px; color: currentColor;"></iconify-icon>
+                    <span>我的訂單</span>
+                </button>
+            </div>
         </section>
 
-        <section id="section-locations" class="content-section">
-            <h2 class="page-header">服務站點</h2>
-            <div class="empty-state">門市據點載入中...</div>
+        <section id="page-orders" class="page-content">
+            <div class="nav-header">
+                <button class="back-btn" onclick="switchPage('passport')"><i data-feather="chevron-left"></i></button>
+                <div class="page-title">訂單追蹤</div>
+            </div>
+            <div id="order-list-container" style="padding-top: 10px;"></div>
         </section>
-    </main>
 
-    <footer>&copy; 2026 BLACK BOX 維修中心. All Rights Reserved.</footer>
+        <section id="page-process" class="page-content">
+            <div class="nav-header">
+                <button class="back-btn" onclick="switchPage('passport')"><i data-feather="chevron-left"></i></button>
+                <div class="page-title">下單流程</div>
+            </div>
+            <div class="process-img-box">
+                <img src="網站下單.jpg" alt="Order Process Instruction" class="process-image">
+            </div>
+        </section>
+
+        <div id="cart-bar" style="display:none; position:fixed; bottom:95px; left:16px; right:16px; background:#191f28; color:#fff; padding:18px 24px; border-radius:20px; justify-content:space-between; align-items:center; z-index:250; cursor:pointer;" onclick="switchPage('checkout')"><span>已選 <span id="cart-qty" style="color:#28b0eb; font-weight:900;">0</span> 件商品</span><span style="font-weight:900;">查看清單 →</span></div>
+        
+        <nav class="bottom-nav">
+            <div class="nav-item" id="nav-shop" onclick="switchPage('shop')"><iconify-icon icon="fluent:shopping-bag-28-filled" style="font-size: 24px; color: currentColor;"></iconify-icon><span>弘大漫遊</span></div>
+            <div class="nav-item" id="nav-passport" onclick="switchPage('passport')"><iconify-icon icon="ph:identification-badge-fill" style="font-size: 24px; color: currentColor;"></iconify-icon><span>我的護照</span></div>
+        </nav>
+    </div>
+
+    <div id="register-modal" class="modal">
+        <div class="modal-card">
+            <div style="text-align: center; margin-bottom: 20px;"><h2 style="font-weight:900; margin:0; font-size: 20px;">報到櫃檯</h2></div>
+            <div class="modal-body">
+                <div class="form-item">
+                    <div class="row-flex">
+                        <div style="flex:1;"><label class="form-label">真實姓名<span class="req-tag" id="tag-reg-name">*必填</span></label><input type="text" id="reg-name" class="input-box" style="width:100%;" placeholder="您的姓名" oninput="clearError(this)"></div>
+                        <div style="width:auto; text-align:center;"><label class="form-label">性別</label><div class="gender-group"><button class="gender-btn" id="g-male" onclick="setGender('M')">男</button><button class="gender-btn" id="g-female" onclick="setGender('F')">女</button></div></div>
+                    </div>
+                </div>
+                <div class="form-item"><label class="form-label">聯絡電話<span class="req-tag" id="tag-reg-tel">*必填</span></label><input type="tel" id="reg-tel" class="input-box" placeholder="09xxxxxxxx" maxlength="10" oninput="clearError(this)"></div>
+                <div class="form-item"><label class="form-label">出生日期<span class="req-tag" id="tag-reg-birth">*必填</span></label><div class="birth-row"><select id="reg-birth-y" class="input-box" onchange="clearError(this)"></select><select id="reg-birth-m" class="input-box" onchange="clearError(this)"></select><select id="reg-birth-d" class="input-box" onchange="clearError(this)"></select></div></div>
+                <div class="form-item"><label class="form-label">電子信箱</label><input type="email" id="reg-email" class="input-box" placeholder="example@mail.com"></div>
+            </div>
+            <div class="modal-footer"><button class="btn-sub-small" id="btn-register" onclick="handleRegister()">登機報到</button></div>
+        </div>
+    </div>
+
+    <div id="add-modal" class="modal" onclick="closeModal('add-modal')">
+        <div class="modal-card" onclick="event.stopPropagation()">
+            <div id="add-modal-content" style="display: flex; flex-direction: column; height: 100%;">
+                <div class="modal-body" style="padding-top: 10px;">
+                    <div class="form-item"><label class="form-label">選擇類別<span class="req-tag" id="tag-in-cat">*必填</span></label><select id="in-cat" class="input-box" onchange="changeCat(this)"><option value="">請選擇</option><option value="化妝水">化妝水</option><option value="精華液">精華液</option><option value="乳液">乳液</option><option value="面膜棉片">面膜棉片</option><option value="洗臉洗澡">洗臉洗澡</option><option value="美髮護髮">美髮護髮</option><option value="彩妝遮瑕">彩妝遮瑕</option><option value="口腔護理">口腔護理</option><option value="防曬">防曬</option><option value="藥膏藥品">藥膏藥品</option><option value="食品（含保健）">食品（含保健）</option><option value="其他">其他</option></select></div>
+                    <div class="form-item"><label class="form-label">商品名稱<span class="req-tag" id="tag-in-name">*必填</span></label><textarea id="in-name" class="input-box" placeholder="例如：Torriden 面膜" oninput="clearError(this)"></textarea></div>
+                    <div class="form-item"><label class="form-label">款式規格</label><textarea id="in-option" class="input-box" placeholder="example：藍色保濕型" oninput="autoGrow(this)"></textarea></div>
+                    <div class="form-item"><label class="form-label">價格 NT$</label><input type="number" id="in-price" class="input-box" placeholder="金額" oninput="clearError(this)"></div>
+                    <div class="form-item"><label class="form-label">來源網址<span class="req-tag" id="tag-in-url">*必填</span></label><input type="url" id="in-url" class="input-box" placeholder="請輸入網址" oninput="clearError(this)"></div>
+                </div>
+                <div class="modal-footer"><button type="button" class="btn-main" onclick="upload()">確認登錄</button></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="order-detail-modal" class="modal">
+        <div class="modal-card">
+            <div class="modal-header-centered">
+                <h2 style="font-weight:900; margin:0; font-size: 22px;">訂單明細</h2>
+                <div style="margin-top: 4px;">
+                    <span class="order-id-label" id="m-order-id" style="display:inline-block;">編號: --------</span>
+                    <button id="copy-btn" class="copy-btn" onclick="copyOrderId()"><i data-feather="copy" style="width:12px;"></i>複製</button>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="modal-section">
+                    <span class="modal-section-title">收件資訊</span>
+                    <div class="detail-item"><div>取件姓名</div><div class="detail-val" id="m-name"></div></div>
+                    <div class="detail-item"><div>聯絡電話</div><div class="detail-val" id="m-tel"></div></div>
+                    <div class="detail-item"><div>取件方式</div><div class="detail-val" id="m-method"></div></div>
+                </div>
+                <div class="modal-section">
+                    <span class="modal-section-title">訂購商品</span>
+                    <div id="m-items-container"></div>
+                    <div class="detail-item" style="margin-top:15px; border-top:1px solid #eee; padding-top:12px;"><div style="font-weight:900; color:#191f28;">匯款金額</div><div class="detail-val" id="m-total" style="color:#28b0eb; font-size:18px; font-weight:900;"></div></div>
+                </div>
+                <p style="font-size: 12px; color: var(--gray); text-align: center; line-height: 1.5; margin: 10px 0;">請截圖此畫面回傳至 LINE@<br>核對金額無誤後即可進行匯款。</p>
+            </div>
+            <div class="modal-footer"><div class="btn-main" onclick="closeOrderDetailModal()">我知道了</div></div>
+        </div>
+    </div>
 
     <script>
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('overlay');
+        const LIFF_ID = '2009405888-D5absVA3';
+        const SUPABASE_URL = 'https://ivpctyqlrkjstfsoweeh.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml2cGN0eXFscmtqc3Rmc293ZWVoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTk1MTksImV4cCI6MjA4ODc3NTUxOX0.DYgzhaTH3_5NFwv009ZfZAshfUnCW2PeTuNcJ9feyMU';
+        
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        let userLineId = "", userLinePicture = "", userData = null, selectedGender = "", allProducts = [], cart = {}, shipMethod = '', packingQty = 1, currentRawOrderId = "", allUserOrders = [], isFromCheckout = false;
 
-        document.getElementById('openMenu').onclick = () => { sidebar.classList.add('active'); overlay.classList.add('active'); };
-        overlay.onclick = () => { sidebar.classList.remove('active'); overlay.classList.remove('active'); };
+        async function init() {
+            try {
+                await liff.init({ liffId: LIFF_ID });
+                if (!liff.isLoggedIn()) { liff.login(); return; }
+                const profile = await liff.getProfile();
+                userLineId = profile.userId;
+                userLinePicture = profile.pictureUrl || "https://img.icons8.com/illustrations/96/user.png";
 
-        function navigateTo(sectionId) {
-            document.querySelectorAll('.content-section').forEach(sec => sec.classList.remove('active'));
-            const targetSection = document.getElementById(`section-${sectionId}`);
-            if (targetSection) {
-                targetSection.classList.add('active');
-                window.location.hash = sectionId;
-            }
-            sidebar.classList.remove('active');
-            overlay.classList.remove('active');
-            window.scrollTo(0, 0);
-        }
+                await fetchProducts();
 
-        window.addEventListener('DOMContentLoaded', () => {
-            const currentHash = window.location.hash.replace('#', '');
-            if (currentHash && document.getElementById(`section-${currentHash}`)) {
-                navigateTo(currentHash);
-            } else {
-                navigateTo('home');
-            }
-            updateActiveSliderItem();
-        });
-
-        function changeProcessImg(type, btn) {
-            document.querySelectorAll('#section-process .tab-btn').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('#section-process .display-img').forEach(i => i.classList.remove('active'));
-            btn.classList.add('active');
-            document.getElementById(`img-process-${type}`).classList.add('active');
-        }
-
-        // 價格查詢：手勢滑動置中偵測
-        const priceSlider = document.getElementById('priceSlider');
-        const priceSelectedTitle = document.getElementById('priceSelectedTitle');
-        const sliderItems = document.querySelectorAll('.price-slider-item');
-
-        function updateActiveSliderItem() {
-            const containerRect = priceSlider.getBoundingClientRect();
-            const containerCenter = containerRect.left + containerRect.width / 2;
-
-            let closestItem = null;
-            let minDistance = Infinity;
-
-            sliderItems.forEach(item => {
-                const itemRect = item.getBoundingClientRect();
-                const itemCenter = itemRect.left + itemRect.width / 2;
-                const distance = Math.abs(containerCenter - itemCenter);
-
-                if (distance < minDistance) {
-                    minDistance = distance;
-                    closestItem = item;
-                }
-            });
-
-            if (closestItem) {
-                sliderItems.forEach(item => item.classList.remove('active'));
-                closestItem.classList.add('active');
-
-                const type = closestItem.getAttribute('data-type');
-                document.querySelectorAll('#section-prices .display-img').forEach(img => img.classList.remove('active'));
+                const { data } = await supabaseClient.from('profiles').select('*').or(`line_id.eq.${userLineId},user_id.eq.${userLineId}`);
                 
-                if (type === 'na') {
-                    priceSelectedTitle.textContent = '';
-                } else if (type === 'applewatch') {
-                    priceSelectedTitle.textContent = 'Apple Watch';
-                    document.getElementById('img-price-applewatch').classList.add('active');
-                } else if (type === 'capacity') {
-                    priceSelectedTitle.textContent = '硬碟擴容';
-                    document.getElementById('img-price-memory').classList.add('active');
-                } else if (type === 'switch') {
-                    priceSelectedTitle.textContent = 'Switch遊戲機';
-                    const target = document.getElementById('img-price-switch');
-                    if(target) target.classList.add('active');
-                } else if (type === 'vacuum') {
-                    priceSelectedTitle.textContent = '吸塵器';
-                    const target = document.getElementById('img-price-vacuum');
-                    if(target) target.classList.add('active');
-                } else if (type === 'hairdryer') {
-                    priceSelectedTitle.textContent = '吹風機';
-                    const target = document.getElementById('img-price-hairdryer');
-                    if(target) target.classList.add('active');
-                } else if (type === 'data') {
-                    priceSelectedTitle.textContent = '資料救援';
-                    const target = document.getElementById('img-price-data');
-                    if(target) target.classList.add('active');
+                document.getElementById('main-app').style.display = 'block';
+
+                if (data && data.length > 0) {
+                    userData = data[0]; 
+                    renderUserProfile(); 
+                    document.getElementById('login-gate').style.display = 'none';
+                    const lastPage = localStorage.getItem('korian_last_page') || 'passport';
+                    switchPage(lastPage);
+                } else {
+                    initBirthSelects();
+                    switchPage('passport'); 
+                    document.getElementById('loader-content').style.display = 'none'; 
+                    document.body.classList.add('modal-open');
+                    document.getElementById('register-modal').style.display = 'flex';
                 }
+                feather.replace();
+            } catch (e) { console.error(e); }
+        }
+
+        async function fetchProducts() {
+            try {
+                const { data } = await supabaseClient.from('products').select('*').eq('is_active', true);
+                if(data) {
+                    allProducts = data.sort((a,b)=>(b.order_count||0)-(a.order_count||0));
+                    renderProducts(allProducts);
+                }
+            } catch (err) { console.error(err); }
+        }
+
+        // 修正：人氣皇冠標籤條件渲染邏輯，完美整合 Iconify 元件
+        function renderProducts(ps) {
+            const container = document.getElementById('item-list');
+            if(!container) return;
+            container.innerHTML = ps.map(p => `
+                <div class="item-card">
+                    ${(p.order_count >= 5) ? '<div class="crown-badge"><iconify-icon icon="material-symbols:crown-rounded" style="font-size: 16px; color: currentColor;"></iconify-icon></div>' : ''}
+                    <div class="item-main" onclick="window.open('${p.olive_url}','_blank')">
+                        <div><span class="item-name">${p.name_zh}</span>${p.option ? `<span class="item-option">${p.option}</span>`:''}</div>
+                        <span class="item-price">NT$ ${Number(p.price_nt).toLocaleString()}</span>
+                    </div>
+                    <div class="qty-ctrl">
+                        <button class="qty-btn" onclick="updateQty('${p.id}',-1)"><i data-feather="minus" style="width:18px;"></i></button>
+                        <span class="qty-num" id="qty-${p.id}">${cart[p.id]?cart[p.id].qty:0}</span>
+                        <button class="qty-btn" onclick="updateQty('${p.id}',1)"><i data-feather="plus" style="width:18px;"></i></button>
+                    </div>
+                </div>
+            `).join('');
+            feather.replace();
+        }
+
+        function filterCategory(cat, el) {
+            document.querySelectorAll('.cat-pill').forEach(p=>p.classList.remove('active'));
+            el.classList.add('active');
+            renderProducts(cat==='全部' ? allProducts : allProducts.filter(p=>p.category===cat));
+        }
+
+        function updateQty(id, d) {
+            const p = allProducts.find(x=>x.id===id);
+            if(!p) return;
+            if(!cart[id]) cart[id]={id:p.id, name:p.name_zh, option:p.option, price:p.price_nt, qty:0};
+            cart[id].qty=Math.max(0, cart[id].qty+d);
+            if(document.getElementById(`qty-${id}`)) document.getElementById(`qty-${id}`).innerText=cart[id].qty;
+            let t = Object.values(cart).reduce((s,i)=>s+i.qty,0);
+            document.getElementById('cart-bar').style.display=(t>0&&document.getElementById('page-shop').classList.contains('active'))?'flex':'none';
+            document.getElementById('cart-qty').innerText=t;
+            if(document.getElementById('page-checkout').classList.contains('active')) renderCheckout();
+            if(document.getElementById('page-shipping').classList.contains('active')) calculateFinal();
+        }
+
+        function renderCheckout() {
+            let h='', t=0;
+            Object.values(cart).forEach(i=>{
+                if(i.qty>0){
+                    h+=`<div class="list-row"><div class="list-left"><div><span class="list-n">${i.name}</span>${i.option?`<span class="list-s">${i.option}</span>`:''}</div><span class="list-p">NT$ ${Number(i.price).toLocaleString()}</span></div><div class="qty-ctrl"><button class="qty-btn" onclick="updateQty('${i.id}',-1)"><i data-feather="minus" style="width:16px;"></i></button><span class="qty-num">${i.qty}</span><button class="qty-btn" onclick="updateQty('${i.id}',1)"><i data-feather="plus" style="width:16px;"></i></button></div></div>`;
+                    t+=i.price*i.qty;
+                }
+            });
+            document.getElementById('checkout-container').innerHTML=h||'<p style="text-align:center;padding:40px 0;color:#999;">尚未選擇商品</p>';
+            document.getElementById('checkout-grand-total').innerText=`NT$ ${t.toLocaleString()}`;
+            feather.replace();
+        }
+
+        function setShipping(m) { 
+            shipMethod=m; 
+            document.getElementById('ship-method-group').classList.remove('error');
+            document.getElementById('btn-face').classList.toggle('active',m==='face'); 
+            document.getElementById('btn-711').classList.toggle('active',m==='711'); 
+            document.getElementById('hint-face').style.display=m==='face'?'block':'none'; 
+            document.getElementById('form-711').style.display=m==='711'?'block':'none'; 
+            if(m==='711' && packingQty<1) packingQty=1; 
+            calculateFinal(); 
+        }
+        
+        function toggleSummary() { document.getElementById('shipping-summary').classList.toggle('expanded'); }
+        function updatePacking(d) { const min=shipMethod==='711'?1:0; packingQty=Math.max(min, packingQty+d); document.getElementById('qty-packing').innerText=packingQty; calculateFinal(); }
+        
+        function calculateFinal() { 
+            let it=Object.values(cart).reduce((s,i)=>s+(i.price*i.qty),0); 
+            let sf=shipMethod==='711'?(80*packingQty):0; 
+            let pf=packingQty*10; 
+            document.getElementById('sum-items').innerText=`NT$ ${it.toLocaleString()}`; 
+            document.getElementById('sum-shipping').innerText=`NT$ ${sf.toLocaleString()}`; 
+            document.getElementById('sum-packing').innerText=`NT$ ${pf.toLocaleString()}`; 
+            document.getElementById('sum-total').innerText=`NT$ ${(it+sf+pf).toLocaleString()}`; 
+        }
+
+        function setGender(g) {
+            selectedGender = g;
+            const maleBtn = document.getElementById('g-male'), femaleBtn = document.getElementById('g-female');
+            maleBtn.classList.remove('active-m'); femaleBtn.classList.remove('active-f');
+            if (g === 'M') maleBtn.classList.add('active-m');
+            if (g === 'F') femaleBtn.classList.add('active-f');
+        }
+
+        function openAddModal() { 
+            document.body.classList.add('modal-open'); 
+            document.getElementById('add-modal').style.display = 'flex'; 
+            initTextareas(); 
+        }
+
+        function closeModal(id) { 
+            document.body.classList.remove('modal-open'); 
+            document.getElementById(id).style.display = 'none'; 
+        }
+
+        function initTextareas() { const ts = document.querySelectorAll('textarea.input-box'); ts.forEach(t => { t.style.height = '48px'; }); }
+        function autoGrow(element) { element.style.height = '48px'; if (element.scrollHeight > 48) { element.style.height = (element.scrollHeight) + "px"; } }
+        function changeCat(el) { clearError(el); }
+
+        async function upload() {
+            const btn = document.querySelector('#add-modal .btn-main');
+            const cat = document.getElementById('in-cat'), name = document.getElementById('in-name'), price = document.getElementById('in-price'), url = document.getElementById('in-url'), opt = document.getElementById('in-option');
+            let valid = true;
+            if(!cat.value){ cat.classList.add('error'); valid=false; }
+            if(!name.value.trim()){ name.classList.add('error'); valid=false; }
+            if(!url.value.trim()){ url.value.classList.add('error'); valid=false; }
+            if(!valid) return;
+            
+            if(btn) { btn.disabled = true; btn.innerText = "處理中..."; }
+            const taiwanTime = new Date().toISOString();
+            
+            const { error } = await supabaseClient.from('products').insert({ 
+                category: cat.value,
+                name_zh: name.value.trim(), 
+                option: opt.value.trim() || "",
+                price_nt: price.value || 0, 
+                olive_url: url.value.trim(), 
+                created_by: userLineId,
+                is_active: false, 
+                created_at: taiwanTime
+            });
+            
+            if(!error) { 
+                closeModal('add-modal'); 
+                if(btn) { btn.disabled = false; btn.innerText = "確認登錄"; }
+                [name, opt, price, url].forEach(el => el.value = ""); cat.value = "";
+                await fetchProducts(); 
+            } else { 
+                alert('失敗：' + error.message); 
+                if(btn) { btn.disabled = false; btn.innerText = "確認登錄"; }
             }
         }
 
-        priceSlider.addEventListener('scroll', updateActiveSliderItem);
+        async function submitFinalOrder() {
+            const btn = document.getElementById('confirm-submit-btn'); if(btn.disabled) return;
+            const name = document.getElementById('ship-name'), tel = document.getElementById('ship-tel'), store = document.getElementById('ship-store'), code = document.getElementById('ship-code');
+            let isValid = true;
+            if(!name.value.trim()){ name.classList.add('error'); isValid=false; }
+            if(!/^09\d{8}$/.test(tel.value.trim())){ tel.classList.add('error'); isValid=false; }
+            if(!shipMethod){ document.getElementById('ship-method-group').classList.add('error'); document.getElementById('tag-ship-method').style.display='inline'; isValid=false; }
+            if(shipMethod==='711'){ if(!store.value.trim()){ store.classList.add('error'); isValid=false; } if(!code.value.trim()){ code.classList.add('error'); isValid=false; } }
+            if(!isValid) return; btn.disabled=true; btn.innerText="下單中...";
+            let itemsStr = Object.values(cart).filter(i=>i.qty>0).map(i=>`${i.name}*${i.qty}`).join(', ');
+            const finalMethod = shipMethod === 'face' ? '面交' : '7-11 取件';
+            const finalStore = shipMethod === '711' ? `${store.value}(${code.value})` : '台中指定區';
+            const taiwanTime = new Date().toISOString();
+            try {
+                const { data, error } = await supabaseClient.from('orders').insert({ items_summary: itemsStr, user_id: userLineId, customer_name: name.value, customer_tel: tel.value, shipping_method: finalMethod, shipping_store: finalStore, packing_qty: packingQty, total_amount: document.getElementById('sum-total').innerText, created_at: taiwanTime }).select();
+                if(error) throw error;
+                for(let i of Object.values(cart)){ if(i.qty>0) await supabaseClient.rpc('increment_order_count',{row_id:i.id, inc_val:parseInt(i.qty)}); }
+                showOrderDetail(data[0], true); 
+                cart={}; renderProducts(allProducts); 
+            } catch(e){ alert("失敗："+e.message); btn.disabled=false; btn.innerText="確認下單"; }
+        }
 
-        sliderItems.forEach(item => {
-            item.addEventListener('click', () => {
-                item.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-            });
-        });
+        function showOrderDetail(order, fromCheckout = false) {
+            isFromCheckout = fromCheckout; 
+            currentRawOrderId = order.id.slice(-10).toUpperCase();
+            document.getElementById('m-order-id').innerText = "編號: " + currentRawOrderId;
+            document.getElementById('m-name').innerText = order.customer_name;
+            document.getElementById('m-tel').innerText = order.customer_tel;
+            document.getElementById('m-method').innerText = `${order.shipping_method} ${order.shipping_store || ''}`;
+            document.getElementById('m-total').innerText = order.total_amount;
+            const items = order.items_summary.split(', ');
+            document.getElementById('m-items-container').innerHTML = items.map(it => `
+                <div class="order-item-row">
+                    <div class="order-item-name">${it.split('*')[0]}</div>
+                    <div class="order-item-qty">× ${it.split('*')[1]}</div>
+                </div>
+            `).join('');
+            document.getElementById('order-detail-modal').style.display = 'flex';
+            feather.replace();
+        }
+
+        function closeOrderDetailModal() {
+            document.getElementById('order-detail-modal').style.display = 'none';
+            if (isFromCheckout) {
+                const btn = document.getElementById('confirm-submit-btn');
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerText = "確認下單";
+                }
+                switchPage('shop');
+            }
+        }
+
+        function viewOrder(idx) {
+            if (allUserOrders && allUserOrders[idx]) {
+                showOrderDetail(allUserOrders[idx], false);
+            }
+        }
+
+        async function fetchUserOrders() {
+            const container = document.getElementById('order-list-container');
+            container.innerHTML = '<p style="text-align:center; padding:40px; color:#999;">努力載入訂單中...</p>';
+            const { data, error } = await supabaseClient.from('orders').select('*').eq('user_id', userLineId).order('created_at', { ascending: false });
+            if(error || !data || data.length === 0) {
+                container.innerHTML = '<p style="text-align:center; padding:40px; color:#999;">目前尚無下單紀錄</p>';
+                return;
+            }
+            allUserOrders = data;
+            
+            container.innerHTML = data.map((order, index) => `
+                <div class="order-list-item" onclick="viewOrder(${index})">
+                    <div class="order-icon-box"><i data-feather="package"></i></div>
+                    <div class="order-info">
+                        <div class="order-id-title">${order.id.slice(-10).toUpperCase()}</div>
+                        <div class="order-meta">
+                            <span>${new Date(order.created_at).toLocaleDateString()}</span>
+                            <span style="color:var(--primary); font-weight:700;">${order.total_amount}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            feather.replace();
+        }
+
+        function initBirthSelects() {
+            const sy = document.getElementById('reg-birth-y'), sm = document.getElementById('reg-birth-m'), sd = document.getElementById('reg-birth-d');
+            sy.innerHTML = '<option value="">年</option>' + Array.from({length: 87}, (_, i) => `<option value="${1940+i}">${1940+i}</option>`).reverse().join('');
+            sm.innerHTML = '<option value="">月</option>' + Array.from({length: 12}, (_, i) => `<option value="${(i+1).toString().padStart(2,'0')}">${(i+1).toString().padStart(2,'0')}</option>`).join('');
+            sd.innerHTML = '<option value="">日</option>' + Array.from({length: 31}, (_, i) => `<option value="${(i+1).toString().padStart(2,'0')}">${(i+1).toString().padStart(2,'0')}</option>`).join('');
+        }
+
+        window.onload = init;
     </script>
 </body>
 </html>
