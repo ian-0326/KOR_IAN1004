@@ -66,9 +66,6 @@
         .item-option { font-size: 12px; color: #adb5bd; margin-left: 6px; font-weight: 400; }
         .item-price { color: #28b0eb; font-weight: 900; font-size: 17px; display: block; }
 
-        /* 熱銷黃色皇冠標籤樣式 */
-        .crown-badge { position: absolute; top: -6px; left: 16px; background: #ffffff; color: #ffca28; padding: 2px 6px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); display: flex; align-items: center; justify-content: center; z-index: 10; }
-
         .qty-ctrl { display: flex; align-items: center; gap: 14px; background: #f8f9fa; padding: 8px 16px; border-radius: 50px; }
         .qty-btn { background: none; border: none; padding: 0; color: #4e5968; display: flex; align-items: center; cursor: pointer; }
         .qty-num { font-size: 16px; font-weight: 900; color: #28b0eb; min-width: 20px; text-align: center; }
@@ -115,7 +112,7 @@
         .copy-btn { background: #eee; border: none; padding: 4px 8px; border-radius: 8px; font-size: 10px; color: #4e5968; cursor: pointer; margin-left: 8px; display: inline-flex; align-items: center; gap: 4px; vertical-align: middle; }
         .modal-header-centered { text-align: center; margin-bottom: 24px; flex-shrink: 0; }
 
-        /* 護照資料圖卡排版設定（無白框樣式） */
+        /* 護照資料圖卡排邊設定（維持無外框白底樣式） */
         .passport-card-layer { background: url('KOR.IAN CARD.png') no-repeat center center; background-size: cover; border-radius: 32px; padding: 30px 20px; margin-top: 10px; width: 100%; box-sizing: border-box; }
         .passport-inner-card { display: flex; gap: 32px; text-align: left; box-sizing: border-box; align-items: center; }
         .passport-photo-box { width: 115px; display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
@@ -135,24 +132,25 @@
             padding-bottom: 110px; /* 留出底部導覽選單空間避免重疊 */
         }
 
-        /* 長方形橫條型選單按鈕，高度降低，橫向 Flex 兩端對齊排列 */
-        .passport-btn-group { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; width: 100%; box-sizing: border-box; }
+        /* 修正 1：將功能按鈕群組改回橫向並排一行（flex-direction: row）的方形美學設定 */
+        .passport-btn-group { display: flex; flex-direction: row; gap: 16px; margin-top: 24px; width: 100%; box-sizing: border-box; }
         .passport-action-btn { 
-            width: 100%; 
-            height: 54px; /* 高度降低變長方形 */
+            flex: 1; 
+            aspect-ratio: 1 / 1; 
             background: #ffffff; 
             border: none; 
-            border-radius: 18px; 
-            padding: 0 20px; 
+            border-radius: 28px; 
+            padding: 20px; 
             font-size: 16px; 
             font-weight: 900; 
             color: #191f28; 
             cursor: pointer; 
             display: flex; 
-            flex-direction: row; /* 水平排列 */
+            flex-direction: column; 
             align-items: center; 
-            justify-content: space-between; /* 實現：icon靠左、選單名稱靠右顯示 */
-            box-shadow: 0 4px 12px rgba(0,0,0,0.04); 
+            justify-content: center; 
+            gap: 14px; 
+            box-shadow: 0 8px 24px rgba(0,0,0,0.04); 
             border: 1px solid rgba(0,0,0,0.01); 
             transition: 0.15s ease-in-out; 
             box-sizing: border-box;
@@ -253,8 +251,6 @@
         </section>
 
         <section id="page-passport" class="page-content">
-            <h3 style="font-weight: 900; text-align: center; margin: 40px 0 auto 0; letter-spacing: 1px;">PASSPORT / 護照</h3>
-            
             <div class="passport-card-layer">
                 <div class="passport-inner-card">
                     <div class="passport-photo-box">
@@ -387,7 +383,6 @@
                 const { data } = await supabaseClient.from('profiles').select('*').or(`line_id.eq.${userLineId},user_id.eq.${userLineId}`);
                 
                 document.getElementById('main-app').style.display = 'block';
-                // 修正點：將關閉 Loading 牆提至上層，確保不論有無註冊快取資料，都能100%正常解除開屏大藍牆
                 document.getElementById('login-gate').style.display = 'none';
 
                 if (data && data.length > 0) {
@@ -404,7 +399,6 @@
                 feather.replace();
             } catch (e) { 
                 console.error(e); 
-                // 安全防禦降級機制：即使有任何非預期錯誤，也要解鎖牆面，預防極端環境死鎖
                 document.getElementById('main-app').style.display = 'block';
                 document.getElementById('login-gate').style.display = 'none';
             }
@@ -518,7 +512,6 @@
         function autoGrow(element) { element.style.height = '48px'; if (element.scrollHeight > 48) { element.style.height = (element.scrollHeight) + "px"; } }
         function changeCat(el) { clearError(el); }
 
-        // 修正：徹底抽離網址欄的前端必填驗證，並在留空時向 Supabase 發送 null（空值）以通過 Check Constraints 規則
         async function upload() {
             const btn = document.querySelector('#add-modal .btn-main');
             const cat = document.getElementById('in-cat'), name = document.getElementById('in-name'), price = document.getElementById('in-price'), url = document.getElementById('in-url'), opt = document.getElementById('in-option');
@@ -535,7 +528,7 @@
                 name_zh: name.value.trim(), 
                 option: opt.value.trim() || "",
                 price_nt: price.value || 0, 
-                olive_url: url.value.trim() || null, // 修正點：若留空則完美傳送標準 null
+                olive_url: url.value.trim() || null, 
                 created_by: userLineId,
                 is_active: false, 
                 created_at: taiwanTime
@@ -674,7 +667,7 @@
             let t = Object.values(cart).reduce((s,i)=>s+i.qty,0);
             document.getElementById('cart-bar').style.display=(t>0&&p=='shop')?'flex':'none';
             
-            if(p === 'shop') renderProducts(allProducts);
+            if(p === 'shop' orient) renderProducts(allProducts);
             if(p === 'checkout') renderCheckout();
             if(p === 'shipping') calculateFinal();
             if(p === 'orders') fetchUserOrders(); 
