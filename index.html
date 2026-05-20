@@ -8,7 +8,6 @@
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.0/feather.min.js"></script>
-    <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
     
     <style>
         :root { --primary: #28b0eb; --pink: #ff85a2; --bg: #f2f4f6; --white: #ffffff; --text: #191f28; --sub: #4e5968; --gray: #adb5bd; --error: #f44336; }
@@ -58,16 +57,13 @@
         .cat-pill.active { background: #28b0eb; color: #fff; }
 
         /* 商品卡片 */
-        .item-card { background: #fff; padding: 20px; border-radius: 28px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 12px rgba(0,0,0,0.04); margin-bottom: 12px; position: relative; }
+        .item-card { background: #fff; padding: 20px; border-radius: 28px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 12px rgba(0,0,0,0.04); margin-bottom: 12px; }
         .item-card:first-child { margin-top: 10px; }
         .item-card * { pointer-events: auto; }
         .item-main { flex: 1; cursor: pointer; }
         .item-name { font-size: 16px; font-weight: 700; color: #191f28; display: inline-block; margin-bottom: 4px; }
         .item-option { font-size: 12px; color: #adb5bd; margin-left: 6px; font-weight: 400; }
         .item-price { color: #28b0eb; font-weight: 900; font-size: 17px; display: block; }
-
-        /* 熱銷黃色皇冠標籤樣式 */
-        .crown-badge { position: absolute; top: -6px; left: 16px; background: #ffffff; color: #ffca28; padding: 2px 6px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); display: flex; align-items: center; justify-content: center; z-index: 10; }
 
         .qty-ctrl { display: flex; align-items: center; gap: 14px; background: #f8f9fa; padding: 8px 16px; border-radius: 50px; }
         .qty-btn { background: none; border: none; padding: 0; color: #4e5968; display: flex; align-items: center; cursor: pointer; }
@@ -115,8 +111,8 @@
         .copy-btn { background: #eee; border: none; padding: 4px 8px; border-radius: 8px; font-size: 10px; color: #4e5968; cursor: pointer; margin-left: 8px; display: inline-flex; align-items: center; gap: 4px; vertical-align: middle; }
         .modal-header-centered { text-align: center; margin-bottom: 24px; flex-shrink: 0; }
 
-        /* 護照資料圖卡排版設定（無白框樣式） */
-        .passport-card-layer { background: url('KOR.IAN CARD.png') no-repeat center center; background-size: cover; border-radius: 32px; padding: 30px 20px; margin-top: 10px; width: 100%; box-sizing: border-box; }
+        /* 護照資料圖卡排版設定 */
+        .passport-card-layer { background: url('KOR.IAN CARD.png') no-repeat center center; background-size: cover; border-radius: 32px; padding: 30px 20px; margin-top: 10px; box-shadow: 0 8px 30px rgba(0,0,0,0.15); }
         .passport-inner-card { display: flex; gap: 32px; text-align: left; box-sizing: border-box; align-items: center; }
         .passport-photo-box { width: 115px; display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
         .passport-photo { width: 115px; height: 150px; object-fit: cover; border-radius: 12px; background: #e5e8eb; border: 2px solid rgba(255,255,255,0.25); box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
@@ -125,40 +121,11 @@
         .pass-label { font-size: 11px; font-weight: 900; color: #d4af37; text-transform: uppercase; margin-bottom: 2px; } /* 金黃色標籤 */
         .pass-val { font-size: 18px; font-weight: 900; color: #ffffff; word-break: break-all; text-shadow: 0 1px 2px rgba(0,0,0,0.4); } /* 白色資料 */
 
-        /* 護照頁面指定套用 KIbackground.png，且改為 Flex 沉底置底容器佈局 */
-        #page-passport.active { 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: flex-end; 
-            background: url('KIbackground.png') no-repeat center center; 
-            background-size: cover; 
-            padding-bottom: 110px; /* 留出底部導覽選單空間避免重疊 */
-        }
-
-        /* 長方形橫條型選單按鈕，高度降低，橫向 Flex 兩端對齊排列 */
-        .passport-btn-group { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; width: 100%; box-sizing: border-box; }
-        .passport-action-btn { 
-            width: 100%; 
-            height: 54px; /* 高度降低變長方形 */
-            background: #ffffff; 
-            border: none; 
-            border-radius: 18px; 
-            padding: 0 20px; 
-            font-size: 16px; 
-            font-weight: 900; 
-            color: #191f28; 
-            cursor: pointer; 
-            display: flex; 
-            flex-direction: row; /* 水平排列 */
-            align-items: center; 
-            justify-content: space-between; /* 實現：icon靠左、選單名稱靠右顯示 */
-            box-shadow: 0 4px 12px rgba(0,0,0,0.04); 
-            border: 1px solid rgba(0,0,0,0.01); 
-            transition: 0.15s ease-in-out; 
-            box-sizing: border-box;
-        }
+        /* 修正 1：護照功能按鈕群組（維持左右 display: flex 橫向並排一行設定） */
+        .passport-btn-group { display: flex; gap: 16px; margin-top: 24px; width: 100%; box-sizing: border-box; }
+        .passport-action-btn { flex: 1; aspect-ratio: 1 / 1; background: #ffffff; border: none; border-radius: 28px; padding: 20px; font-size: 16px; font-weight: 900; color: #191f28; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.04); border: 1px solid rgba(0,0,0,0.01); transition: 0.15s ease-in-out; }
         .passport-action-btn:active { background: #f8f9fa; transform: translateY(2px); }
-        .passport-action-btn svg, .passport-action-btn iconify-icon { width: 24px; height: 24px; color: #4e5968; display: flex; align-items: center; justify-content: center; }
+        .passport-action-btn svg { width: 28px; height: 28px; color: #4e5968; stroke-width: 2.3; }
 
         /* 訂單列表追蹤樣式 */
         .order-list-item { background: #fff; padding: 20px; border-radius: 24px; margin-bottom: 12px; cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.03); display: flex; align-items: center; gap: 15px; border: 1px solid transparent; transition: 0.2s; }
@@ -166,7 +133,7 @@
         .order-list-item * { pointer-events: none; } /* 阻擋 icon 吃掉點擊事件 */
         .order-icon-box { width: 44px; height: 44px; background: #f2f4f6; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #28b0eb; }
         .order-info { flex: 1; }
-        .order-id-title { font-size: 16px; font-weight: 700; color: #191f28; margin-bottom: 4px; }
+        .order-id-title { font-size: 16px; font-weight: 900; color: #191f28; margin-bottom: 4px; }
         .order-meta { font-size: 12px; color: #adb5bd; display: flex; justify-content: space-between; }
 
         /* 下單流程展示滿版大圖樣式 */
@@ -180,7 +147,7 @@
 
         /* 底部選單導覽 */
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; padding: 12px 0 calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid #e5e8eb; z-index: 200; }
-        .nav-item { color: #adb5bd; text-align: center; flex: 1; font-size: 11px; font-weight: 700; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; }
+        .nav-item { color: #adb5bd; text-align: center; flex: 1; font-size: 11px; font-weight: 900; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; }
         .nav-item.active { color: #28b0eb; }
     </style>
 </head>
@@ -197,7 +164,7 @@
         <section id="page-shop" class="page-content">
             <div class="fixed-header">
                 <img src="https://raw.githubusercontent.com/ian-0326/KOR_IAN1004/main/KORIAN.png" alt="Logo" class="page-logo">
-                <button type="button" class="add-btn" onclick="openAddModal()"><iconify-icon icon="si:ai-note-fill" style="font-size: 24px; color: currentColor;"></iconify-icon></button>
+                <button type="button" class="add-btn" onclick="openAddModal()"><i data-feather="plus"></i></button>
             </div>
             <div class="category-wrapper" id="category-bar">
                 <div class="cat-pill active" onclick="filterCategory('全部', this)">全部</div>
@@ -252,9 +219,7 @@
             </div>
         </section>
 
-        <section id="page-passport" class="page-content">
-            <h3 style="font-weight: 900; text-align: center; margin: 40px 0 auto 0; letter-spacing: 1px;">PASSPORT / 護照</h3>
-            
+        <section id="page-passport" class="page-content" style="padding-top: 40px;">
             <div class="passport-card-layer">
                 <div class="passport-inner-card">
                     <div class="passport-photo-box">
@@ -270,11 +235,11 @@
 
             <div class="passport-btn-group">
                 <button class="passport-action-btn" onclick="switchPage('process')">
-                    <iconify-icon icon="fe:notice-push" style="font-size: 24px; color: currentColor;"></iconify-icon>
+                    <i data-feather="help-circle"></i>
                     <span>下單流程</span>
                 </button>
                 <button class="passport-action-btn" onclick="switchPage('orders')">
-                    <iconify-icon icon="ep:list" style="font-size: 24px; color: currentColor;"></iconify-icon>
+                    <i data-feather="file-text"></i>
                     <span>我的訂單</span>
                 </button>
             </div>
@@ -301,8 +266,8 @@
         <div id="cart-bar" style="display:none; position:fixed; bottom:95px; left:16px; right:16px; background:#191f28; color:#fff; padding:18px 24px; border-radius:20px; justify-content:space-between; align-items:center; z-index:250; cursor:pointer;" onclick="switchPage('checkout')"><span>已選 <span id="cart-qty" style="color:#28b0eb; font-weight:900;">0</span> 件商品</span><span style="font-weight:900;">查看清單 →</span></div>
         
         <nav class="bottom-nav">
-            <div class="nav-item" id="nav-shop" onclick="switchPage('shop')"><iconify-icon icon="fluent:shopping-bag-28-filled" style="font-size: 24px; color: currentColor;"></iconify-icon><span>弘大漫遊</span></div>
-            <div class="nav-item" id="nav-passport" onclick="switchPage('passport')"><iconify-icon icon="ph:identification-badge-fill" style="font-size: 24px; color: currentColor;"></iconify-icon><span>我的護照</span></div>
+            <div class="nav-item" id="nav-shop" onclick="switchPage('shop')"><i data-feather="shopping-bag"></i><span>弘大漫遊</span></div>
+            <div class="nav-item" id="nav-passport" onclick="switchPage('passport')"><i data-feather="user"></i><span>我的護照</span></div>
         </nav>
     </div>
 
@@ -332,7 +297,7 @@
                     <div class="form-item"><label class="form-label">商品名稱<span class="req-tag" id="tag-in-name">*必填</span></label><textarea id="in-name" class="input-box" placeholder="例如：Torriden 面膜" oninput="clearError(this)"></textarea></div>
                     <div class="form-item"><label class="form-label">款式規格</label><textarea id="in-option" class="input-box" placeholder="example：藍色保濕型" oninput="autoGrow(this)"></textarea></div>
                     <div class="form-item"><label class="form-label">價格 NT$</label><input type="number" id="in-price" class="input-box" placeholder="金額" oninput="clearError(this)"></div>
-                    <div class="form-item"><label class="form-label">來源網址</label><input type="url" id="in-url" class="input-box" placeholder="請輸入網址（選填）" oninput="clearError(this)"></div>
+                    <div class="form-item"><label class="form-label">來源網址<span class="req-tag" id="tag-in-url">*必填</span></label><input type="url" id="in-url" class="input-box" placeholder="請輸入網址" oninput="clearError(this)"></div>
                 </div>
                 <div class="modal-footer"><button type="button" class="btn-main" onclick="upload()">確認登錄</button></div>
             </div>
@@ -387,27 +352,22 @@
                 const { data } = await supabaseClient.from('profiles').select('*').or(`line_id.eq.${userLineId},user_id.eq.${userLineId}`);
                 
                 document.getElementById('main-app').style.display = 'block';
-                // 修正點：將關閉 Loading 牆提至上層，確保不論有無註冊快取資料，都能100%正常解除開屏大藍牆
-                document.getElementById('login-gate').style.display = 'none';
 
                 if (data && data.length > 0) {
                     userData = data[0]; 
                     renderUserProfile(); 
+                    document.getElementById('login-gate').style.display = 'none';
                     const lastPage = localStorage.getItem('korian_last_page') || 'passport';
                     switchPage(lastPage);
                 } else {
                     initBirthSelects();
                     switchPage('passport'); 
+                    document.getElementById('loader-content').style.display = 'none'; 
                     document.body.classList.add('modal-open');
                     document.getElementById('register-modal').style.display = 'flex';
                 }
                 feather.replace();
-            } catch (e) { 
-                console.error(e); 
-                // 安全防禦降級機制：即使有任何非預期錯誤，也要解鎖牆面，預防極端環境死鎖
-                document.getElementById('main-app').style.display = 'block';
-                document.getElementById('login-gate').style.display = 'none';
-            }
+            } catch (e) { console.error(e); }
         }
 
         async function fetchProducts() {
@@ -518,13 +478,13 @@
         function autoGrow(element) { element.style.height = '48px'; if (element.scrollHeight > 48) { element.style.height = (element.scrollHeight) + "px"; } }
         function changeCat(el) { clearError(el); }
 
-        // 修正：徹底抽離網址欄的前端必填驗證，並在留空時向 Supabase 發送 null（空值）以通過 Check Constraints 規則
         async function upload() {
             const btn = document.querySelector('#add-modal .btn-main');
             const cat = document.getElementById('in-cat'), name = document.getElementById('in-name'), price = document.getElementById('in-price'), url = document.getElementById('in-url'), opt = document.getElementById('in-option');
             let valid = true;
             if(!cat.value){ cat.classList.add('error'); valid=false; }
             if(!name.value.trim()){ name.classList.add('error'); valid=false; }
+            if(!url.value.trim()){ url.value.classList.add('error'); valid=false; }
             if(!valid) return;
             
             if(btn) { btn.disabled = true; btn.innerText = "處理中..."; }
@@ -535,7 +495,7 @@
                 name_zh: name.value.trim(), 
                 option: opt.value.trim() || "",
                 price_nt: price.value || 0, 
-                olive_url: url.value.trim() || null, // 修正點：若留空則完美傳送標準 null
+                olive_url: url.value.trim(), 
                 created_by: userLineId,
                 is_active: false, 
                 created_at: taiwanTime
@@ -636,11 +596,20 @@
             feather.replace();
         }
 
-        function initBirthSelects() {
-            const sy = document.getElementById('reg-birth-y'), sm = document.getElementById('reg-birth-m'), sd = document.getElementById('reg-birth-d');
-            sy.innerHTML = '<option value="">年</option>' + Array.from({length: 87}, (_, i) => `<option value="${1940+i}">${1940+i}</option>`).reverse().join('');
-            sm.innerHTML = '<option value="">月</option>' + Array.from({length: 12}, (_, i) => `<option value="${(i+1).toString().padStart(2,'0')}">${(i+1).toString().padStart(2,'0')}</option>`).join('');
-            sd.innerHTML = '<option value="">日</option>' + Array.from({length: 31}, (_, i) => `<option value="${(i+1).toString().padStart(2,'0')}">${(i+1).toString().padStart(2,'0')}</option>`).join('');
+        async function handleRegister() {
+            const btn = document.getElementById('btn-register');
+            const name = document.getElementById('reg-name'), tel = document.getElementById('reg-tel'), email = document.getElementById('reg-email');
+            const by = document.getElementById('reg-birth-y'), bm = document.getElementById('reg-birth-m'), bd = document.getElementById('reg-birth-d');
+            let valid = true;
+            if(!name.value.trim()){ name.classList.add('error'); document.getElementById('tag-reg-name').style.display='inline'; valid=false; }
+            if(!/^09\d{8}$/.test(tel.value)){ tel.classList.add('error'); document.getElementById('tag-reg-tel').style.display='inline'; valid=false; }
+            if(!by.value || !bm.value || !bd.value){ [by,bm,bd].forEach(s => s.classList.add('error')); document.getElementById('tag-reg-birth').style.display='inline'; valid=false; }
+            if(!valid) return;
+            if(!userLineId) return;
+            btn.disabled = true; 
+            const fullBirth = `${by.value}-${bm.value}-${bd.value}`;
+            const { error } = await supabaseClient.from('profiles').insert([{ line_id: userLineId, user_id: userLineId, full_name: name.value.trim(), phone: tel.value.trim(), birthday: fullBirth, gender: selectedGender, email: email.value.trim() }]);
+            if(!error) location.reload(); else { alert("失敗：" + error.message); btn.disabled = false; }
         }
 
         function renderUserProfile() { 
@@ -680,6 +649,13 @@
             if(p === 'orders') fetchUserOrders(); 
             
             window.scrollTo(0,0); feather.replace();
+        }
+
+        function initBirthSelects() {
+            const sy = document.getElementById('reg-birth-y'), sm = document.getElementById('reg-birth-m'), sd = document.getElementById('reg-birth-d');
+            sy.innerHTML = '<option value="">年</option>' + Array.from({length: 87}, (_, i) => `<option value="${1940+i}">${1940+i}</option>`).reverse().join('');
+            sm.innerHTML = '<option value="">月</option>' + Array.from({length: 12}, (_, i) => `<option value="${(i+1).toString().padStart(2,'0')}">${(i+1).toString().padStart(2,'0')}</option>`).join('');
+            sd.innerHTML = '<option value="">日</option>' + Array.from({length: 31}, (_, i) => `<option value="${(i+1).toString().padStart(2,'0')}">${(i+1).toString().padStart(2,'0')}</option>`).join('');
         }
 
         window.onload = init;
