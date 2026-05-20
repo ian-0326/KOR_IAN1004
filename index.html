@@ -135,7 +135,7 @@
             padding-bottom: 110px; /* 留出底部導覽選單空間避免重疊 */
         }
 
-        /* 修正 3：調整按鈕尺寸成橫式扁平長方形（比例為 2 / 1，縮短高度，依然保持並排一行不拆行） */
+        /* 修正 3：功能選單按鈕改回橫向並排一行的方形長方形美學設計（長寬比為 2 / 1，縮短高度不拆成兩行） */
         .passport-btn-group { display: flex; flex-direction: row; gap: 16px; margin-top: 24px; width: 100%; box-sizing: border-box; }
         .passport-action-btn { 
             flex: 1; 
@@ -162,7 +162,7 @@
         .passport-action-btn svg, .passport-action-btn iconify-icon { width: 24px; height: 24px; color: #4e5968; display: flex; align-items: center; justify-content: center; }
 
         /* 動態進度條狀態激活控量 */
-        .timeline-dot.active { background: var(--primary) !important; box-shadow: 0 0 0 4px rgba(40, 176, 235, 0.2); }
+        .timeline-dot.active { background: #ffca28 !important; box-shadow: 0 0 0 4px rgba(255, 202, 40, 0.2); } /* 採用與線條一樣的橘色 */
         .timeline-label.active { color: #ffffff !important; font-weight: 900 !important; font-size: 12px !important; opacity: 1 !important; }
 
         /* 訂單列表追蹤樣式 */
@@ -287,9 +287,9 @@
                 </button>
             </div>
 
-            <div class="card-box" style="margin-top: 24px; padding: 35px 20px 25px 20px; background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 28px;">
+            <div class="card-box" style="margin-top: 24px; padding: 50px 20px 40px 20px; background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 28px;">
                 <div style="position: relative;">
-                    <div id="timeline-indicator" style="position: absolute; top: -30px; transform: translateX(-50%); left: 0%; transition: left 0.4s cubic-bezier(0.25, 1, 0.5, 1); color: #ffca28;">
+                    <div id="timeline-indicator" style="position: absolute; top: -30px; transform: translateX(-50%); left: 0%; transition: left 0.4s cubic-bezier(0.25, 1, 0.5, 1); color: #ffffff;">
                         <iconify-icon icon="fa6-solid:person-walking-luggage" style="font-size: 26px;"></iconify-icon>
                     </div>
                     
@@ -402,7 +402,7 @@
     <script>
         const LIFF_ID = '2009405888-D5absVA3';
         const SUPABASE_URL = 'https://ivpctyqlrkjstfsoweeh.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml2cGN0eXFscmtqc3Rmc293ZWVoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTk1MTksImV4cCI6MjA4ODc3NTUxOX0.DYgzhaTH3_5NFwv009ZfZAshfUnCW2PeTuNcJ9feyMU';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml2cGN0eXFscmtqc3Rmc293ZWVoIiwicm9sZSI6ImFub24}==';
         
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         let userLineId = "", userLinePicture = "", userData = null, selectedGender = "", allProducts = [], cart = {}, shipMethod = '', packingQty = 1, currentRawOrderId = "", allUserOrders = [], isFromCheckout = false;
@@ -604,7 +604,6 @@
         function autoGrow(element) { element.style.height = '48px'; if (element.scrollHeight > 48) { element.style.height = (element.scrollHeight) + "px"; } }
         function changeCat(el) { clearError(el); }
 
-        // 修正 2：商品新增上傳優化空值為 null 機制
         async function upload() {
             const btn = document.querySelector('#add-modal .btn-main');
             const cat = document.getElementById('in-cat'), name = document.getElementById('in-name'), price = document.getElementById('in-price'), url = document.getElementById('in-url'), opt = document.getElementById('in-option');
