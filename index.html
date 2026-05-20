@@ -135,7 +135,7 @@
             padding-bottom: 110px; /* 留出底部導覽選單空間避免重疊 */
         }
 
-        /* 修正 3：調整按鈕尺寸成橫式扁平長方形（比例為 2 / 1，縮短高度，依然保持並排一行不拆行） */
+        /* 修正 3：功能選單按鈕改回橫向並排一行的方形長方形美學設計（長寬比為 2 / 1，縮短高度不拆成兩行） */
         .passport-btn-group { display: flex; flex-direction: row; gap: 16px; margin-top: 24px; width: 100%; box-sizing: border-box; }
         .passport-action-btn { 
             flex: 1; 
@@ -161,8 +161,8 @@
         .passport-action-btn:active { background: #f8f9fa; transform: translateY(2px); }
         .passport-action-btn svg, .passport-action-btn iconify-icon { width: 24px; height: 24px; color: #4e5968; display: flex; align-items: center; justify-content: center; }
 
-        /* 動態進度條狀態激活控量 */
-        .timeline-dot.active { background: var(--primary) !important; box-shadow: 0 0 0 4px rgba(40, 176, 235, 0.2); }
+        /* 修正 2：將點亮節點（.timeline-dot.active）的背景色精準改為線條一致的亮橘色（#ffca28），並調配同色系的光暈陰影 */
+        .timeline-dot.active { background: #ffca28 !important; box-shadow: 0 0 0 4px rgba(255, 202, 40, 0.25); }
         .timeline-label.active { color: #ffffff !important; font-weight: 900 !important; font-size: 12px !important; opacity: 1 !important; }
 
         /* 訂單列表追蹤樣式 */
@@ -287,9 +287,9 @@
                 </button>
             </div>
 
-            <div class="card-box" style="margin-top: 24px; padding: 35px 20px 25px 20px; background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 28px;">
+            <div class="card-box" style="margin-top: 24px; padding: 52px 20px 42px 20px; background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 28px;">
                 <div style="position: relative;">
-                    <div id="timeline-indicator" style="position: absolute; top: -30px; transform: translateX(-50%); left: 0%; transition: left 0.4s cubic-bezier(0.25, 1, 0.5, 1); color: #ffca28;">
+                    <div id="timeline-indicator" style="position: absolute; top: -30px; transform: translateX(-50%); left: 0%; transition: left 0.4s cubic-bezier(0.25, 1, 0.5, 1); color: #ffffff;">
                         <iconify-icon icon="fa6-solid:person-walking-luggage" style="font-size: 26px;"></iconify-icon>
                     </div>
                     
@@ -416,7 +416,7 @@
                 userLinePicture = profile.pictureUrl || "https://img.icons8.com/illustrations/96/user.png";
 
                 await fetchProducts();
-                // 修正 2：加載產品後同步查詢後端階段控制表狀態
+                // 異步同步後端動態進度控制表狀態
                 await fetchSystemControl();
 
                 const { data } = await supabaseClient.from('profiles').select('*').or(`line_id.eq.${userLineId},user_id.eq.${userLineId}`);
@@ -443,13 +443,12 @@
             }
         }
 
-        // 修正 2：異步連線 Supabase 讀取並計算代購階段指標渲染
         async function fetchSystemControl() {
             try {
                 const { data, error } = await supabaseClient.from('system_control').select('*').eq('project', '代購階段');
                 if (data && data.length > 0) {
                     const sys = data[0];
-                    let activeStep = 0; // 預設 0 代表休息等候
+                    let activeStep = 0; 
                     
                     const now = new Date();
                     const year = now.getFullYear();
@@ -581,6 +580,11 @@
             document.getElementById('sum-total').innerText=`NT$ ${(it+sf+pf).toLocaleString()}`; 
         }
 
+        function removeGateError() {
+            document.getElementById('main-app').style.display = 'block';
+            document.getElementById('login-gate').style.display = 'none';
+        }
+
         function setGender(g) {
             selectedGender = g;
             const maleBtn = document.getElementById('g-male'), femaleBtn = document.getElementById('g-female');
@@ -589,6 +593,7 @@
             if (g === 'F') femaleBtn.classList.add('active-f');
         }
 
+        UX_add_modal = function() { openAddModal(); }
         function openAddModal() { 
             document.body.classList.add('modal-open'); 
             document.getElementById('add-modal').style.display = 'flex'; 
@@ -604,7 +609,6 @@
         function autoGrow(element) { element.style.height = '48px'; if (element.scrollHeight > 48) { element.style.height = (element.scrollHeight) + "px"; } }
         function changeCat(el) { clearError(el); }
 
-        // 修正 2：商品新增上傳優化空值為 null 機制
         async function upload() {
             const btn = document.querySelector('#add-modal .btn-main');
             const cat = document.getElementById('in-cat'), name = document.getElementById('in-name'), price = document.getElementById('in-price'), url = document.getElementById('in-url'), opt = document.getElementById('in-option');
@@ -720,6 +724,23 @@
                 </div>
             `).join('');
             feather.replace();
+        }
+
+        function handleRegister() {
+            const btn = document.getElementById('btn-register');
+            const name = document.getElementById('reg-name'), tel = document.getElementById('reg-tel'), email = document.getElementById('reg-email');
+            const by = document.getElementById('reg-birth-y'), bm = document.getElementById('reg-birth-m'), bd = document.getElementById('reg-birth-d');
+            let valid = true;
+            if(!name.value.trim()){ name.classList.add('error'); document.getElementById('tag-reg-name').style.display='inline'; valid=false; }
+            if(!/^09\d{8}$/.test(tel.value)){ tel.classList.add('error'); document.getElementById('tag-reg-tel').style.display='inline'; valid=false; }
+            if(!by.value || !bm.value || !bd.value){ [by,bm,bd].forEach(s => s.classList.add('error')); document.getElementById('tag-reg-birth').style.display='inline'; valid=false; }
+            if(!valid) return;
+            if(!userLineId) return;
+            btn.disabled = true; 
+            const fullBirth = `${by.value}-${bm.value}-${bd.value}`;
+            supabaseClient.from('profiles').insert([{ line_id: userLineId, user_id: userLineId, full_name: name.value.trim(), phone: tel.value.trim(), birthday: fullBirth, gender: selectedGender, email: email.value.trim() }]).then(({error}) => {
+                if(!error) location.reload(); else { alert("失敗：" + error.message); btn.disabled = false; }
+            });
         }
 
         function renderUserProfile() { 
