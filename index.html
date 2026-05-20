@@ -135,21 +135,21 @@
             padding-bottom: 110px; /* 留出底部導覽選單空間避免重疊 */
         }
 
-        /* 修正 3：功能選單按鈕改回橫向並排一行的方形長方形美學設計（長寬比為 2 / 1，縮短高度不拆成兩行） */
+        /* 修正 2：橫向並排一行的扁平橫式長方形按鈕排版優化設定 */
         .passport-btn-group { display: flex; flex-direction: row; gap: 16px; margin-top: 24px; width: 100%; box-sizing: border-box; }
         .passport-action-btn { 
             flex: 1; 
-            aspect-ratio: 2 / 1; /* 由原來的 1/1 方形精準演化為 2/1 橫條扁平化比例 */
+            height: 46px; /* 修正點：高度再稍微縮小一點（由54px縮短到46px），變得更扁平精緻 */
             background: #ffffff; 
             border: none; 
             border-radius: 24px; 
-            padding: 12px; 
-            font-size: 16px; 
+            padding: 0 12px; 
+            font-size: 15px; 
             font-weight: 900; 
             color: #191f28; 
             cursor: pointer; 
             display: flex; 
-            flex-direction: column; /* 上下堆疊 */
+            flex-direction: row; /* 修正點：改回橫向排列，將選單圖示移動到選單文字的左側 */
             align-items: center; 
             justify-content: center; 
             gap: 8px; 
@@ -159,9 +159,9 @@
             box-sizing: border-box;
         }
         .passport-action-btn:active { background: #f8f9fa; transform: translateY(2px); }
-        .passport-action-btn svg, .passport-action-btn iconify-icon { width: 24px; height: 24px; color: #4e5968; display: flex; align-items: center; justify-content: center; }
+        .passport-action-btn svg, .passport-action-btn iconify-icon { width: 22px; height: 22px; color: #4e5968; display: flex; align-items: center; justify-content: center; }
 
-        /* 修正 2：將點亮節點（.timeline-dot.active）的背景色精準改為線條一致的亮橘色（#ffca28），並調配同色系的光暈陰影 */
+        /* 動態進度條狀態激活控量 */
         .timeline-dot.active { background: #ffca28 !important; box-shadow: 0 0 0 4px rgba(255, 202, 40, 0.25); }
         .timeline-label.active { color: #ffffff !important; font-weight: 900 !important; font-size: 12px !important; opacity: 1 !important; }
 
@@ -278,18 +278,18 @@
 
             <div class="passport-btn-group">
                 <button class="passport-action-btn" onclick="switchPage('process')">
-                    <iconify-icon icon="fe:notice-push" style="font-size: 24px; color: currentColor;"></iconify-icon>
+                    <iconify-icon icon="fe:notice-push"></iconify-icon>
                     <span>下單流程</span>
                 </button>
                 <button class="passport-action-btn" onclick="switchPage('orders')">
-                    <iconify-icon icon="ep:list" style="font-size: 24px; color: currentColor;"></iconify-icon>
+                    <iconify-icon icon="ep:list"></iconify-icon>
                     <span>我的訂單</span>
                 </button>
             </div>
 
             <div class="card-box" style="margin-top: 24px; padding: 52px 20px 42px 20px; background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 28px;">
                 <div style="position: relative;">
-                    <div id="timeline-indicator" style="position: absolute; top: -30px; transform: translateX(-50%); left: 0%; transition: left 0.4s cubic-bezier(0.25, 1, 0.5, 1); color: #ffffff;">
+                    <div id="timeline-indicator" style="position: absolute; top: -38px; transform: translateX(-50%); left: 0%; transition: left 0.4s cubic-bezier(0.25, 1, 0.5, 1); color: #ffffff;">
                         <iconify-icon icon="fa6-solid:person-walking-luggage" style="font-size: 26px;"></iconify-icon>
                     </div>
                     
@@ -585,14 +585,6 @@
             document.getElementById('login-gate').style.display = 'none';
         }
 
-        function setGender(g) {
-            selectedGender = g;
-            const maleBtn = document.getElementById('g-male'), femaleBtn = document.getElementById('g-female');
-            maleBtn.classList.remove('active-m'); femaleBtn.classList.remove('active-f');
-            if (g === 'M') maleBtn.classList.add('active-m');
-            if (g === 'F') femaleBtn.classList.add('active-f');
-        }
-
         UX_add_modal = function() { openAddModal(); }
         function openAddModal() { 
             document.body.classList.add('modal-open'); 
@@ -724,23 +716,6 @@
                 </div>
             `).join('');
             feather.replace();
-        }
-
-        function handleRegister() {
-            const btn = document.getElementById('btn-register');
-            const name = document.getElementById('reg-name'), tel = document.getElementById('reg-tel'), email = document.getElementById('reg-email');
-            const by = document.getElementById('reg-birth-y'), bm = document.getElementById('reg-birth-m'), bd = document.getElementById('reg-birth-d');
-            let valid = true;
-            if(!name.value.trim()){ name.classList.add('error'); document.getElementById('tag-reg-name').style.display='inline'; valid=false; }
-            if(!/^09\d{8}$/.test(tel.value)){ tel.classList.add('error'); document.getElementById('tag-reg-tel').style.display='inline'; valid=false; }
-            if(!by.value || !bm.value || !bd.value){ [by,bm,bd].forEach(s => s.classList.add('error')); document.getElementById('tag-reg-birth').style.display='inline'; valid=false; }
-            if(!valid) return;
-            if(!userLineId) return;
-            btn.disabled = true; 
-            const fullBirth = `${by.value}-${bm.value}-${bd.value}`;
-            supabaseClient.from('profiles').insert([{ line_id: userLineId, user_id: userLineId, full_name: name.value.trim(), phone: tel.value.trim(), birthday: fullBirth, gender: selectedGender, email: email.value.trim() }]).then(({error}) => {
-                if(!error) location.reload(); else { alert("失敗：" + error.message); btn.disabled = false; }
-            });
         }
 
         function renderUserProfile() { 
