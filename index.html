@@ -66,6 +66,9 @@
         .item-option { font-size: 12px; color: #adb5bd; margin-left: 6px; font-weight: 400; }
         .item-price { color: #28b0eb; font-weight: 900; font-size: 17px; display: block; }
 
+        /* 熱銷黃色皇冠標籤樣式 */
+        .crown-badge { position: absolute; top: -6px; left: 16px; background: #ffffff; color: #ffca28; padding: 2px 6px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); display: flex; align-items: center; justify-content: center; z-index: 10; }
+
         .qty-ctrl { display: flex; align-items: center; gap: 14px; background: #f8f9fa; padding: 8px 16px; border-radius: 50px; }
         .qty-btn { background: none; border: none; padding: 0; color: #4e5968; display: flex; align-items: center; cursor: pointer; }
         .qty-num { font-size: 16px; font-weight: 900; color: #28b0eb; min-width: 20px; text-align: center; }
@@ -103,16 +106,16 @@
         .modal-card { background: #fff; border-radius: 36px; padding: 24px 20px 28px 20px; width: 100%; max-width: 360px; max-height: 85vh; box-sizing: border-box; display: flex; flex-direction: column; box-shadow: 0 15px 50px rgba(0,0,0,0.2); }
         .modal-body { overflow-y: auto; flex-grow: 1; width: 100%; margin-bottom: 10px; }
         .modal-section { text-align: left; margin-bottom: 16px; padding: 16px; background: #f8f9fa; border-radius: 24px; }
-        .modal-section-title { font-size: 12px; font-weight: 900; color: #adb5bd; margin-bottom: 10px; display: block; }
+        .modal-section-title { font-size: 12px; font-weight: 700; color: #adb5bd; margin-bottom: 10px; display: block; }
         .order-item-row { display: flex; justify-content: space-between; align-items: flex-start; font-size: 14px; margin-bottom: 8px; line-height: 1.4; }
         .order-item-name { text-align: left; font-weight: 700; color: #191f28; padding-right: 15px; flex: 1; }
-        .order-item-qty { text-align: right; font-weight: 900; color: #28b0eb; white-space: nowrap; }
+        .order-item-qty { text-align: right; font-weight: 700; color: #28b0eb; white-space: nowrap; }
         .detail-item { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; }
         .detail-val { font-weight: 700; text-align: right; flex: 1; margin-left: 20px; word-break: break-all; }
         .copy-btn { background: #eee; border: none; padding: 4px 8px; border-radius: 8px; font-size: 10px; color: #4e5968; cursor: pointer; margin-left: 8px; display: inline-flex; align-items: center; gap: 4px; vertical-align: middle; }
         .modal-header-centered { text-align: center; margin-bottom: 24px; flex-shrink: 0; }
 
-        /* 護照資料圖卡排邊設定（維持無外框白底樣式） */
+        /* 護照資料圖卡排版設定（無白框樣式） */
         .passport-card-layer { background: url('KOR.IAN CARD.png') no-repeat center center; background-size: cover; border-radius: 32px; padding: 30px 20px; margin-top: 10px; width: 100%; box-sizing: border-box; }
         .passport-inner-card { display: flex; gap: 32px; text-align: left; box-sizing: border-box; align-items: center; }
         .passport-photo-box { width: 115px; display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
@@ -132,7 +135,7 @@
             padding-bottom: 110px; /* 留出底部導覽選單空間避免重疊 */
         }
 
-        /* 修正 1：將功能按鈕群組改回橫向並排一行（flex-direction: row）的方形美學設定 */
+        /* 修正 1：將功能按鈕群組改回橫向並排一行（flex-direction: row）的方形高質感排列 */
         .passport-btn-group { display: flex; flex-direction: row; gap: 16px; margin-top: 24px; width: 100%; box-sizing: border-box; }
         .passport-action-btn { 
             flex: 1; 
@@ -146,7 +149,7 @@
             color: #191f28; 
             cursor: pointer; 
             display: flex; 
-            flex-direction: column; 
+            flex-direction: column; /* 上下堆疊 */
             align-items: center; 
             justify-content: center; 
             gap: 14px; 
@@ -297,7 +300,7 @@
         <div id="cart-bar" style="display:none; position:fixed; bottom:95px; left:16px; right:16px; background:#191f28; color:#fff; padding:18px 24px; border-radius:20px; justify-content:space-between; align-items:center; z-index:250; cursor:pointer;" onclick="switchPage('checkout')"><span>已選 <span id="cart-qty" style="color:#28b0eb; font-weight:900;">0</span> 件商品</span><span style="font-weight:900;">查看清單 →</span></div>
         
         <nav class="bottom-nav">
-            <div class="nav-item" id="nav-shop" onclick="switchPage('shop')"><iconify-icon icon="fluent:shopping-bag-28-filled" style="font-size: 24px; color: currentColor;"></iconify-icon><span>弘大漫遊</span></div>
+            <div class="nav-item" id="nav-shop" onclick="switchPage('shop')"><iconify-icon icon="fluent:shopping-bag-28-filled" style="font-size: 24px; color: currentColor();"></iconify-icon><span>弘大漫遊</span></div>
             <div class="nav-item" id="nav-passport" onclick="switchPage('passport')"><iconify-icon icon="ph:identification-badge-fill" style="font-size: 24px; color: currentColor;"></iconify-icon><span>我的護照</span></div>
         </nav>
     </div>
@@ -629,29 +632,6 @@
             feather.replace();
         }
 
-        function initBirthSelects() {
-            const sy = document.getElementById('reg-birth-y'), sm = document.getElementById('reg-birth-m'), sd = document.getElementById('reg-birth-d');
-            sy.innerHTML = '<option value="">年</option>' + Array.from({length: 87}, (_, i) => `<option value="${1940+i}">${1940+i}</option>`).reverse().join('');
-            sm.innerHTML = '<option value="">月</option>' + Array.from({length: 12}, (_, i) => `<option value="${(i+1).toString().padStart(2,'0')}">${(i+1).toString().padStart(2,'0')}</option>`).join('');
-            sd.innerHTML = '<option value="">日</option>' + Array.from({length: 31}, (_, i) => `<option value="${(i+1).toString().padStart(2,'0')}">${(i+1).toString().padStart(2,'0')}</option>`).join('');
-        }
-
-        function renderUserProfile() { 
-            if(!userData) return;
-            document.getElementById('pass-avatar').src = userLinePicture;
-            document.getElementById('pass-name').innerText = userData.full_name || "---"; 
-            document.getElementById('pass-sex').innerText = userData.gender === 'M' ? '男 / M' : (userData.gender === 'F' ? '女 / F' : '---');
-            document.getElementById('pass-birth').innerText = userData.birthday || "---";
-        }
-        
-        function clearError(el) { 
-            el.classList.remove('error'); 
-            const baseId = el.id.startsWith('reg-birth') ? 'reg-birth' : el.id;
-            const tag = document.getElementById('tag-' + baseId);
-            if(tag) tag.style.display='none'; 
-            if(el.id.startsWith('reg-birth')) ['y','m','d'].forEach(suffix => document.getElementById('reg-birth-'+suffix).classList.remove('error'));
-        }
-        
         async function copyOrderId() { try { await navigator.clipboard.writeText(currentRawOrderId); const btn = document.getElementById('copy-btn'); btn.innerHTML = '<i data-feather="check" style="width:12px;"></i>已複製'; feather.replace(); setTimeout(() => { btn.innerHTML = '<i data-feather="copy" style="width:12px;"></i>複製'; feather.replace(); }, 2000); } catch (err) { console.error(err); } }
 
         function switchPage(p) {
@@ -667,12 +647,19 @@
             let t = Object.values(cart).reduce((s,i)=>s+i.qty,0);
             document.getElementById('cart-bar').style.display=(t>0&&p=='shop')?'flex':'none';
             
-            if(p === 'shop' orient) renderProducts(allProducts);
+            if(p === 'shop') renderProducts(allProducts);
             if(p === 'checkout') renderCheckout();
             if(p === 'shipping') calculateFinal();
             if(p === 'orders') fetchUserOrders(); 
             
             window.scrollTo(0,0); feather.replace();
+        }
+
+        function initBirthSelects() {
+            const sy = document.getElementById('reg-birth-y'), sm = document.getElementById('reg-birth-m'), sd = document.getElementById('reg-birth-d');
+            sy.innerHTML = '<option value="">年</option>' + Array.from({length: 87}, (_, i) => `<option value="${1940+i}">${1940+i}</option>`).reverse().join('');
+            sm.innerHTML = '<option value="">月</option>' + Array.from({length: 12}, (_, i) => `<option value="${(i+1).toString().padStart(2,'0')}">${(i+1).toString().padStart(2,'0')}</option>`).join('');
+            sd.innerHTML = '<option value="">日</option>' + Array.from({length: 31}, (_, i) => `<option value="${(i+1).toString().padStart(2,'0')}">${(i+1).toString().padStart(2,'0')}</option>`).join('');
         }
 
         window.onload = init;
