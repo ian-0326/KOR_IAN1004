@@ -8,6 +8,7 @@
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.0/feather.min.js"></script>
+    <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
     
     <style>
         :root { --primary: #28b0eb; --pink: #ff85a2; --bg: #f2f4f6; --white: #ffffff; --text: #191f28; --sub: #4e5968; --gray: #adb5bd; --error: #f44336; }
@@ -111,8 +112,8 @@
         .copy-btn { background: #eee; border: none; padding: 4px 8px; border-radius: 8px; font-size: 10px; color: #4e5968; cursor: pointer; margin-left: 8px; display: inline-flex; align-items: center; gap: 4px; vertical-align: middle; }
         .modal-header-centered { text-align: center; margin-bottom: 24px; flex-shrink: 0; }
 
-        /* 護照資料圖卡排版設定 */
-        .passport-card-layer { background: url('KOR.IAN CARD.png') no-repeat center center; background-size: cover; border-radius: 32px; padding: 30px 20px; margin-top: 10px; box-shadow: 0 8px 30px rgba(0,0,0,0.15); }
+        /* 修正：將護照圖卡的圓角（border-radius）與陰影白框（box-shadow）完全移除，僅保留背景圖貼附與內距間距 */
+        .passport-card-layer { background: url('KOR.IAN CARD.png') no-repeat center center; background-size: cover; padding: 30px 20px; margin-top: 10px; }
         .passport-inner-card { display: flex; gap: 32px; text-align: left; box-sizing: border-box; align-items: center; }
         .passport-photo-box { width: 115px; display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
         .passport-photo { width: 115px; height: 150px; object-fit: cover; border-radius: 12px; background: #e5e8eb; border: 2px solid rgba(255,255,255,0.25); box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
@@ -124,7 +125,7 @@
         /* 護照功能方形按鈕 */
         .passport-btn-group { display: flex; gap: 16px; margin-top: 24px; width: 100%; box-sizing: border-box; }
         .passport-action-btn { flex: 1; aspect-ratio: 1 / 1; background: #ffffff; border: none; border-radius: 28px; padding: 20px; font-size: 16px; font-weight: 900; color: #191f28; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.04); border: 1px solid rgba(0,0,0,0.01); transition: 0.15s ease-in-out; }
-        .passport-btn-group button:active { background: #f8f9fa; transform: translateY(2px); }
+        .passport-action-btn:active { background: #f8f9fa; transform: translateY(2px); }
         .passport-action-btn svg { width: 28px; height: 28px; color: #4e5968; stroke-width: 2.3; }
 
         /* 訂單列表追蹤樣式 */
@@ -267,8 +268,8 @@
         <div id="cart-bar" style="display:none; position:fixed; bottom:95px; left:16px; right:16px; background:#191f28; color:#fff; padding:18px 24px; border-radius:20px; justify-content:space-between; align-items:center; z-index:250; cursor:pointer;" onclick="switchPage('checkout')"><span>已選 <span id="cart-qty" style="color:#28b0eb; font-weight:900;">0</span> 件商品</span><span style="font-weight:900;">查看清單 →</span></div>
         
         <nav class="bottom-nav">
-            <div class="nav-item" id="nav-shop" onclick="switchPage('shop')"><i data-feather="shopping-bag"></i><span>弘大漫遊</span></div>
-            <div class="nav-item" id="nav-passport" onclick="switchPage('passport')"><i data-feather="user"></i><span>我的護照</span></div>
+            <div class="nav-item" id="nav-shop" onclick="switchPage('shop')"><iconify-icon icon="fluent:shopping-bag-28-filled" style="font-size: 24px; color: currentColor;"></iconify-icon><span>弘大漫遊</span></div>
+            <div class="nav-item" id="nav-passport" onclick="switchPage('passport')"><iconify-icon icon="ph:identification-badge-fill" style="font-size: 24px; color: currentColor;"></iconify-icon><span>我的護照</span></div>
         </nav>
     </div>
 
@@ -298,7 +299,7 @@
                     <div class="form-item"><label class="form-label">商品名稱<span class="req-tag" id="tag-in-name">*必填</span></label><textarea id="in-name" class="input-box" placeholder="例如：Torriden 面膜" oninput="clearError(this)"></textarea></div>
                     <div class="form-item"><label class="form-label">款式規格</label><textarea id="in-option" class="input-box" placeholder="example：藍色保濕型" oninput="autoGrow(this)"></textarea></div>
                     <div class="form-item"><label class="form-label">價格 NT$</label><input type="number" id="in-price" class="input-box" placeholder="金額" oninput="clearError(this)"></div>
-                    <div class="form-item"><label class="form-label">來源網址</label><input type="url" id="in-url" class="input-box" placeholder="請輸入網址（選填）" oninput="clearError(this)"></div>
+                    <div class="form-item"><label class="form-label">來源網址<span class="req-tag" id="tag-in-url">*必填</span></label><input type="url" id="in-url" class="input-box" placeholder="請輸入網址" oninput="clearError(this)"></div>
                 </div>
                 <div class="modal-footer"><button type="button" class="btn-main" onclick="upload()">確認登錄</button></div>
             </div>
@@ -479,26 +480,24 @@
         function autoGrow(element) { element.style.height = '48px'; if (element.scrollHeight > 48) { element.style.height = (element.scrollHeight) + "px"; } }
         function changeCat(el) { clearError(el); }
 
-        // 修正：全面補齊 upload 函式所需的完整變數讀取、欄位驗證、防重複送出鎖定與 Supabase 對齊欄位，修復無法登錄的問題
         async function upload() {
             const btn = document.querySelector('#add-modal .btn-main');
             const cat = document.getElementById('in-cat'), name = document.getElementById('in-name'), price = document.getElementById('in-price'), url = document.getElementById('in-url'), opt = document.getElementById('in-option');
             let valid = true;
             if(!cat.value){ cat.classList.add('error'); valid=false; }
             if(!name.value.trim()){ name.classList.add('error'); valid=false; }
-            // 修正點：移除 url 的必填前端代碼驗證，允許其為空。
+            if(!url.value.trim()){ url.value.classList.add('error'); valid=false; }
             if(!valid) return;
             
             if(btn) { btn.disabled = true; btn.innerText = "處理中..."; }
             const taiwanTime = new Date().toISOString();
             
-            // 修正點：當網址留空時，向 Supabase 傳送 null（空值）而非空字串，以兼容格式檢查約束
             const { error } = await supabaseClient.from('products').insert({ 
                 category: cat.value,
                 name_zh: name.value.trim(), 
                 option: opt.value.trim() || "",
                 price_nt: price.value || 0, 
-                olive_url: url.value.trim() || null, 
+                olive_url: url.value.trim(), 
                 created_by: userLineId,
                 is_active: false, 
                 created_at: taiwanTime
