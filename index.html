@@ -77,7 +77,7 @@
         .list-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f2f4f6; }
         .list-row:last-child { border-bottom: none; }
         .list-left { flex: 1; padding-right: 15px; }
-        .list-n { font-size: 15px; font-weight: 900; color: #000; display: inline-block; }
+        .list-n { font-size: 15px; font-weight: 700; color: #000; display: inline-block; }
         .list-s { font-size: 11px; color: #adb5bd; display: inline-block; margin-left: 6px; }
         .list-p { font-size: 13px; color: #28b0eb; display: block; font-weight: 900; margin-top: 2px; }
 
@@ -135,7 +135,7 @@
             padding-bottom: 110px; /* 留出底部導覽選單空間避免重疊 */
         }
 
-        /* 修正 1：將功能按鈕群組改回橫向並排一行（flex-direction: row）的方形高質感排列 */
+        /* 修正 1：將選單按鈕群組改回橫向並排一行的方形設計，不拆成兩行 */
         .passport-btn-group { display: flex; flex-direction: row; gap: 16px; margin-top: 24px; width: 100%; box-sizing: border-box; }
         .passport-action-btn { 
             flex: 1; 
@@ -300,7 +300,7 @@
         <div id="cart-bar" style="display:none; position:fixed; bottom:95px; left:16px; right:16px; background:#191f28; color:#fff; padding:18px 24px; border-radius:20px; justify-content:space-between; align-items:center; z-index:250; cursor:pointer;" onclick="switchPage('checkout')"><span>已選 <span id="cart-qty" style="color:#28b0eb; font-weight:900;">0</span> 件商品</span><span style="font-weight:900;">查看清單 →</span></div>
         
         <nav class="bottom-nav">
-            <div class="nav-item" id="nav-shop" onclick="switchPage('shop')"><iconify-icon icon="fluent:shopping-bag-28-filled" style="font-size: 24px; color: currentColor();"></iconify-icon><span>弘大漫遊</span></div>
+            <div class="nav-item" id="nav-shop" onclick="switchPage('shop')"><iconify-icon icon="fluent:shopping-bag-28-filled" style="font-size: 24px; color: currentColor;"></iconify-icon><span>弘大漫遊</span></div>
             <div class="nav-item" id="nav-passport" onclick="switchPage('passport')"><iconify-icon icon="ph:identification-badge-fill" style="font-size: 24px; color: currentColor;"></iconify-icon><span>我的護照</span></div>
         </nav>
     </div>
