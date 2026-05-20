@@ -124,7 +124,7 @@
         /* 護照功能方形按鈕 */
         .passport-btn-group { display: flex; gap: 16px; margin-top: 24px; width: 100%; box-sizing: border-box; }
         .passport-action-btn { flex: 1; aspect-ratio: 1 / 1; background: #ffffff; border: none; border-radius: 28px; padding: 20px; font-size: 16px; font-weight: 900; color: #191f28; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.04); border: 1px solid rgba(0,0,0,0.01); transition: 0.15s ease-in-out; }
-        .passport-action-btn:active { background: #f8f9fa; transform: translateY(2px); }
+        .passport-btn-group button:active { background: #f8f9fa; transform: translateY(2px); }
         .passport-action-btn svg { width: 28px; height: 28px; color: #4e5968; stroke-width: 2.3; }
 
         /* 訂單列表追蹤樣式 */
@@ -133,7 +133,7 @@
         .order-list-item * { pointer-events: none; } /* 阻擋 icon 吃掉點擊事件 */
         .order-icon-box { width: 44px; height: 44px; background: #f2f4f6; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #28b0eb; }
         .order-info { flex: 1; }
-        .order-id-title { font-size: 16px; font-weight: 700; color: #191f28; margin-bottom: 4px; }
+        .order-id-title { font-size: 16px; font-weight: 900; color: #191f28; margin-bottom: 4px; }
         .order-meta { font-size: 12px; color: #adb5bd; display: flex; justify-content: space-between; }
 
         /* 下單流程展示滿版大圖樣式 */
@@ -147,7 +147,7 @@
 
         /* 底部選單導覽 */
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; padding: 12px 0 calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid #e5e8eb; z-index: 200; }
-        .nav-item { color: #adb5bd; text-align: center; flex: 1; font-size: 11px; font-weight: 700; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; }
+        .nav-item { color: #adb5bd; text-align: center; flex: 1; font-size: 11px; font-weight: 900; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; }
         .nav-item.active { color: #28b0eb; }
     </style>
 </head>
@@ -220,7 +220,7 @@
         </section>
 
         <section id="page-passport" class="page-content" style="padding-top: 40px;">
-            <h3 style="font-weight: 700; text-align: center; margin: 0 0 15px 0; letter-spacing: 1px;">PASSPORT / 護照</h3>
+            <h3 style="font-weight: 900; text-align: center; margin: 0 0 15px 0; letter-spacing: 1px;">PASSPORT / 護照</h3>
             <div class="passport-card-layer">
                 <div class="passport-inner-card">
                     <div class="passport-photo-box">
@@ -264,7 +264,7 @@
             </div>
         </section>
 
-        <div id="cart-bar" style="display:none; position:fixed; bottom:95px; left:16px; right:16px; background:#191f28; color:#fff; padding:18px 24px; border-radius:20px; justify-content:space-between; align-items:center; z-index:250; cursor:pointer;" onclick="switchPage('checkout')"><span>已選 <span id="cart-qty" style="color:#28b0eb; font-weight:700;">0</span> 件商品</span><span style="font-weight:700;">查看清單 →</span></div>
+        <div id="cart-bar" style="display:none; position:fixed; bottom:95px; left:16px; right:16px; background:#191f28; color:#fff; padding:18px 24px; border-radius:20px; justify-content:space-between; align-items:center; z-index:250; cursor:pointer;" onclick="switchPage('checkout')"><span>已選 <span id="cart-qty" style="color:#28b0eb; font-weight:900;">0</span> 件商品</span><span style="font-weight:900;">查看清單 →</span></div>
         
         <nav class="bottom-nav">
             <div class="nav-item" id="nav-shop" onclick="switchPage('shop')"><i data-feather="shopping-bag"></i><span>弘大漫遊</span></div>
@@ -274,7 +274,7 @@
 
     <div id="register-modal" class="modal">
         <div class="modal-card">
-            <div style="text-align: center; margin-bottom: 20px;"><h2 style="font-weight: 700; margin:0; font-size: 20px;">報到櫃檯</h2></div>
+            <div style="text-align: center; margin-bottom: 20px;"><h2 style="font-weight:900; margin:0; font-size: 20px;">報到櫃檯</h2></div>
             <div class="modal-body">
                 <div class="form-item">
                     <div class="row-flex">
@@ -308,7 +308,7 @@
     <div id="order-detail-modal" class="modal">
         <div class="modal-card">
             <div class="modal-header-centered">
-                <h2 style="font-weight: 700; margin:0; font-size: 22px;">訂單明細</h2>
+                <h2 style="font-weight:900; margin:0; font-size: 22px;">訂單明細</h2>
                 <div style="margin-top: 4px;">
                     <span class="order-id-label" id="m-order-id" style="display:inline-block;">編號: --------</span>
                     <button id="copy-btn" class="copy-btn" onclick="copyOrderId()"><i data-feather="copy" style="width:12px;"></i>複製</button>
@@ -324,7 +324,7 @@
                 <div class="modal-section">
                     <span class="modal-section-title">訂購商品</span>
                     <div id="m-items-container"></div>
-                    <div class="detail-item" style="margin-top:15px; border-top:1px solid #eee; padding-top:12px;"><div style="font-weight:700; color:#191f28;">匯款金額</div><div class="detail-val" id="m-total" style="color:#28b0eb; font-size:18px; font-weight:700;"></div></div>
+                    <div class="detail-item" style="margin-top:15px; border-top:1px solid #eee; padding-top:12px;"><div style="font-weight:900; color:#191f28;">匯款金額</div><div class="detail-val" id="m-total" style="color:#28b0eb; font-size:18px; font-weight:900;"></div></div>
                 </div>
                 <p style="font-size: 12px; color: var(--gray); text-align: center; line-height: 1.5; margin: 10px 0;">請截圖此畫面回傳至 LINE@<br>核對金額無誤後即可進行匯款。</p>
             </div>
@@ -335,7 +335,6 @@
     <script>
         const LIFF_ID = '2009405888-D5absVA3';
         const SUPABASE_URL = 'https://ivpctyqlrkjstfsoweeh.supabase.co';
-        /* 修正：將金鑰內部亂入損壞的「xH鏡像與中文字」精準剔除，恢復成正確的官方金鑰，解決全站通訊無反應問題 */
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml2cGN0eXFscmtqc3Rmc293ZWVoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTk1MTksImV4cCI6MjA4ODc3NTUxOX0.DYgzhaTH3_5NFwv009ZfZAshfUnCW2PeTuNcJ9feyMU';
         
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -480,24 +479,26 @@
         function autoGrow(element) { element.style.height = '48px'; if (element.scrollHeight > 48) { element.style.height = (element.scrollHeight) + "px"; } }
         function changeCat(el) { clearError(el); }
 
+        // 修正：全面補齊 upload 函式所需的完整變數讀取、欄位驗證、防重複送出鎖定與 Supabase 對齊欄位，修復無法登錄的問題
         async function upload() {
             const btn = document.querySelector('#add-modal .btn-main');
             const cat = document.getElementById('in-cat'), name = document.getElementById('in-name'), price = document.getElementById('in-price'), url = document.getElementById('in-url'), opt = document.getElementById('in-option');
             let valid = true;
             if(!cat.value){ cat.classList.add('error'); valid=false; }
             if(!name.value.trim()){ name.classList.add('error'); valid=false; }
-            if(!url.value.trim()){ url.value.classList.add('error'); valid=false; }
+            // 修正點：移除 url 的必填前端代碼驗證，允許其為空。
             if(!valid) return;
             
             if(btn) { btn.disabled = true; btn.innerText = "處理中..."; }
             const taiwanTime = new Date().toISOString();
             
+            // 修正點：當網址留空時，向 Supabase 傳送 null（空值）而非空字串，以兼容格式檢查約束
             const { error } = await supabaseClient.from('products').insert({ 
                 category: cat.value,
                 name_zh: name.value.trim(), 
                 option: opt.value.trim() || "",
                 price_nt: price.value || 0, 
-                olive_url: url.value.trim(), 
+                olive_url: url.value.trim() || null, 
                 created_by: userLineId,
                 is_active: false, 
                 created_at: taiwanTime
