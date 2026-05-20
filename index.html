@@ -135,11 +135,11 @@
             padding-bottom: 110px; /* 留出底部導覽選單空間避免重疊 */
         }
 
-        /* 修正 3：功能選單按鈕改回橫向並排一行的方形橫式長方形美學設計（長寬比為 2 / 1，縮短高度不拆成兩行） */
+        /* 修正 3：調整按鈕尺寸成橫式扁平長方形（比例為 2 / 1，縮短高度，依然保持並排一行不拆行） */
         .passport-btn-group { display: flex; flex-direction: row; gap: 16px; margin-top: 24px; width: 100%; box-sizing: border-box; }
         .passport-action-btn { 
             flex: 1; 
-            aspect-ratio: 2 / 1; /* 修正點：由 1 / 1 正方形改為 2 / 1 橫式扁平長方形（等同 800*400pt 比例） */
+            aspect-ratio: 2 / 1; /* 由原來的 1/1 方形精準演化為 2/1 橫條扁平化比例 */
             background: #ffffff; 
             border: none; 
             border-radius: 24px; 
@@ -160,6 +160,10 @@
         }
         .passport-action-btn:active { background: #f8f9fa; transform: translateY(2px); }
         .passport-action-btn svg, .passport-action-btn iconify-icon { width: 24px; height: 24px; color: #4e5968; display: flex; align-items: center; justify-content: center; }
+
+        /* 動態進度條狀態激活控量 */
+        .timeline-dot.active { background: var(--primary) !important; box-shadow: 0 0 0 4px rgba(40, 176, 235, 0.2); }
+        .timeline-label.active { color: #ffffff !important; font-weight: 900 !important; font-size: 12px !important; opacity: 1 !important; }
 
         /* 訂單列表追蹤樣式 */
         .order-list-item { background: #fff; padding: 20px; border-radius: 24px; margin-bottom: 12px; cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.03); display: flex; align-items: center; gap: 15px; border: 1px solid transparent; transition: 0.2s; }
@@ -244,7 +248,7 @@
                         <div class="form-item"><label class="form-label">門市代碼<span class="req-tag" id="tag-ship-code">*必填</span></label><input type="text" id="ship-code" class="input-box" placeholder="門市代碼" oninput="clearError(this)"></div>
                     </div>
                 </div>
-                <div class="list-row" style="border-top:1px solid #f2f4f6; margin-top: 20px; padding-top: 20px;"><div class="list-row"><div class="list-left"><span style="font-weight:700;">包材、紙箱</span><br><small style="color:#adb5bd;">NT$ 10 / 個</small></div><div class="qty-ctrl"><button class="qty-btn" onclick="updatePacking(-1)"><i data-feather="minus" style="width:16px;"></i></button><span id="qty-packing" class="qty-num">1</span><button class="qty-btn" onclick="updatePacking(1)"><i data-feather="plus" style="width:16px;"></i></button></div></div>
+                <div class="list-row" style="border-top:1px solid #f2f4f6; margin-top: 20px; padding-top: 20px;"><div class="list-left"><span style="font-weight:700;">包材、紙箱</span><br><small style="color:#adb5bd;">NT$ 10 / 個</small></div><div class="qty-ctrl"><button class="qty-btn" onclick="updatePacking(-1)"><i data-feather="minus" style="width:16px;"></i></button><span id="qty-packing" class="qty-num">1</span><button class="qty-btn" onclick="updatePacking(1)"><i data-feather="plus" style="width:16px;"></i></button></div></div>
             </div>
             <div class="bottom-summary" id="shipping-summary">
                 <div class="summary-details"><div class="row-sm"><span>小計</span><span id="sum-items">NT$ 0</span></div><div class="row-sm"><span>運費</span><span id="sum-shipping">NT$ 0</span></div><div class="row-sm"><span>包材</span><span id="sum-packing">NT$ 10</span></div></div>
@@ -282,6 +286,31 @@
                     <span>我的訂單</span>
                 </button>
             </div>
+
+            <div class="card-box" style="margin-top: 24px; padding: 35px 20px 25px 20px; background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 28px;">
+                <div style="position: relative;">
+                    <div id="timeline-indicator" style="position: absolute; top: -30px; transform: translateX(-50%); left: 0%; transition: left 0.4s cubic-bezier(0.25, 1, 0.5, 1); color: #ffca28;">
+                        <iconify-icon icon="fa6-solid:person-walking-luggage" style="font-size: 26px;"></iconify-icon>
+                    </div>
+                    
+                    <div style="position: relative; height: 4px; background: rgba(255,255,255,0.3); border-radius: 2px; display: flex; justify-content: space-between; align-items: center; margin: 0 15px;">
+                        <div id="timeline-progress" style="position: absolute; left: 0; top: 0; height: 100%; background: #ffca28; width: 0%; transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1); border-radius: 2px;"></div>
+                        
+                        <div class="timeline-dot" style="width: 12px; height: 12px; background: rgba(255,255,255,0.6); border-radius: 50%; z-index: 2; position: relative; transition: 0.3s;">
+                            <span class="timeline-label" style="position: absolute; top: 20px; left: 50%; transform: translateX(-50%); white-space: nowrap; font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.5); opacity: 0.8; transition: 0.3s;">休息等候</span>
+                        </div>
+                        <div class="timeline-dot" style="width: 12px; height: 12px; background: rgba(255,255,255,0.6); border-radius: 50%; z-index: 2; position: relative; transition: 0.3s;">
+                            <span class="timeline-label" style="position: absolute; top: 20px; left: 50%; transform: translateX(-50%); white-space: nowrap; font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.5); opacity: 0.8; transition: 0.3s;">大促開團</span>
+                        </div>
+                        <div class="timeline-dot" style="width: 12px; height: 12px; background: rgba(255,255,255,0.6); border-radius: 50%; z-index: 2; position: relative; transition: 0.3s;">
+                            <span class="timeline-label" style="position: absolute; top: 20px; left: 50%; transform: translateX(-50%); white-space: nowrap; font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.5); opacity: 0.8; transition: 0.3s;">最後倒數</span>
+                        </div>
+                        <div class="timeline-dot" style="width: 12px; height: 12px; background: rgba(255,255,255,0.6); border-radius: 50%; z-index: 2; position: relative; transition: 0.3s;">
+                            <span class="timeline-label" style="position: absolute; top: 20px; left: 50%; transform: translateX(-50%); white-space: nowrap; font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.5); opacity: 0.8; transition: 0.3s;">行程結束</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
 
         <section id="page-orders" class="page-content">
@@ -302,7 +331,7 @@
             </div>
         </section>
 
-        <div id="cart-bar" style="display:none; position:fixed; bottom:95px; left:16px; right:16px; background:#191f28; color:#fff; padding:18px 24px; border-radius:20px; justify-content:space-between; align-items:center; z-index:250; cursor:pointer;" onclick="switchPage('checkout')"><span>已選 <span id="cart-qty" style="color:#28b0eb; font-weight:900;">0</span> 件商品</span><span style="font-weight:900;">查看清單 →</span></div>
+        <div id="cart-bar" style="display:none; position:fixed; bottom:95px; left:16px; right:16px; background:#191f28; color:#fff; padding:18px 24px; border-radius:20px; justify-content:space-between; align-items:center; z-index:250; cursor:pointer;" onclick="switchPage('checkout')"><span>已選 <span id="cart-qty" style="color:#28b0eb; font-weight:900;">0</span> 件商品</span><span style="font-weight:700;">查看清單 →</span></div>
         
         <nav class="bottom-nav">
             <div class="nav-item" id="nav-shop" onclick="switchPage('shop')"><iconify-icon icon="fluent:shopping-bag-28-filled" style="font-size: 24px; color: currentColor;"></iconify-icon><span>弘大漫遊</span></div>
@@ -387,11 +416,12 @@
                 userLinePicture = profile.pictureUrl || "https://img.icons8.com/illustrations/96/user.png";
 
                 await fetchProducts();
+                // 修正 2：加載產品後同步查詢後端階段控制表狀態
+                await fetchSystemControl();
 
                 const { data } = await supabaseClient.from('profiles').select('*').or(`line_id.eq.${userLineId},user_id.eq.${userLineId}`);
                 
                 document.getElementById('main-app').style.display = 'block';
-                // 關鍵加固：不論資料庫狀態，載入完成立刻解除 Loading 天藍色底牆，徹底避免出現網頁卡死的可能
                 document.getElementById('login-gate').style.display = 'none';
 
                 if (data && data.length > 0) {
@@ -411,6 +441,58 @@
                 document.getElementById('main-app').style.display = 'block';
                 document.getElementById('login-gate').style.display = 'none';
             }
+        }
+
+        // 修正 2：異步連線 Supabase 讀取並計算代購階段指標渲染
+        async function fetchSystemControl() {
+            try {
+                const { data, error } = await supabaseClient.from('system_control').select('*').eq('project', '代購階段');
+                if (data && data.length > 0) {
+                    const sys = data[0];
+                    let activeStep = 0; // 預設 0 代表休息等候
+                    
+                    const now = new Date();
+                    const year = now.getFullYear();
+                    const month = String(now.getMonth() + 1).padStart(2, '0');
+                    const date = String(now.getDate()).padStart(2, '0');
+                    const todayStr = `${year}-${month}-${date}`;
+                    const currentHour = now.getHours();
+
+                    if (sys.open) activeStep = 1;
+                    if (sys.finally) activeStep = 2;
+                    if (sys.finish && sys.finish === todayStr && currentHour >= 12) {
+                        activeStep = 3;
+                    }
+
+                    renderTimelineUI(activeStep);
+                } else {
+                    renderTimelineUI(0);
+                }
+            } catch (err) {
+                console.error(err);
+                renderTimelineUI(0);
+            }
+        }
+
+        function renderTimelineUI(step) {
+            const dots = document.querySelectorAll('.timeline-dot');
+            const labels = document.querySelectorAll('.timeline-label');
+            const indicator = document.getElementById('timeline-indicator');
+            const progress = document.getElementById('timeline-progress');
+
+            dots.forEach((dot, idx) => {
+                if (idx <= step) dot.classList.add('active');
+                else dot.classList.remove('active');
+            });
+
+            labels.forEach((label, idx) => {
+                if (idx === step) label.classList.add('active');
+                else label.classList.remove('active');
+            });
+
+            const percentage = (step / 3) * 100;
+            if (indicator) indicator.style.left = `${percentage}%`;
+            if (progress) progress.style.width = `${percentage}%`;
         }
 
         async function fetchProducts() {
@@ -522,7 +604,7 @@
         function autoGrow(element) { element.style.height = '48px'; if (element.scrollHeight > 48) { element.style.height = (element.scrollHeight) + "px"; } }
         function changeCat(el) { clearError(el); }
 
-        // 修正 2：當來源網址留空時發送 null（空值）進資料庫，可完美繞過格式約束（NOT NULL / http限制）以保證順利寫入
+        // 修正 2：商品新增上傳優化空值為 null 機制
         async function upload() {
             const btn = document.querySelector('#add-modal .btn-main');
             const cat = document.getElementById('in-cat'), name = document.getElementById('in-name'), price = document.getElementById('in-price'), url = document.getElementById('in-url'), opt = document.getElementById('in-option');
@@ -675,8 +757,17 @@
             if(p === 'checkout') renderCheckout();
             if(p === 'shipping') calculateFinal();
             if(p === 'orders') fetchUserOrders(); 
+            // 當切換到護照頁時重新同步階段動態
+            if(p === 'passport') fetchSystemControl();
             
             window.scrollTo(0,0); feather.replace();
+        }
+
+        function initBirthSelects() {
+            const sy = document.getElementById('reg-birth-y'), sm = document.getElementById('reg-birth-m'), sd = document.getElementById('reg-birth-d');
+            sy.innerHTML = '<option value="">年</option>' + Array.from({length: 87}, (_, i) => `<option value="${1940+i}">${1940+i}</option>`).reverse().join('');
+            sm.innerHTML = '<option value="">月</option>' + Array.from({length: 12}, (_, i) => `<option value="${(i+1).toString().padStart(2,'0')}">${(i+1).toString().padStart(2,'0')}</option>`).join('');
+            sd.innerHTML = '<option value="">日</option>' + Array.from({length: 31}, (_, i) => `<option value="${(i+1).toString().padStart(2,'0')}">${(i+1).toString().padStart(2,'0')}</option>`).join('');
         }
 
         window.onload = init;
