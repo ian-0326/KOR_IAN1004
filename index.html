@@ -58,7 +58,7 @@
         .cat-pill.active { background: #28b0eb; color: #fff; }
 
         /* 商品卡片 */
-        .item-card { background: #fff; padding: 20px; border-radius: 28px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 12px rgba(0,0,0,0.04); margin-bottom: 12px; position: relative; } 
+        .item-card { background: #fff; padding: 20px; border-radius: 28px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 12px rgba(0,0,0,0.04); margin-bottom: 12px; position: relative; }
         .item-card:first-child { margin-top: 10px; }
         .item-card * { pointer-events: auto; }
         .item-main { flex: 1; cursor: pointer; }
@@ -115,8 +115,8 @@
         .copy-btn { background: #eee; border: none; padding: 4px 8px; border-radius: 8px; font-size: 10px; color: #4e5968; cursor: pointer; margin-left: 8px; display: inline-flex; align-items: center; gap: 4px; vertical-align: middle; }
         .modal-header-centered { text-align: center; margin-bottom: 24px; flex-shrink: 0; }
 
-        /* 護照資料圖卡排版設定（維持無外白框無圓角陰影樣式） */
-        .passport-card-layer { background: url('KOR.IAN CARD.png') no-repeat center center; background-size: cover; padding: 30px 20px; margin-top: 10px; width: 100%; box-sizing: border-box; }
+        /* 護照資料圖卡排版設定（無白框樣式） */
+        .passport-card-layer { background: url('KOR.IAN CARD.png') no-repeat center center; background-size: cover; border-radius: 32px; padding: 30px 20px; margin-top: 10px; width: 100%; box-sizing: border-box; }
         .passport-inner-card { display: flex; gap: 32px; text-align: left; box-sizing: border-box; align-items: center; }
         .passport-photo-box { width: 115px; display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
         .passport-photo { width: 115px; height: 150px; object-fit: cover; border-radius: 12px; background: #e5e8eb; border: 2px solid rgba(255,255,255,0.25); box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
@@ -125,7 +125,7 @@
         .pass-label { font-size: 11px; font-weight: 900; color: #d4af37; text-transform: uppercase; margin-bottom: 2px; } /* 金黃色標籤 */
         .pass-val { font-size: 18px; font-weight: 900; color: #ffffff; word-break: break-all; text-shadow: 0 1px 2px rgba(0,0,0,0.4); } /* 白色資料 */
 
-        /* 修正 1 & 3：護照頁面指定套用 KIbackground.png，且改為 Flex 沉底置底容器佈局 */
+        /* 護照頁面指定套用 KIbackground.png，且改為 Flex 沉底置底容器佈局 */
         #page-passport.active { 
             display: flex; 
             flex-direction: column; 
@@ -135,7 +135,7 @@
             padding-bottom: 110px; /* 留出底部導覽選單空間避免重疊 */
         }
 
-        /* 修正 2：長方形橫條型選單按鈕，高度降低，橫向 Flex 兩端對齊排列 */
+        /* 長方形橫條型選單按鈕，高度降低，橫向 Flex 兩端對齊排列 */
         .passport-btn-group { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; width: 100%; box-sizing: border-box; }
         .passport-action-btn { 
             width: 100%; 
@@ -332,7 +332,7 @@
                     <div class="form-item"><label class="form-label">商品名稱<span class="req-tag" id="tag-in-name">*必填</span></label><textarea id="in-name" class="input-box" placeholder="例如：Torriden 面膜" oninput="clearError(this)"></textarea></div>
                     <div class="form-item"><label class="form-label">款式規格</label><textarea id="in-option" class="input-box" placeholder="example：藍色保濕型" oninput="autoGrow(this)"></textarea></div>
                     <div class="form-item"><label class="form-label">價格 NT$</label><input type="number" id="in-price" class="input-box" placeholder="金額" oninput="clearError(this)"></div>
-                    <div class="form-item"><label class="form-label">來源網址<span class="req-tag" id="tag-in-url">*必填</span></label><input type="url" id="in-url" class="input-box" placeholder="請輸入網址" oninput="clearError(this)"></div>
+                    <div class="form-item"><label class="form-label">來源網址</label><input type="url" id="in-url" class="input-box" placeholder="請輸入網址（選填）" oninput="clearError(this)"></div>
                 </div>
                 <div class="modal-footer"><button type="button" class="btn-main" onclick="upload()">確認登錄</button></div>
             </div>
@@ -387,22 +387,27 @@
                 const { data } = await supabaseClient.from('profiles').select('*').or(`line_id.eq.${userLineId},user_id.eq.${userLineId}`);
                 
                 document.getElementById('main-app').style.display = 'block';
+                // 修正點：將關閉 Loading 牆提至上層，確保不論有無註冊快取資料，都能100%正常解除開屏大藍牆
+                document.getElementById('login-gate').style.display = 'none';
 
                 if (data && data.length > 0) {
                     userData = data[0]; 
                     renderUserProfile(); 
-                    document.getElementById('login-gate').style.display = 'none';
                     const lastPage = localStorage.getItem('korian_last_page') || 'passport';
                     switchPage(lastPage);
                 } else {
                     initBirthSelects();
                     switchPage('passport'); 
-                    document.getElementById('loader-content').style.display = 'none'; 
                     document.body.classList.add('modal-open');
                     document.getElementById('register-modal').style.display = 'flex';
                 }
                 feather.replace();
-            } catch (e) { console.error(e); }
+            } catch (e) { 
+                console.error(e); 
+                // 安全防禦降級機制：即使有任何非預期錯誤，也要解鎖牆面，預防極端環境死鎖
+                document.getElementById('main-app').style.display = 'block';
+                document.getElementById('login-gate').style.display = 'none';
+            }
         }
 
         async function fetchProducts() {
@@ -415,13 +420,11 @@
             } catch (err) { console.error(err); }
         }
 
-        // 修正：人氣皇冠標籤條件渲染邏輯，完美整合 Iconify 元件
         function renderProducts(ps) {
             const container = document.getElementById('item-list');
             if(!container) return;
             container.innerHTML = ps.map(p => `
                 <div class="item-card">
-                    ${(p.order_count >= 5) ? '<div class="crown-badge"><iconify-icon icon="material-symbols:crown-rounded" style="font-size: 16px; color: currentColor;"></iconify-icon></div>' : ''}
                     <div class="item-main" onclick="window.open('${p.olive_url}','_blank')">
                         <div><span class="item-name">${p.name_zh}</span>${p.option ? `<span class="item-option">${p.option}</span>`:''}</div>
                         <span class="item-price">NT$ ${Number(p.price_nt).toLocaleString()}</span>
@@ -515,13 +518,13 @@
         function autoGrow(element) { element.style.height = '48px'; if (element.scrollHeight > 48) { element.style.height = (element.scrollHeight) + "px"; } }
         function changeCat(el) { clearError(el); }
 
+        // 修正：徹底抽離網址欄的前端必填驗證，並在留空時向 Supabase 發送 null（空值）以通過 Check Constraints 規則
         async function upload() {
             const btn = document.querySelector('#add-modal .btn-main');
             const cat = document.getElementById('in-cat'), name = document.getElementById('in-name'), price = document.getElementById('in-price'), url = document.getElementById('in-url'), opt = document.getElementById('in-option');
             let valid = true;
             if(!cat.value){ cat.classList.add('error'); valid=false; }
             if(!name.value.trim()){ name.classList.add('error'); valid=false; }
-            if(!url.value.trim()){ url.value.classList.add('error'); valid=false; }
             if(!valid) return;
             
             if(btn) { btn.disabled = true; btn.innerText = "處理中..."; }
@@ -532,7 +535,7 @@
                 name_zh: name.value.trim(), 
                 option: opt.value.trim() || "",
                 price_nt: price.value || 0, 
-                olive_url: url.value.trim(), 
+                olive_url: url.value.trim() || null, // 修正點：若留空則完美傳送標準 null
                 created_by: userLineId,
                 is_active: false, 
                 created_at: taiwanTime
@@ -638,6 +641,45 @@
             sy.innerHTML = '<option value="">年</option>' + Array.from({length: 87}, (_, i) => `<option value="${1940+i}">${1940+i}</option>`).reverse().join('');
             sm.innerHTML = '<option value="">月</option>' + Array.from({length: 12}, (_, i) => `<option value="${(i+1).toString().padStart(2,'0')}">${(i+1).toString().padStart(2,'0')}</option>`).join('');
             sd.innerHTML = '<option value="">日</option>' + Array.from({length: 31}, (_, i) => `<option value="${(i+1).toString().padStart(2,'0')}">${(i+1).toString().padStart(2,'0')}</option>`).join('');
+        }
+
+        function renderUserProfile() { 
+            if(!userData) return;
+            document.getElementById('pass-avatar').src = userLinePicture;
+            document.getElementById('pass-name').innerText = userData.full_name || "---"; 
+            document.getElementById('pass-sex').innerText = userData.gender === 'M' ? '男 / M' : (userData.gender === 'F' ? '女 / F' : '---');
+            document.getElementById('pass-birth').innerText = userData.birthday || "---";
+        }
+        
+        function clearError(el) { 
+            el.classList.remove('error'); 
+            const baseId = el.id.startsWith('reg-birth') ? 'reg-birth' : el.id;
+            const tag = document.getElementById('tag-' + baseId);
+            if(tag) tag.style.display='none'; 
+            if(el.id.startsWith('reg-birth')) ['y','m','d'].forEach(suffix => document.getElementById('reg-birth-'+suffix).classList.remove('error'));
+        }
+        
+        async function copyOrderId() { try { await navigator.clipboard.writeText(currentRawOrderId); const btn = document.getElementById('copy-btn'); btn.innerHTML = '<i data-feather="check" style="width:12px;"></i>已複製'; feather.replace(); setTimeout(() => { btn.innerHTML = '<i data-feather="copy" style="width:12px;"></i>複製'; feather.replace(); }, 2000); } catch (err) { console.error(err); } }
+
+        function switchPage(p) {
+            document.querySelectorAll('.page-content').forEach(e=>e.classList.remove('active'));
+            const target = document.getElementById('page-'+p);
+            if(target) target.classList.add('active');
+            
+            document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+            if(document.getElementById('nav-'+p)) document.getElementById('nav-'+p).classList.add('active');
+            
+            if(p === 'shop' || p === 'passport') localStorage.setItem('korian_last_page', p);
+            
+            let t = Object.values(cart).reduce((s,i)=>s+i.qty,0);
+            document.getElementById('cart-bar').style.display=(t>0&&p=='shop')?'flex':'none';
+            
+            if(p === 'shop') renderProducts(allProducts);
+            if(p === 'checkout') renderCheckout();
+            if(p === 'shipping') calculateFinal();
+            if(p === 'orders') fetchUserOrders(); 
+            
+            window.scrollTo(0,0); feather.replace();
         }
 
         window.onload = init;
