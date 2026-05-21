@@ -187,11 +187,6 @@
         }
         .passport-circle-btn:active { transform: scale(0.95); background: rgba(255, 255, 255, 0.35); }
 
-        /* 修正 2：在下單流程按鈕右側加入一個一樣樣式的「語言轉換」按鈕，寬度間距推開 */
-        #passport-lang-btn {
-            left: 74px; /* 44px按鈕寬 + 16px左距 + 14px間距 */
-        }
-
         /* 橫向並排一行的扁平橫式長方形按鈕排版優化設定 */
         .passport-btn-group { display: flex; flex-direction: row; gap: 16px; margin-top: 24px; width: 100%; box-sizing: border-box; }
         .passport-action-btn { 
@@ -223,14 +218,14 @@
         .timeline-dot.active { background: #ffca28 !important; box-shadow: 0 0 0 4px rgba(255, 202, 40, 0.25); }
         .timeline-label.active { color: #ffffff !important; font-weight: 900 !important; font-size: 12px !important; opacity: 1 !important; }
 
-        /* 修正 1：核心平滑轉化槽，為進度條與純白行走指標賦予完美的 CSS 轉化緩動動畫 */
+        /* 修正 1 & 2：核心平滑轉化槽，放慢動效速度（由1.2s完美調校至2.5s高階緩動），並配置完美垂直置中軌道 */
         #timeline-indicator {
             position: absolute; 
-            top: -38px; /* 修正：拉開指標與線條的距離，避免黏在一起 */
+            top: -38px; 
             transform: translateX(-50%); 
             left: 0%; 
-            transition: left 1.2s cubic-bezier(0.4, 0, 0.2, 1); /* 平滑緩動滑動動效 */
-            color: #ffffff; /* 修正：指標 icon 改用白色 */
+            transition: left 2.5s cubic-bezier(0.4, 0, 0.2, 1); /* 修正 2：放慢移動速度至 2.5 秒，呈現絲滑高級感 */
+            color: #ffffff; 
         }
         #timeline-progress {
             position: absolute; 
@@ -239,7 +234,7 @@
             height: 100%; 
             background: #ffca28; 
             width: 0%; 
-            transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1); /* 平滑同步伸展橘色線條 */
+            transition: width 2.5s cubic-bezier(0.4, 0, 0.2, 1); /* 修正 2：同步放慢橘色線條伸展速度至 2.5 秒 */
             border-radius: 2px;
         }
 
@@ -368,11 +363,15 @@
 
             <div class="timeline-card-container">
                 <div style="position: relative;">
-                    <div id="timeline-indicator">
-                        <iconify-icon icon="fa6-solid:person-walking-luggage" style="font-size: 26px;"></iconify-icon>
-                    </div>
                     
                     <div style="position: relative; height: 4px; background: rgba(255,255,255,0.3); border-radius: 2px; display: flex; justify-content: space-between; align-items: center; margin: 0 15px;">
+                        
+                        <div style="position: absolute; left: 6px; right: 6px; top: 0; bottom: 0; pointer-events: none;">
+                            <div id="timeline-indicator">
+                                <iconify-icon icon="fa6-solid:person-walking-luggage" style="font-size: 26px;"></iconify-icon>
+                            </div>
+                        </div>
+
                         <div id="timeline-progress"></div>
                         
                         <div class="timeline-dot" style="width: 12px; height: 12px; background: rgba(255,255,255,0.6); border-radius: 50%; z-index: 2; position: relative;">
@@ -413,9 +412,9 @@
         <div id="cart-bar" style="display:none; position:fixed; bottom:95px; left:16px; right:16px; background:#191f28; color:#fff; padding:18px 24px; border-radius:20px; justify-content:space-between; align-items:center; z-index:250; cursor:pointer;" onclick="switchPage('checkout')"><span id="cart-qty-wrapper">已選 <span id="cart-qty" style="color:#28b0eb; font-weight:900;">0</span> 件商品</span><span id="view-list-text" style="font-weight:700;">查看清單 →</span></div>
         
         <nav class="bottom-nav">
-            <div class="nav-item" id="nav-shop" onclick="switchPage('shop')"><iconify-icon icon="fluent:shopping-bag-28-filled" style="font-size: 24px; color: currentColor;"></iconify-icon><span class="i-trans" data-key="navShop">弘大漫遊</span></div>
-            <div class="nav-item" id="nav-orders" onclick="switchPage('orders')"><iconify-icon icon="ic:round-luggage" style="font-size: 24px; color: currentColor;"></iconify-icon><span class="i-trans" data-key="navOrders">托運行李</span></div>
-            <div class="nav-item" id="nav-passport" onclick="switchPage('passport')"><iconify-icon icon="ph:identification-badge-fill" style="font-size: 24px; color: currentColor;"></iconify-icon><span class="i-trans" data-key="navPassport">我的護照</span></div>
+            <div class="nav-item" id="nav-shop" onclick="switchPage('shop')"><iconify-icon icon="fluent:shopping-bag-28-filled" style="font-size: 24px; color: currentColor;"></iconify-icon><span>弘大漫遊</span></div>
+            <div class="nav-item" id="nav-orders" onclick="switchPage('orders')"><iconify-icon icon="ic:round-luggage" style="font-size: 24px; color: currentColor;"></iconify-icon><span>托運行李</span></div>
+            <div class="nav-item" id="nav-passport" onclick="switchPage('passport')"><iconify-icon icon="ph:identification-badge-fill" style="font-size: 24px; color: currentColor;"></iconify-icon><span>我的護照</span></div>
         </nav>
     </div>
 
@@ -487,7 +486,7 @@
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         let userLineId = "", userLinePicture = "", userData = null, selectedGender = "", allProducts = [], cart = {}, shipMethod = '', packingQty = 1, currentRawOrderId = "", allUserOrders = [], isFromCheckout = false;
         
-        // 修正 1：建立完整、穩固的多國語系字典對照表（排除商品名稱）
+        // 建立完整、穩固的多國語系字典對照表（排除商品名稱）
         let currentLang = 'zh';
         const TRANSLATIONS = {
             zh: {
@@ -541,21 +540,18 @@
         };
 
         function translatePageUI() {
-            // 翻譯標準純文本屬性
             document.querySelectorAll('.i-trans').forEach(el => {
                 const key = el.getAttribute('data-key');
                 if (key && TRANSLATIONS[currentLang][key]) {
                     el.innerText = TRANSLATIONS[currentLang][key];
                 }
             });
-            // 翻譯 Input 表單 Placeholder 屬性
             document.querySelectorAll('.i-trans-placeholder').forEach(el => {
                 const key = el.getAttribute('data-placeholder-key');
                 if (key && TRANSLATIONS[currentLang][key]) {
                     el.setAttribute('placeholder', TRANSLATIONS[currentLang][key]);
                 }
             });
-            // 重新刷新局部渲染組件語意（購物車條、未出單提示）
             let t = Object.values(cart).reduce((s,i)=>s+i.qty,0);
             if (t > 0) {
                 document.getElementById('cart-qty-wrapper').innerHTML = TRANSLATIONS[currentLang]['cartSelected'].replace('{qty}', `<span id="cart-qty" style="color:#28b0eb; font-weight:900;">${t}</span>`);
@@ -574,7 +570,7 @@
             if (currentLang === 'en') iconEl.setAttribute('icon', 'icon-park-solid:english');
             
             translatePageUI();
-            fetchSystemControl(); // 驅動時序進度條重繪防衝突
+            fetchSystemControl(); 
             if (document.getElementById('page-orders').classList.contains('active')) fetchUserOrders();
         }
 
@@ -605,7 +601,7 @@
                     document.body.classList.add('modal-open');
                     document.getElementById('register-modal').style.display = 'flex';
                 }
-                translatePageUI(); // 預設語系初始化
+                translatePageUI(); 
                 feather.replace();
             } catch (e) { 
                 console.error(e); 
@@ -630,24 +626,24 @@
 
                     if (sys.open) activeStep = 1;
                     if (sys.finally) activeStep = 2;
+                    
                     if (sys.finish && sys.finish === todayStr && currentHour >= 12) {
                         activeStep = 3;
                     }
 
-                    // 處理第四個結點標籤的動態顯示（含 MM-DD 格式化裁剪與回歸）
-                    const finalLabel = document.getElementById('final-step-label');
-                    if (finalLabel) {
+                    const labels = document.querySelectorAll('.timeline-label');
+                    if (labels && labels.length >= 4) {
                         if (sys.finish && sys.finish === todayStr && currentHour >= 12) {
-                            finalLabel.innerText = TRANSLATIONS[currentLang]['step3'];
+                            labels[3].innerText = "行程結束";
                         } else if (sys.open && sys.finish) {
                             const dateParts = sys.finish.split('-');
                             if (dateParts.length >= 3) {
-                                finalLabel.innerText = `${dateParts[1]}-${dateParts[2]}`; // 裁剪格式化為 MM-DD
+                                labels[3].innerText = `${dateParts[1]}-${dateParts[2]}`;
                             } else {
-                                finalLabel.innerText = sys.finish;
+                                labels[3].innerText = sys.finish;
                             }
                         } else {
-                            finalLabel.innerText = TRANSLATIONS[currentLang]['step3'];
+                            labels[3].innerText = "行程結束";
                         }
                     }
 
@@ -661,21 +657,18 @@
             }
         }
 
-        // 修正 2：實作自左向右平滑充能與指標滑動開屏載入動畫
         function renderTimelineUI(step) {
             const dots = document.querySelectorAll('.timeline-dot');
             const labels = document.querySelectorAll('.timeline-label');
             const indicator = document.getElementById('timeline-indicator');
             const progress = document.getElementById('timeline-progress');
 
-            // 1. 動效前置準備：先強制將線條與純白指標歸零重設到第一個點上（休息等候位置）
             if (indicator) indicator.style.left = "0%";
             if (progress) progress.style.width = "0%";
             
             dots.forEach(dot => dot.classList.remove('active'));
             labels.forEach(label => label.classList.remove('active'));
 
-            // 2. 利用非同步非阻塞延時，向目標點平滑展開點亮動畫與滑動
             setTimeout(() => {
                 dots.forEach((dot, idx) => {
                     if (idx <= step) dot.classList.add('active');
@@ -685,7 +678,6 @@
                     if (idx === step) label.classList.add('active');
                 });
 
-                // 修正 1：利用 (step / 3) 精準百分比定位，第四點對齊 100% 垂直完美歸位，不溢出靠右
                 const percentage = (step / 3) * 100;
                 if (indicator) indicator.style.left = `${percentage}%`;
                 if (progress) progress.style.width = `${percentage}%`;
@@ -736,7 +728,6 @@
             if(document.getElementById(`qty-${id}`)) document.getElementById(`qty-${id}`).innerText=cart[id].qty;
             let t = Object.values(cart).reduce((s,i)=>s+i.qty,0);
             
-            // 購物車條語系防拉扯渲染
             if (t > 0 && document.getElementById('page-shop').classList.contains('active')) {
                 document.getElementById('cart-bar').style.display = 'flex';
                 document.getElementById('cart-qty-wrapper').innerHTML = TRANSLATIONS[currentLang]['cartSelected'].replace('{qty}', `<span id="cart-qty" style="color:#28b0eb; font-weight:900;">${t}</span>`);
@@ -968,7 +959,7 @@
             if(p === 'orders') fetchUserOrders(); 
             if(p === 'passport') fetchSystemControl();
             
-            translatePageUI(); // 同步當前語系狀態
+            translatePageUI(); 
             window.scrollTo(0,0); feather.replace();
         }
 
