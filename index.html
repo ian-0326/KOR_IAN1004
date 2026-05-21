@@ -128,7 +128,7 @@
         .modal-section-title { font-size: 12px; font-weight: 900; color: #adb5bd; margin-bottom: 10px; display: block; }
         .order-item-row { display: flex; justify-content: space-between; align-items: flex-start; font-size: 14px; margin-bottom: 8px; line-height: 1.4; }
         .order-item-name { text-align: left; font-weight: 700; color: #191f28; padding-right: 15px; flex: 1; }
-        .order-item-qty { text-align: right; font-weight: 900; color: #28b0eb; white-space: nowrap; }
+        .order-item-qty { text-align: right; font-weight: 700; color: #28b0eb; white-space: nowrap; }
         .detail-item { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; }
         .detail-val { font-weight: 700; text-align: right; flex: 1; margin-left: 20px; word-break: break-all; }
         .copy-btn { background: #eee; border: none; padding: 4px 8px; border-radius: 8px; font-size: 10px; color: #4e5968; cursor: pointer; margin-left: 8px; display: inline-flex; align-items: center; gap: 4px; vertical-align: middle; }
@@ -183,11 +183,11 @@
             position: absolute; /* 絕對定位至最左上角 */
             top: 24px;
             left: 16px;
-            z-index: 10;
+            z-index: 999; /* 提升層級 */
         }
         .passport-circle-btn:active { transform: scale(0.95); background: rgba(255, 255, 255, 0.35); }
 
-        /* 修正 2：在下單流程按鈕右側加入一個一樣樣式的「語言轉換」按鈕，寬度間距推開 */
+        /* 語言轉換按鈕 */
         #passport-lang-btn {
             left: 74px; /* 44px按鈕寬 + 16px左距 + 14px間距 */
         }
@@ -219,28 +219,22 @@
         .passport-action-btn svg, .passport-action-btn iconify-icon { width: 22px; height: 22px; color: #4e5968; display: flex; align-items: center; justify-content: center; }
 
         /* 階梯圖卡進度條狀態激活控量 */
-        .timeline-card-container { margin-top: 24px; padding: 52px 20px 42px 20px; background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 28px; box-sizing: border-box; }
+        .timeline-card-container { margin-top: 24px; padding: 40px 20px 25px 20px; background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 28px; box-sizing: border-box; }
         .timeline-dot.active { background: #ffca28 !important; box-shadow: 0 0 0 4px rgba(255, 202, 40, 0.25); }
         .timeline-label.active { color: #ffffff !important; font-weight: 900 !important; font-size: 12px !important; opacity: 1 !important; }
 
-        /* 修正 1：核心平滑轉化槽，為進度條與純白行走指標賦予完美的 CSS 轉化緩動動畫 */
+        /* 修正 2：依據指令完全拔除 `transition` 的動畫轉化與時間參數，使其瞬間改道到位 */
         #timeline-indicator {
             position: absolute; 
-            top: -38px; /* 修正：拉開指標與線條的距離，避免黏在一起 */
+            top: -38px; 
             transform: translateX(-50%); 
             left: 0%; 
-            transition: left 1.2s cubic-bezier(0.4, 0, 0.2, 1); /* 平滑緩動滑動動效 */
-            color: #ffffff; /* 修正：指標 icon 改用白色 */
+            color: #ffffff; 
+            z-index: 5;
+            pointer-events: none;
         }
-        #timeline-progress {
-            position: absolute; 
-            left: 0; 
-            top: 0; 
-            height: 100%; 
-            background: #ffca28; 
-            width: 0%; 
-            transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1); /* 平滑同步伸展橘色線條 */
-            border-radius: 2px;
+        #timeline-arc-path {
+            /* 移除動畫屬性 */
         }
 
         /* 訂單列表追蹤樣式 */
@@ -329,11 +323,7 @@
                 <div class="list-row" style="border-top:1px solid #f2f4f6; margin-top: 20px; padding-top: 20px;"><div class="list-left"><span class="i-trans" data-key="boxMaterial">包材、紙箱</span><br><small style="color:#adb5bd;">NT$ 10 / 個</small></div><div class="qty-ctrl"><button class="qty-btn" onclick="updatePacking(-1)"><i data-feather="minus" style="width:16px;"></i></button><span id="qty-packing" class="qty-num">1</span><button class="qty-btn" onclick="updatePacking(1)"><i data-feather="plus" style="width:16px;"></i></button></div></div>
             </div>
             <div class="bottom-summary" id="shipping-summary">
-                <div class="summary-details">
-                    <div class="row-sm"><span class="i-trans" data-key="sumSubtotal">小計</span><span id="sum-items">NT$ 0</span></div>
-                    <div class="row-sm"><span class="i-trans" data-key="sumShippingFee">運費</span><span id="sum-shipping">NT$ 0</span></div>
-                    <div class="row-sm"><span class="i-trans" data-key="sumPackingFee">包材</span><span id="sum-packing">NT$ 10</span></div>
-                </div>
+                <div class="summary-details"><div class="row-sm"><span>小計</span><span id="sum-items">NT$ 0</span></div><div class="row-sm"><span>運費</span><span id="sum-shipping">NT$ 0</span></div><div class="row-sm"><span>包材</span><span id="sum-packing">NT$ 10</span></div></div>
                 <div class="row-lg" onclick="toggleSummary()"><span class="i-trans" data-key="sumGrandTotal">匯款總金額</span><div style="display:flex; align-items:center; gap:8px;"><span class="price-lg" id="sum-total">NT$ 0</span><i data-feather="chevron-up"></i></div></div>
                 <button class="btn-main i-trans" data-key="confirmOrderBtn" id="confirm-submit-btn" onclick="submitFinalOrder()">確認下單</button>
             </div>
@@ -367,44 +357,48 @@
             </div>
 
             <div class="timeline-card-container">
-                <div style="position: relative;">
-                    <div id="timeline-indicator">
+                <div style="position: relative; width: 220px; height: 125px; margin: 0 auto; text-align: center;">
+                    
+                    <svg viewBox="0 0 220 120" style="width: 100%; height: auto; display: block; margin: 0 auto;">
+                        <path d="M 30 100 A 80 80 0 0 1 190 100" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="6" stroke-linecap="round"/>
+                        <path id="timeline-arc-path" d="M 30 100 A 80 80 0 0 1 190 100" fill="none" stroke="#ffca28" stroke-width="6" stroke-linecap="round" 
+                              stroke-dasharray="251.3" stroke-dashoffset="251.3"/>
+                    </svg>
+
+                    <div id="timeline-indicator" style="position: absolute; transform: translate(-50%, -50%); left: 30px; top: 100px;">
                         <iconify-icon icon="fa6-solid:person-walking-luggage" style="font-size: 26px;"></iconify-icon>
                     </div>
                     
-                    <div style="position: relative; height: 4px; background: rgba(255,255,255,0.3); border-radius: 2px; display: flex; justify-content: space-between; align-items: center; margin: 0 15px;">
-                        <div id="timeline-progress"></div>
-                        
-                        <div class="timeline-dot" style="width: 12px; height: 12px; background: rgba(255,255,255,0.6); border-radius: 50%; z-index: 2; position: relative;">
-                            <span class="timeline-label i-trans" data-key="step0" style="position: absolute; top: 20px; left: 50%; transform: translateX(-50%); white-space: nowrap; font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.5); opacity: 0.8; transition: 0.3s;">休息等候</span>
-                        </div>
-                        <div class="timeline-dot" style="width: 12px; height: 12px; background: rgba(255,255,255,0.6); border-radius: 50%; z-index: 2; position: relative;">
-                            <span class="timeline-label i-trans" data-key="step1" style="position: absolute; top: 20px; left: 50%; transform: translateX(-50%); white-space: nowrap; font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.5); opacity: 0.8; transition: 0.3s;">大促開團</span>
-                        </div>
-                        <div class="timeline-dot" style="width: 12px; height: 12px; background: rgba(255,255,255,0.6); border-radius: 50%; z-index: 2; position: relative;">
-                            <span class="timeline-label i-trans" data-key="step2" style="position: absolute; top: 20px; left: 50%; transform: translateX(-50%); white-space: nowrap; font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.5); opacity: 0.8; transition: 0.3s;">最後倒數</span>
-                        </div>
-                        <div class="timeline-dot" style="width: 12px; height: 12px; background: rgba(255,255,255,0.6); border-radius: 50%; z-index: 2; position: relative;">
-                            <span class="timeline-label i-trans" id="final-step-label" data-key="step3" style="position: absolute; top: 20px; left: 50%; transform: translateX(-50%); white-space: nowrap; font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.5); opacity: 0.8; transition: 0.3s;">行程結束</span>
-                        </div>
+                    <div style="position: absolute; left: 30px; top: 100px; transform: translate(-50%, -50%);">
+                        <div class="timeline-dot" style="width: 10px; height: 10px; background: rgba(255,255,255,0.6); border-radius: 50%;"></div>
+                        <span class="timeline-label i-trans" data-key="step0" style="position: absolute; top: 16px; left: 50%; transform: translateX(-50%); white-space: nowrap; font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.5); opacity: 0.8;">休息等候</span>
                     </div>
+                    <div style="position: absolute; left: 70px; top: 31px; transform: translate(-50%, -50%);">
+                        <div class="timeline-dot" style="width: 10px; height: 10px; background: rgba(255,255,255,0.6); border-radius: 50%;"></div>
+                        <span class="timeline-label i-trans" data-key="step1" style="position: absolute; top: 16px; left: 50%; transform: translateX(-50%); white-space: nowrap; font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.5); opacity: 0.8;">大促開團</span>
+                    </div>
+                    <div style="position: absolute; left: 150px; top: 31px; transform: translate(-50%, -50%);">
+                        <div class="timeline-dot" style="width: 10px; height: 10px; background: rgba(255,255,255,0.6); border-radius: 50%;"></div>
+                        <span class="timeline-label i-trans" data-key="step2" style="position: absolute; top: 16px; left: 50%; transform: translateX(-50%); white-space: nowrap; font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.5); opacity: 0.8;">最後倒數</span>
+                    </div>
+                    <div style="position: absolute; left: 190px; top: 100px; transform: translate(-50%, -50%);">
+                        <div class="timeline-dot" style="width: 10px; height: 10px; background: rgba(255,255,255,0.6); border-radius: 50%;"></div>
+                        <span class="timeline-label i-trans" id="final-step-label" data-key="step3" style="position: absolute; top: 16px; left: 50%; transform: translateX(-50%); white-space: nowrap; font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.5); opacity: 0.8;">行程結束</span>
+                    </div>
+
                 </div>
             </div>
         </section>
 
         <section id="page-orders" class="page-content">
             <div class="nav-header">
-                <button class="back-btn" onclick="switchPage('passport')"><i data-feather="chevron-left" class="i-trans"></i></button>
                 <div class="page-title i-trans" data-key="ordersTitle">訂單追蹤</div>
             </div>
             <div id="order-list-container" style="padding-top: 10px;"></div>
         </section>
 
         <section id="page-process" class="page-content">
-            <div class="nav-header">
-                <button class="back-btn" onclick="switchPage('passport')"><i data-feather="chevron-left" class="i-trans"></i></button>
-                <div class="page-title i-trans" data-key="processTitle">下單流程</div>
-            </div>
+            <div class="nav-header"><button class="back-btn" onclick="switchPage('passport')"><i data-feather="chevron-left"></i></button><div class="page-title i-trans" data-key="processTitle">下單流程</div></div>
             <div class="process-img-box">
                 <img src="網站下單.jpg" alt="Order Process Instruction" class="process-image">
             </div>
@@ -413,9 +407,9 @@
         <div id="cart-bar" style="display:none; position:fixed; bottom:95px; left:16px; right:16px; background:#191f28; color:#fff; padding:18px 24px; border-radius:20px; justify-content:space-between; align-items:center; z-index:250; cursor:pointer;" onclick="switchPage('checkout')"><span id="cart-qty-wrapper">已選 <span id="cart-qty" style="color:#28b0eb; font-weight:900;">0</span> 件商品</span><span id="view-list-text" style="font-weight:700;">查看清單 →</span></div>
         
         <nav class="bottom-nav">
-            <div class="nav-item" id="nav-shop" onclick="switchPage('shop')"><iconify-icon icon="fluent:shopping-bag-28-filled" style="font-size: 24px; color: currentColor;"></iconify-icon><span class="i-trans" data-key="navShop">弘大漫遊</span></div>
-            <div class="nav-item" id="nav-orders" onclick="switchPage('orders')"><iconify-icon icon="ic:round-luggage" style="font-size: 24px; color: currentColor;"></iconify-icon><span class="i-trans" data-key="navOrders">托運行李</span></div>
-            <div class="nav-item" id="nav-passport" onclick="switchPage('passport')"><iconify-icon icon="ph:identification-badge-fill" style="font-size: 24px; color: currentColor;"></iconify-icon><span class="i-trans" data-key="navPassport">我的護照</span></div>
+            <div class="nav-item" id="nav-shop" onclick="switchPage('shop')"><iconify-icon icon="fluent:shopping-bag-28-filled" style="font-size: 24px; color: currentColor;"></iconify-icon><span>弘大漫遊</span></div>
+            <div class="nav-item" id="nav-orders" onclick="switchPage('orders')"><iconify-icon icon="ic:round-luggage" style="font-size: 24px; color: currentColor;"></iconify-icon><span>托運行李</span></div>
+            <div class="nav-item" id="nav-passport" onclick="switchPage('passport')"><iconify-icon icon="ph:identification-badge-fill" style="font-size: 24px; color: currentColor;"></iconify-icon><span>我的護照</span></div>
         </nav>
     </div>
 
@@ -487,7 +481,6 @@
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         let userLineId = "", userLinePicture = "", userData = null, selectedGender = "", allProducts = [], cart = {}, shipMethod = '', packingQty = 1, currentRawOrderId = "", allUserOrders = [], isFromCheckout = false;
         
-        // 修正 1：建立完整、穩固的多國語系字典對照表（排除商品名稱）
         let currentLang = 'zh';
         const TRANSLATIONS = {
             zh: {
@@ -504,7 +497,7 @@
                 regTelLabel: "聯絡電話", regTelPlace: "09xxxxxxxx", regBirthLabel: "出生日期", regEmailLabel: "電子信箱", regEmailPlace: "example@mail.com", regBtnText: "登機報到",
                 detailTitle: "訂單明細", copyBtnText: "複製", sectionReceiver: "收件資訊", detailName: "取件姓名", detailTel: "聯絡電話", detailMethod: "取件方式",
                 sectionProducts: "訂購商品", detailAmount: "匯款金額", detailAlert: "請截圖此畫面回傳至 LINE@\n核對金額無誤後即可進行匯款。", detailConfirm: "我知道了",
-                emptyOrders: "行李箱空空如也～", cartSelected: "已選 {qty} 件商品", viewCart: "查看清單 →", step0: "休息等候", step1: "大促開團", step2: "最後倒數", step3: "行程結束"
+                emptyOrders: "行李箱空空如好～", cartSelected: "已選 {qty} 件商品", viewCart: "查看清單 →", step0: "休息等候", step1: "大促開團", step2: "最後倒數", step3: "行程結束"
             },
             ko: {
                 checkoutTitle: "구매 대행 목록", checkoutTotal: "총 합계", fillDataBtn: "정보 입력하기",
@@ -541,21 +534,18 @@
         };
 
         function translatePageUI() {
-            // 翻譯標準純文本屬性
             document.querySelectorAll('.i-trans').forEach(el => {
                 const key = el.getAttribute('data-key');
                 if (key && TRANSLATIONS[currentLang][key]) {
                     el.innerText = TRANSLATIONS[currentLang][key];
                 }
             });
-            // 翻譯 Input 表單 Placeholder 屬性
             document.querySelectorAll('.i-trans-placeholder').forEach(el => {
                 const key = el.getAttribute('data-placeholder-key');
                 if (key && TRANSLATIONS[currentLang][key]) {
                     el.setAttribute('placeholder', TRANSLATIONS[currentLang][key]);
                 }
             });
-            // 重新刷新局部渲染組件語意（購物車條、未出單提示）
             let t = Object.values(cart).reduce((s,i)=>s+i.qty,0);
             if (t > 0) {
                 document.getElementById('cart-qty-wrapper').innerHTML = TRANSLATIONS[currentLang]['cartSelected'].replace('{qty}', `<span id="cart-qty" style="color:#28b0eb; font-weight:900;">${t}</span>`);
@@ -574,7 +564,7 @@
             if (currentLang === 'en') iconEl.setAttribute('icon', 'icon-park-solid:english');
             
             translatePageUI();
-            fetchSystemControl(); // 驅動時序進度條重繪防衝突
+            fetchSystemControl(); 
             if (document.getElementById('page-orders').classList.contains('active')) fetchUserOrders();
         }
 
@@ -605,7 +595,6 @@
                     document.body.classList.add('modal-open');
                     document.getElementById('register-modal').style.display = 'flex';
                 }
-                translatePageUI(); // 預設語系初始化
                 feather.replace();
             } catch (e) { 
                 console.error(e); 
@@ -630,24 +619,24 @@
 
                     if (sys.open) activeStep = 1;
                     if (sys.finally) activeStep = 2;
+                    
                     if (sys.finish && sys.finish === todayStr && currentHour >= 12) {
                         activeStep = 3;
                     }
 
-                    // 處理第四個結點標籤的動態顯示（含 MM-DD 格式化裁剪與回歸）
-                    const finalLabel = document.getElementById('final-step-label');
-                    if (finalLabel) {
+                    const labels = document.querySelectorAll('.timeline-label');
+                    if (labels && labels.length >= 4) {
                         if (sys.finish && sys.finish === todayStr && currentHour >= 12) {
-                            finalLabel.innerText = TRANSLATIONS[currentLang]['step3'];
+                            labels[3].innerText = "行程結束";
                         } else if (sys.open && sys.finish) {
                             const dateParts = sys.finish.split('-');
                             if (dateParts.length >= 3) {
-                                finalLabel.innerText = `${dateParts[1]}-${dateParts[2]}`; // 裁剪格式化為 MM-DD
+                                labels[3].innerText = `${dateParts[1]}-${dateParts[2]}`;
                             } else {
-                                finalLabel.innerText = sys.finish;
+                                labels[3].innerText = sys.finish;
                             }
                         } else {
-                            finalLabel.innerText = TRANSLATIONS[currentLang]['step3'];
+                            labels[3].innerText = "行程結束";
                         }
                     }
 
@@ -661,35 +650,43 @@
             }
         }
 
-        // 修正 2：實作自左向右平滑充能與指標滑動開屏載入動畫
+        // 修正 1 & 2：完全移除指標滑動與線條點亮的 transition 動效設定，使其刷新後直接瞬間定格到位
         function renderTimelineUI(step) {
             const dots = document.querySelectorAll('.timeline-dot');
             const labels = document.querySelectorAll('.timeline-label');
             const indicator = document.getElementById('timeline-indicator');
-            const progress = document.getElementById('timeline-progress');
+            const arcPath = document.getElementById('timeline-arc-path');
 
-            // 1. 動效前置準備：先強制將線條與純白指標歸零重設到第一個點上（休息等候位置）
-            if (indicator) indicator.style.left = "0%";
-            if (progress) progress.style.width = "0%";
+            // 圓弧在 220px 軌道上的精確節點坐標
+            const coords = [
+                { left: '30px', top: '100px' },
+                { left: '70px', top: '31px' },
+                { left: '150px', top: '31px' },
+                { left: '190px', top: '100px' }
+            ];
+
+            const totalLength = 251.3;
             
             dots.forEach(dot => dot.classList.remove('active'));
             labels.forEach(label => label.classList.remove('active'));
 
-            // 2. 利用非同步非阻塞延時，向目標點平滑展開點亮動畫與滑動
-            setTimeout(() => {
-                dots.forEach((dot, idx) => {
-                    if (idx <= step) dot.classList.add('active');
-                });
+            // 修正點：移除原本的 0% 歸零重設動作與 setTimeout 延遲觸發器，改為直接瞬間定格到位
+            dots.forEach((dot, idx) => {
+                if (idx <= step) dot.classList.add('active');
+            });
 
-                labels.forEach((label, idx) => {
-                    if (idx === step) label.classList.add('active');
-                });
+            labels.forEach((label, idx) => {
+                if (idx === step) label.classList.add('active');
+            });
 
-                // 修正 1：利用 (step / 3) 精準百分比定位，第四點對齊 100% 垂直完美歸位，不溢出靠右
-                const percentage = (step / 3) * 100;
-                if (indicator) indicator.style.left = `${percentage}%`;
-                if (progress) progress.style.width = `${percentage}%`;
-            }, 150);
+            if (indicator && coords[step]) {
+                indicator.style.left = coords[step].left;
+                indicator.style.top = coords[step].top;
+            }
+            if (arcPath) {
+                const targetOffset = totalLength - (step / 3) * totalLength;
+                arcPath.style.strokeDashoffset = targetOffset;
+            }
         }
 
         async function fetchProducts() {
@@ -736,7 +733,6 @@
             if(document.getElementById(`qty-${id}`)) document.getElementById(`qty-${id}`).innerText=cart[id].qty;
             let t = Object.values(cart).reduce((s,i)=>s+i.qty,0);
             
-            // 購物車條語系防拉扯渲染
             if (t > 0 && document.getElementById('page-shop').classList.contains('active')) {
                 document.getElementById('cart-bar').style.display = 'flex';
                 document.getElementById('cart-qty-wrapper').innerHTML = TRANSLATIONS[currentLang]['cartSelected'].replace('{qty}', `<span id="cart-qty" style="color:#28b0eb; font-weight:900;">${t}</span>`);
@@ -789,6 +785,14 @@
         function removeGateError() {
             document.getElementById('main-app').style.display = 'block';
             document.getElementById('login-gate').style.display = 'none';
+        }
+
+        function setGender(g) {
+            selectedGender = g;
+            const maleBtn = document.getElementById('g-male'), femaleBtn = document.getElementById('g-female');
+            maleBtn.classList.remove('active-m'); femaleBtn.classList.remove('active-f');
+            if (g === 'M') maleBtn.classList.add('active-m');
+            if (g === 'F') femaleBtn.classList.add('active-f');
         }
 
         UX_add_modal = function() { openAddModal(); }
@@ -904,7 +908,7 @@
             container.innerHTML = '<p style="text-align:center; padding:40px; color:#999;">努力載入訂單中...</p>';
             const { data, error } = await supabaseClient.from('orders').select('*').eq('user_id', userLineId).order('created_at', { ascending: false });
             if(error || !data || data.length === 0) {
-                container.innerHTML = `<p style="text-align:center; padding:40px; color:#999; font-weight:700;" class="i-trans" data-key="emptyOrders">${TRANSLATIONS[currentLang]['emptyOrders']}</p>`;
+                container.innerHTML = `<p style="text-align:center; padding:40px; color:#999; font-weight:700;" class="i-trans" data-key="emptyOrders">行李箱空空如也～</p>`;
                 return;
             }
             allUserOrders = data;
@@ -968,7 +972,7 @@
             if(p === 'orders') fetchUserOrders(); 
             if(p === 'passport') fetchSystemControl();
             
-            translatePageUI(); // 同步當前語系狀態
+            translatePageUI(); 
             window.scrollTo(0,0); feather.replace();
         }
 
