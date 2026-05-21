@@ -62,11 +62,11 @@
         .item-card:first-child { margin-top: 10px; }
         .item-card * { pointer-events: auto; }
         .item-main { flex: 1; cursor: pointer; }
-        .item-name { font-size: 16px; font-weight: 700; color: #191f28; display: inline-block; margin-bottom: 4px; }
+        .item-name { font-size: 16px; height: auto; font-weight: 700; color: #191f28; display: inline-block; margin-bottom: 4px; }
         .item-option { font-size: 12px; color: #adb5bd; margin-left: 6px; font-weight: 400; }
         .item-price { color: #28b0eb; font-weight: 900; font-size: 17px; display: block; }
 
-        /* 修正：新增熱銷黃色皇冠懸浮標籤樣式 */
+        /* 新增熱銷黃色皇冠懸浮標籤樣式 */
         .crown-badge { position: absolute; top: -6px; left: 16px; background: #ffffff; color: #ffca28; padding: 2px 6px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); display: flex; align-items: center; justify-content: center; z-index: 10; }
 
         .qty-ctrl { display: flex; align-items: center; gap: 14px; background: #f8f9fa; padding: 8px 16px; border-radius: 50px; }
@@ -135,31 +135,25 @@
             padding-bottom: 110px; /* 留出底部導覽選單空間避免重疊 */
         }
 
-        /* 修正 2：橫向並排一行的扁平橫式長方形按鈕排版優化設定 */
-        .passport-btn-group { display: flex; flex-direction: row; gap: 16px; margin-top: 24px; width: 100%; box-sizing: border-box; }
-        .passport-action-btn { 
-            flex: 1; 
-            height: 46px; /* 修正點：高度再稍微縮小一點（由54px縮短到46px），變得更扁平精緻 */
-            background: #ffffff; 
-            border: none; 
-            border-radius: 24px; 
-            padding: 0 12px; 
-            font-size: 15px; 
-            font-weight: 900; 
-            color: #191f28; 
-            cursor: pointer; 
-            display: flex; 
-            flex-direction: row; /* 修正點：改回橫向排列，將選單圖示移動到選單文字的左側 */
-            align-items: center; 
-            justify-content: center; 
-            gap: 8px; 
-            box-shadow: 0 8px 24px rgba(0,0,0,0.04); 
-            border: 1px solid rgba(0,0,0,0.01); 
-            transition: 0.15s ease-in-out; 
-            box-sizing: border-box;
+        /* 修正 2：「下單流程」新型左上角圓形純圖示按鈕樣式 */
+        .passport-circle-btn {
+            width: 44px;
+            height: 44px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            color: #ffffff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            transition: 0.2s;
+            flex-shrink: 0;
         }
-        .passport-action-btn:active { background: #f8f9fa; transform: translateY(2px); }
-        .passport-action-btn svg, .passport-action-btn iconify-icon { width: 22px; height: 22px; color: #4e5968; display: flex; align-items: center; justify-content: center; }
+        .passport-circle-btn:active { transform: scale(0.95); background: rgba(255, 255, 255, 0.35); }
 
         /* 動態進度條狀態激活控量 */
         .timeline-dot.active { background: #ffca28 !important; box-shadow: 0 0 0 4px rgba(255, 202, 40, 0.25); }
@@ -258,9 +252,14 @@
         </section>
 
         <section id="page-passport" class="page-content">
-            <div style="text-align: left; padding: 20px 16px 0 16px; color: #ffffff;">
-                <div style="font-size: 26px; font-weight: 900; letter-spacing: 1px;">護照</div>
-                <div style="font-size: 14px; font-weight: 700; letter-spacing: 2px; opacity: 0.8; margin-top: 2px;">PASSPORT</div>
+            <div style="text-align: left; padding: 20px 16px 0 16px; color: #ffffff; display: flex; align-items: center; gap: 14px;">
+                <button type="button" class="passport-circle-btn" onclick="switchPage('process')">
+                    <iconify-icon icon="fe:notice-push" style="font-size: 24px; color: currentColor;"></iconify-icon>
+                </button>
+                <div>
+                    <div style="font-size: 26px; font-weight: 900; letter-spacing: 1px;">護照</div>
+                    <div style="font-size: 14px; font-weight: 700; letter-spacing: 2px; opacity: 0.8; margin-top: 2px;">PASSPORT</div>
+                </div>
             </div>
             
             <div class="passport-card-layer">
@@ -274,17 +273,6 @@
                         <div class="pass-row"><span class="pass-label">Date of Birth / 生日</span><span id="pass-birth" class="pass-val">---</span></div>
                     </div>
                 </div>
-            </div>
-
-            <div class="passport-btn-group">
-                <button class="passport-action-btn" onclick="switchPage('process')">
-                    <iconify-icon icon="fe:notice-push"></iconify-icon>
-                    <span>下單流程</span>
-                </button>
-                <button class="passport-action-btn" onclick="switchPage('orders')">
-                    <iconify-icon icon="ep:list"></iconify-icon>
-                    <span>我的訂單</span>
-                </button>
             </div>
 
             <div class="card-box" style="margin-top: 24px; padding: 52px 20px 42px 20px; background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 28px;">
@@ -335,6 +323,7 @@
         
         <nav class="bottom-nav">
             <div class="nav-item" id="nav-shop" onclick="switchPage('shop')"><iconify-icon icon="fluent:shopping-bag-28-filled" style="font-size: 24px; color: currentColor;"></iconify-icon><span>弘大漫遊</span></div>
+            <div class="nav-item" id="nav-orders" onclick="switchPage('orders')"><iconify-icon icon="ic:round-luggage" style="font-size: 24px; color: currentColor;"></iconify-icon><span>托運行李</span></div>
             <div class="nav-item" id="nav-passport" onclick="switchPage('passport')"><iconify-icon icon="ph:identification-badge-fill" style="font-size: 24px; color: currentColor;"></iconify-icon><span>我的護照</span></div>
         </nav>
     </div>
@@ -583,6 +572,14 @@
         function removeGateError() {
             document.getElementById('main-app').style.display = 'block';
             document.getElementById('login-gate').style.display = 'none';
+        }
+
+        function setGender(g) {
+            selectedGender = g;
+            const maleBtn = document.getElementById('g-male'), femaleBtn = document.getElementById('g-female');
+            maleBtn.classList.remove('active-m'); femaleBtn.classList.remove('active-f');
+            if (g === 'M') maleBtn.classList.add('active-m');
+            if (g === 'F') femaleBtn.classList.add('active-f');
         }
 
         UX_add_modal = function() { openAddModal(); }
