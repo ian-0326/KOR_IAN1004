@@ -187,58 +187,25 @@
         }
         .passport-circle-btn:active { transform: scale(0.95); background: rgba(255, 255, 255, 0.35); }
 
-        /* 語言轉換按鈕 */
+        /* 語言轉換按鈕位置 */
         #passport-lang-btn {
             left: 74px; /* 44px按鈕寬 + 16px左距 + 14px間距 */
         }
-
-        /* 橫向並排一行的扁平橫式長方形按鈕排版優化設定 */
-        .passport-btn-group { display: flex; flex-direction: row; gap: 16px; margin-top: 24px; width: 100%; box-sizing: border-box; }
-        .passport-action-btn { 
-            flex: 1; 
-            height: 46px; /* 高度縮小一點變扁平精緻 */
-            background: #ffffff; 
-            border: none; 
-            border-radius: 24px; 
-            padding: 0 12px; 
-            font-size: 15px; 
-            font-weight: 900; 
-            color: #191f28; 
-            cursor: pointer; 
-            display: flex; 
-            flex-direction: row; /* 橫向排列，將選單圖示移動到選單文字的左側 */
-            align-items: center; 
-            justify-content: center; 
-            gap: 8px; 
-            box-shadow: 0 8px 24px rgba(0,0,0,0.04); 
-            border: 1px solid rgba(0,0,0,0.01); 
-            transition: 0.15s ease-in-out; 
-            box-sizing: border-box;
-        }
-        .passport-action-btn:active { background: #f8f9fa; transform: translateY(2px); }
-        .passport-action-btn svg, .passport-action-btn iconify-icon { width: 22px; height: 22px; color: #4e5968; display: flex; align-items: center; justify-content: center; }
 
         /* 階梯圖卡進度條狀態激活控量 */
         .timeline-card-container { margin-top: 24px; padding: 52px 20px 42px 20px; background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 28px; box-sizing: border-box; }
         .timeline-dot.active { background: #ffca28 !important; box-shadow: 0 0 0 4px rgba(255, 202, 40, 0.25); }
         .timeline-label.active { color: #ffffff !important; font-weight: 900 !important; font-size: 12px !important; opacity: 1 !important; }
 
-        /* 修正 2：依據指令完全拔除 `transition` 的動畫轉化與時間參數，使其瞬間改道、直接定格到位 */
+        /* 修正 2：依據指令完全拔除 `transition` 的動畫路徑轉化與時間參數，使其瞬間改道、直接定格到位 */
         #timeline-indicator {
             position: absolute; 
-            top: -38px; /* 修正：拉開指標與線條的距離，避免黏在一起 */
+            top: -38px; 
             transform: translateX(-50%); 
             left: 0%; 
-            color: #ffffff; /* 修正：指標 icon 改用白色 */
-        }
-        #timeline-progress {
-            position: absolute; 
-            left: 0; 
-            top: 0; 
-            height: 100%; 
-            background: #ffca28; 
-            width: 0%; 
-            border-radius: 2px;
+            color: #ffffff; 
+            z-index: 5;
+            pointer-events: none;
         }
 
         /* 訂單列表追蹤樣式 */
@@ -358,13 +325,6 @@
                         <div class="pass-row"><span class="pass-label i-trans" data-key="passCardBirth">Date of Birth / 生日</span><span id="pass-birth" class="pass-val">---</span></div>
                     </div>
                 </div>
-            </div>
-
-            <div class="passport-btn-group">
-                <button class="passport-action-btn" onclick="switchPage('process')">
-                    <iconify-icon icon="fe:notice-push"></iconify-icon>
-                    <span>下單流程</span>
-                </button>
             </div>
 
             <div class="timeline-card-container">
@@ -634,6 +594,7 @@
                         if (sys.finish && sys.finish === todayStr && currentHour >= 12) {
                             labels[3].innerText = "行程結束";
                         } else if (sys.open && sys.finish) {
+                            // 只顯示月份和日期（2026-05-20 格式化轉為 05-20）
                             const dateParts = sys.finish.split('-');
                             if (dateParts.length >= 3) {
                                 labels[3].innerText = `${dateParts[1]}-${dateParts[2]}`;
@@ -655,6 +616,7 @@
             }
         }
 
+        // 修正 1 & 2：完全移除指標滑動與線條點亮的 transition 動效設定，使其刷新後直接瞬間定格到位
         function renderTimelineUI(step) {
             const dots = document.querySelectorAll('.timeline-dot');
             const labels = document.querySelectorAll('.timeline-label');
@@ -769,6 +731,11 @@
             document.getElementById('sum-total').innerText=`NT$ ${(it+sf+pf).toLocaleString()}`; 
         }
 
+        function removeGateError() {
+            document.getElementById('main-app').style.display = 'block';
+            document.getElementById('login-gate').style.display = 'none';
+        }
+
         UX_add_modal = function() { openAddModal(); }
         function openAddModal() { 
             document.body.classList.add('modal-open'); 
@@ -781,6 +748,7 @@
             document.getElementById(id).style.display = 'none'; 
         }
 
+        document.onload_add = function() { initTextareas(); };
         function initTextareas() { const ts = document.querySelectorAll('textarea.input-box'); ts.forEach(t => { t.style.height = '48px'; }); }
         function autoGrow(element) { element.style.height = '48px'; if (element.scrollHeight > 48) { element.style.height = (element.scrollHeight) + "px"; } }
         function changeCat(el) { clearError(el); }
@@ -947,7 +915,7 @@
             // 當切換到護照頁時重新同步階段動態
             if(p === 'passport') fetchSystemControl();
             
-            translatePageUI(); 
+            translatePageUI(); // 同步當前語系狀態
             window.scrollTo(0,0); feather.replace();
         }
 
