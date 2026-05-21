@@ -40,10 +40,29 @@
 
         /* 頂部固定 Header */
         .fixed-header { position: sticky; top: 0; background: #f2f4f6; z-index: 110; padding: 20px 16px 10px 16px; display: flex; justify-content: space-between; align-items: center; }
-        .page-logo { height: 52px; width: auto; object-fit: contain; }
+        /* 修正 1：將 Logo 放大至 64px 高度 */
+        .page-logo { height: 64px; width: auto; object-fit: contain; }
         
-        /* 提升至最高層級，並預防 SVG 點擊穿透問題 */
-        .add-btn { width: 44px; height: 44px; background: #28b0eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; border: none; box-shadow: 0 4px 12px rgba(40, 176, 235, 0.2); cursor: pointer; position: relative; z-index: 9999; }
+        /* 修正 2：將「新增商品」按鈕的樣式改成跟「下單流程」按鈕一模一樣的圓形毛玻璃懸浮規格 */
+        .add-btn { 
+            width: 44px; 
+            height: 44px; 
+            background: rgba(255, 255, 255, 0.2); 
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            color: #ffffff; 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05); 
+            cursor: pointer; 
+            transition: 0.2s;
+            flex-shrink: 0;
+            position: relative; 
+            z-index: 9999; 
+        }
         .add-btn * { pointer-events: none; } /* 阻擋 icon 吃掉點擊事件 */
 
         .nav-header { display: flex; align-items: center; padding: 20px 16px; background: #f2f4f6; position: sticky; top: 0; z-index: 100; }
@@ -144,7 +163,7 @@
             position: relative; /* 設定相對定位基準線 */
         }
 
-        /* 「下單流程」左上角客製化純圖示圓形按鈕 CSS 規則，脫離常規文檔流 */
+        /* 「下單流程」左上角客製化純圖示圓形按鈕 CSS 規則 */
         .passport-circle-btn {
             width: 44px;
             height: 44px;
@@ -172,7 +191,7 @@
         .passport-btn-group { display: flex; flex-direction: row; gap: 16px; margin-top: 24px; width: 100%; box-sizing: border-box; }
         .passport-action-btn { 
             flex: 1; 
-            height: 46px; /* 高度縮小一點變扁平精緻 */
+            height: 46px; 
             background: #ffffff; 
             border: none; 
             border-radius: 24px; 
@@ -182,7 +201,7 @@
             color: #191f28; 
             cursor: pointer; 
             display: flex; 
-            flex-direction: row; /* 橫向排列，將選單圖示移動到選單文字的左側 */
+            flex-direction: row; 
             align-items: center; 
             justify-content: center; 
             gap: 8px; 
@@ -491,6 +510,16 @@
                         activeStep = 3;
                     }
 
+                    // 修正點 1：當 open 欄位打開時（true），動態將第 4 個節點的文字替換為 finish 欄位紀錄的截止日期
+                    const labels = document.querySelectorAll('.timeline-label');
+                    if (labels && labels.length >= 4) {
+                        if (sys.open && sys.finish) {
+                            labels[3].innerText = sys.finish;
+                        } else {
+                            labels[3].innerText = "行程結束";
+                        }
+                    }
+
                     renderTimelineUI(activeStep);
                 } else {
                     renderTimelineUI(0);
@@ -613,6 +642,14 @@
             document.getElementById('login-gate').style.display = 'none';
         }
 
+        function setGender(g) {
+            selectedGender = g;
+            const maleBtn = document.getElementById('g-male'), femaleBtn = document.getElementById('g-female');
+            maleBtn.classList.remove('active-m'); femaleBtn.classList.remove('active-f');
+            if (g === 'M') maleBtn.classList.add('active-m');
+            if (g === 'F') femaleBtn.classList.add('active-f');
+        }
+
         UX_add_modal = function() { openAddModal(); }
         function openAddModal() { 
             document.body.classList.add('modal-open'); 
@@ -725,8 +762,9 @@
             const container = document.getElementById('order-list-container');
             container.innerHTML = '<p style="text-align:center; padding:40px; color:#999;">努力載入訂單中...</p>';
             const { data, error } = await supabaseClient.from('orders').select('*').eq('user_id', userLineId).order('created_at', { ascending: false });
+            // 修正點 2：若該用戶沒有任何訂單資料，頁面提示改成「行李箱空空如也～」
             if(error || !data || data.length === 0) {
-                container.innerHTML = '<p style="text-align:center; padding:40px; color:#999;">目前尚無下單紀錄</p>';
+                container.innerHTML = '<p style="text-align:center; padding:40px; color:#999; font-weight:700;">行李箱空空如也～</p>';
                 return;
             }
             allUserOrders = data;
