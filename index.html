@@ -58,15 +58,15 @@
         .cat-pill.active { background: #28b0eb; color: #fff; }
 
         /* 商品卡片 */
-        .item-card { background: #fff; padding: 20px; border-radius: 28px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 12px rgba(0,0,0,0.04); margin-bottom: 12px; position: relative; } /* 修正：確保卡片容器具備相對定位以利皇冠貼附 */
+        .item-card { background: #fff; padding: 20px; border-radius: 28px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 12px rgba(0,0,0,0.04); margin-bottom: 12px; position: relative; } /* 確保卡片容器具備相對定位以利皇冠貼附 */
         .item-card:first-child { margin-top: 10px; }
         .item-card * { pointer-events: auto; }
         .item-main { flex: 1; cursor: pointer; }
-        .item-name { font-size: 16px; height: auto; font-weight: 700; color: #191f28; display: inline-block; margin-bottom: 4px; }
+        .item-name { font-size: 16px; font-weight: 700; color: #191f28; display: inline-block; margin-bottom: 4px; }
         .item-option { font-size: 12px; color: #adb5bd; margin-left: 6px; font-weight: 400; }
         .item-price { color: #28b0eb; font-weight: 900; font-size: 17px; display: block; }
 
-        /* 新增熱銷黃色皇冠懸浮標籤樣式 */
+        /* 熱銷黃色皇冠懸浮標籤樣式 */
         .crown-badge { position: absolute; top: -6px; left: 16px; background: #ffffff; color: #ffca28; padding: 2px 6px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); display: flex; align-items: center; justify-content: center; z-index: 10; }
 
         .qty-ctrl { display: flex; align-items: center; gap: 14px; background: #f8f9fa; padding: 8px 16px; border-radius: 50px; }
@@ -115,6 +115,14 @@
         .copy-btn { background: #eee; border: none; padding: 4px 8px; border-radius: 8px; font-size: 10px; color: #4e5968; cursor: pointer; margin-left: 8px; display: inline-flex; align-items: center; gap: 4px; vertical-align: middle; }
         .modal-header-centered { text-align: center; margin-bottom: 24px; flex-shrink: 0; }
 
+        /* 報到櫃檯專屬排版 CSS 樣式規則 */
+        .row-flex { display: flex; gap: 16px; width: calc(100% - 24px); align-items: flex-end; justify-content: space-between; box-sizing: border-box; }
+        .gender-group { display: flex; gap: 4px; background: #f2f4f6; padding: 4px; border-radius: 14px; height: 48px; box-sizing: border-box; align-items: center; }
+        .gender-btn { background: none; border: none; padding: 0 16px; font-size: 14px; font-weight: 700; color: #4e5968; cursor: pointer; border-radius: 10px; height: 100%; transition: 0.2s; box-sizing: border-box; }
+        .gender-btn.active-m { background: #28b0eb; color: #ffffff; }
+        .gender-btn.active-f { background: #ff85a2; color: #ffffff; }
+        .birth-row { display: flex; gap: 8px; width: calc(100% - 24px); box-sizing: border-box; }
+
         /* 護照資料圖卡排版設定（無白框樣式） */
         .passport-card-layer { background: url('KOR.IAN CARD.png') no-repeat center center; background-size: cover; border-radius: 32px; padding: 30px 20px; margin-top: 10px; width: 100%; box-sizing: border-box; }
         .passport-inner-card { display: flex; gap: 32px; text-align: left; box-sizing: border-box; align-items: center; }
@@ -125,7 +133,7 @@
         .pass-label { font-size: 11px; font-weight: 900; color: #d4af37; text-transform: uppercase; margin-bottom: 2px; } /* 金黃色標籤 */
         .pass-val { font-size: 18px; font-weight: 900; color: #ffffff; word-break: break-all; text-shadow: 0 1px 2px rgba(0,0,0,0.4); } /* 白色資料 */
 
-        /* 護照頁面指定套用 KIbackground.png，且改為 Flex 沉底置底容器佈局 */
+        /* 修正 1：護照頁面指定套用 KIbackground.png，改為相對定位，以利左上角圓形指標按鈕精確錨定 */
         #page-passport.active { 
             display: flex; 
             flex-direction: column; 
@@ -133,9 +141,10 @@
             background: url('KIbackground.png') no-repeat center center; 
             background-size: cover; 
             padding-bottom: 110px; /* 留出底部導覽選單空間避免重疊 */
+            position: relative; /* 核心修正點：設定相對定位基準線 */
         }
 
-        /* 修正 2：「下單流程」新型左上角圓形純圖示按鈕樣式 */
+        /* 修正 1：「下單流程」左上角客製化純圖示圓形按鈕 CSS 規則，脫離常規文檔流 */
         .passport-circle-btn {
             width: 44px;
             height: 44px;
@@ -152,10 +161,15 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
             transition: 0.2s;
             flex-shrink: 0;
+            position: absolute; /* 核心修正點：絕對定位至最左上角 */
+            top: 24px;
+            left: 16px;
+            z-index: 10;
         }
         .passport-circle-btn:active { transform: scale(0.95); background: rgba(255, 255, 255, 0.35); }
 
-        /* 動態進度條狀態激活控量 */
+        /* 階梯圖卡進度條狀態激活控量 */
+        .timeline-card-container { margin-top: 24px; padding: 52px 20px 42px 20px; background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 28px; box-sizing: border-box; }
         .timeline-dot.active { background: #ffca28 !important; box-shadow: 0 0 0 4px rgba(255, 202, 40, 0.25); }
         .timeline-label.active { color: #ffffff !important; font-weight: 900 !important; font-size: 12px !important; opacity: 1 !important; }
 
@@ -252,14 +266,13 @@
         </section>
 
         <section id="page-passport" class="page-content">
-            <div style="text-align: left; padding: 20px 16px 0 16px; color: #ffffff; display: flex; align-items: center; gap: 14px;">
-                <button type="button" class="passport-circle-btn" onclick="switchPage('process')">
-                    <iconify-icon icon="fe:notice-push" style="font-size: 24px; color: currentColor;"></iconify-icon>
-                </button>
-                <div>
-                    <div style="font-size: 26px; font-weight: 900; letter-spacing: 1px;">護照</div>
-                    <div style="font-size: 14px; font-weight: 700; letter-spacing: 2px; opacity: 0.8; margin-top: 2px;">PASSPORT</div>
-                </div>
+            <button type="button" class="passport-circle-btn" onclick="switchPage('process')">
+                <iconify-icon icon="fe:notice-push" style="font-size: 24px; color: currentColor;"></iconify-icon>
+            </button>
+
+            <div style="text-align: left; padding: 0 16px; color: #ffffff; margin-top: 64px; margin-bottom: auto;">
+                <div style="font-size: 26px; font-weight: 900; letter-spacing: 1px;">護照</div>
+                <div style="font-size: 14px; font-weight: 700; letter-spacing: 2px; opacity: 0.8; margin-top: 2px;">PASSPORT</div>
             </div>
             
             <div class="passport-card-layer">
@@ -275,7 +288,7 @@
                 </div>
             </div>
 
-            <div class="card-box" style="margin-top: 24px; padding: 52px 20px 42px 20px; background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 28px;">
+            <div class="timeline-card-container">
                 <div style="position: relative;">
                     <div id="timeline-indicator" style="position: absolute; top: -38px; transform: translateX(-50%); left: 0%; transition: left 0.4s cubic-bezier(0.25, 1, 0.5, 1); color: #ffffff;">
                         <iconify-icon icon="fa6-solid:person-walking-luggage" style="font-size: 26px;"></iconify-icon>
@@ -405,7 +418,6 @@
                 userLinePicture = profile.pictureUrl || "https://img.icons8.com/illustrations/96/user.png";
 
                 await fetchProducts();
-                // 異步同步後端動態進度控制表狀態
                 await fetchSystemControl();
 
                 const { data } = await supabaseClient.from('profiles').select('*').or(`line_id.eq.${userLineId},user_id.eq.${userLineId}`);
@@ -713,6 +725,23 @@
                 </div>
             `).join('');
             feather.replace();
+        }
+
+        function handleRegister() {
+            const btn = document.getElementById('btn-register');
+            const name = document.getElementById('reg-name'), tel = document.getElementById('reg-tel'), email = document.getElementById('reg-email');
+            const by = document.getElementById('reg-birth-y'), bm = document.getElementById('reg-birth-m'), bd = document.getElementById('reg-birth-d');
+            let valid = true;
+            if(!name.value.trim()){ name.classList.add('error'); document.getElementById('tag-reg-name').style.display='inline'; valid=false; }
+            if(!/^09\d{8}$/.test(tel.value)){ tel.classList.add('error'); document.getElementById('tag-reg-tel').style.display='inline'; valid=false; }
+            if(!by.value || !bm.value || !bd.value){ [by,bm,bd].forEach(s => s.classList.add('error')); document.getElementById('tag-reg-birth').style.display='inline'; valid=false; }
+            if(!valid) return;
+            if(!userLineId) return;
+            btn.disabled = true; 
+            const fullBirth = `${by.value}-${bm.value}-${bd.value}`;
+            supabaseClient.from('profiles').insert([{ line_id: userLineId, user_id: userLineId, full_name: name.value.trim(), phone: tel.value.trim(), birthday: fullBirth, gender: selectedGender, email: email.value.trim() }]).then(({error}) => {
+                if(!error) location.reload(); else { alert("失敗：" + error.message); btn.disabled = false; }
+            });
         }
 
         function renderUserProfile() { 
