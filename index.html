@@ -163,7 +163,7 @@
             position: relative; /* 設定相對定位基準線 */
         }
 
-        /* 「下單流程」左上角客製化純圖示圓形按鈕 CSS 規則，脫離常規文檔流 */
+        /* 修正 2：「下單流程」加固高層級 z-index 確保秒開不消失 */
         .passport-circle-btn {
             width: 44px;
             height: 44px;
@@ -183,59 +183,30 @@
             position: absolute; /* 絕對定位至最左上角 */
             top: 24px;
             left: 16px;
-            z-index: 10;
+            z-index: 999; /* 提升層級 */
         }
         .passport-circle-btn:active { transform: scale(0.95); background: rgba(255, 255, 255, 0.35); }
 
-        /* 橫向並排一行的扁平橫式長方形按鈕排版優化設定 */
-        .passport-btn-group { display: flex; flex-direction: row; gap: 16px; margin-top: 24px; width: 100%; box-sizing: border-box; }
-        .passport-action-btn { 
-            flex: 1; 
-            height: 46px; /* 高度縮小一點變扁平精緻 */
-            background: #ffffff; 
-            border: none; 
-            border-radius: 24px; 
-            padding: 0 12px; 
-            font-size: 15px; 
-            font-weight: 900; 
-            color: #191f28; 
-            cursor: pointer; 
-            display: flex; 
-            flex-direction: row; /* 橫向排列，將選單圖示移動到選單文字的左側 */
-            align-items: center; 
-            justify-content: center; 
-            gap: 8px; 
-            box-shadow: 0 8px 24px rgba(0,0,0,0.04); 
-            border: 1px solid rgba(0,0,0,0.01); 
-            transition: 0.15s ease-in-out; 
-            box-sizing: border-box;
+        /* 語言轉換按鈕 */
+        #passport-lang-btn {
+            left: 74px; /* 44px按鈕寬 + 16px左距 + 14px間距 */
         }
-        .passport-action-btn:active { background: #f8f9fa; transform: translateY(2px); }
-        .passport-action-btn svg, .passport-action-btn iconify-icon { width: 22px; height: 22px; color: #4e5968; display: flex; align-items: center; justify-content: center; }
 
-        /* 階梯圖卡進度條狀態激活控量 */
-        .timeline-card-container { margin-top: 24px; padding: 52px 20px 42px 20px; background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 28px; box-sizing: border-box; }
+        /* 修正 1：加高進度條外框內距 (padding 上下調大)，完美支撐全新的圓弧儀表盤軌道 */
+        .timeline-card-container { margin-top: 24px; padding: 40px 20px 25px 20px; background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 28px; box-sizing: border-box; }
         .timeline-dot.active { background: #ffca28 !important; box-shadow: 0 0 0 4px rgba(255, 202, 40, 0.25); }
         .timeline-label.active { color: #ffffff !important; font-weight: 900 !important; font-size: 12px !important; opacity: 1 !important; }
 
-        /* 修正 1 & 2：核心平滑轉化槽，放慢動效速度（由1.2s完美調校至2.5s高階緩動），並配置完美垂直置中軌道 */
+        /* 修正 1：圓弧軌道核心平滑轉化與 2.6s 慢速過渡樣式 */
         #timeline-indicator {
             position: absolute; 
-            top: -38px; 
-            transform: translateX(-50%); 
-            left: 0%; 
-            transition: left 2.5s cubic-bezier(0.4, 0, 0.2, 1); /* 修正 2：放慢移動速度至 2.5 秒，呈現絲滑高級感 */
+            transition: left 2.6s cubic-bezier(0.25, 1, 0.5, 1), top 2.6s cubic-bezier(0.25, 1, 0.5, 1); /* 放慢至 2.6 秒 */
             color: #ffffff; 
+            z-index: 5;
+            pointer-events: none;
         }
-        #timeline-progress {
-            position: absolute; 
-            left: 0; 
-            top: 0; 
-            height: 100%; 
-            background: #ffca28; 
-            width: 0%; 
-            transition: width 2.5s cubic-bezier(0.4, 0, 0.2, 1); /* 修正 2：同步放慢橘色線條伸展速度至 2.5 秒 */
-            border-radius: 2px;
+        #timeline-arc-path {
+            transition: stroke-dashoffset 2.6s cubic-bezier(0.25, 1, 0.5, 1); /* 放慢至 2.6 秒 */
         }
 
         /* 訂單列表追蹤樣式 */
@@ -324,11 +295,7 @@
                 <div class="list-row" style="border-top:1px solid #f2f4f6; margin-top: 20px; padding-top: 20px;"><div class="list-left"><span class="i-trans" data-key="boxMaterial">包材、紙箱</span><br><small style="color:#adb5bd;">NT$ 10 / 個</small></div><div class="qty-ctrl"><button class="qty-btn" onclick="updatePacking(-1)"><i data-feather="minus" style="width:16px;"></i></button><span id="qty-packing" class="qty-num">1</span><button class="qty-btn" onclick="updatePacking(1)"><i data-feather="plus" style="width:16px;"></i></button></div></div>
             </div>
             <div class="bottom-summary" id="shipping-summary">
-                <div class="summary-details">
-                    <div class="row-sm"><span class="i-trans" data-key="sumSubtotal">小計</span><span id="sum-items">NT$ 0</span></div>
-                    <div class="row-sm"><span class="i-trans" data-key="sumShippingFee">運費</span><span id="sum-shipping">NT$ 0</span></div>
-                    <div class="row-sm"><span class="i-trans" data-key="sumPackingFee">包材</span><span id="sum-packing">NT$ 10</span></div>
-                </div>
+                <div class="summary-details"><div class="row-sm"><span>小計</span><span id="sum-items">NT$ 0</span></div><div class="row-sm"><span>運費</span><span id="sum-shipping">NT$ 0</span></div><div class="row-sm"><span>包材</span><span id="sum-packing">NT$ 10</span></div></div>
                 <div class="row-lg" onclick="toggleSummary()"><span class="i-trans" data-key="sumGrandTotal">匯款總金額</span><div style="display:flex; align-items:center; gap:8px;"><span class="price-lg" id="sum-total">NT$ 0</span><i data-feather="chevron-up"></i></div></div>
                 <button class="btn-main i-trans" data-key="confirmOrderBtn" id="confirm-submit-btn" onclick="submitFinalOrder()">確認下單</button>
             </div>
@@ -362,48 +329,48 @@
             </div>
 
             <div class="timeline-card-container">
-                <div style="position: relative;">
+                <div style="position: relative; width: 220px; height: 125px; margin: 0 auto; text-align: center;">
                     
-                    <div style="position: relative; height: 4px; background: rgba(255,255,255,0.3); border-radius: 2px; display: flex; justify-content: space-between; align-items: center; margin: 0 15px;">
-                        
-                        <div style="position: absolute; left: 6px; right: 6px; top: 0; bottom: 0; pointer-events: none;">
-                            <div id="timeline-indicator">
-                                <iconify-icon icon="fa6-solid:person-walking-luggage" style="font-size: 26px;"></iconify-icon>
-                            </div>
-                        </div>
+                    <svg viewBox="0 0 220 120" style="width: 100%; height: auto; display: block; margin: 0 auto;">
+                        <path d="M 30 100 A 80 80 0 0 1 190 100" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="6" stroke-linecap="round"/>
+                        <path id="timeline-arc-path" d="M 30 100 A 80 80 0 0 1 190 100" fill="none" stroke="#ffca28" stroke-width="6" stroke-linecap="round" 
+                              stroke-dasharray="251.3" stroke-dashoffset="251.3"/>
+                    </svg>
 
-                        <div id="timeline-progress"></div>
-                        
-                        <div class="timeline-dot" style="width: 12px; height: 12px; background: rgba(255,255,255,0.6); border-radius: 50%; z-index: 2; position: relative;">
-                            <span class="timeline-label i-trans" data-key="step0" style="position: absolute; top: 20px; left: 50%; transform: translateX(-50%); white-space: nowrap; font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.5); opacity: 0.8; transition: 0.3s;">休息等候</span>
-                        </div>
-                        <div class="timeline-dot" style="width: 12px; height: 12px; background: rgba(255,255,255,0.6); border-radius: 50%; z-index: 2; position: relative;">
-                            <span class="timeline-label i-trans" data-key="step1" style="position: absolute; top: 20px; left: 50%; transform: translateX(-50%); white-space: nowrap; font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.5); opacity: 0.8; transition: 0.3s;">大促開團</span>
-                        </div>
-                        <div class="timeline-dot" style="width: 12px; height: 12px; background: rgba(255,255,255,0.6); border-radius: 50%; z-index: 2; position: relative;">
-                            <span class="timeline-label i-trans" data-key="step2" style="position: absolute; top: 20px; left: 50%; transform: translateX(-50%); white-space: nowrap; font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.5); opacity: 0.8; transition: 0.3s;">最後倒數</span>
-                        </div>
-                        <div class="timeline-dot" style="width: 12px; height: 12px; background: rgba(255,255,255,0.6); border-radius: 50%; z-index: 2; position: relative;">
-                            <span class="timeline-label i-trans" id="final-step-label" data-key="step3" style="position: absolute; top: 20px; left: 50%; transform: translateX(-50%); white-space: nowrap; font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.5); opacity: 0.8; transition: 0.3s;">行程結束</span>
-                        </div>
+                    <div id="timeline-indicator" style="position: absolute; transform: translate(-50%, -50%); left: 30px; top: 100px;">
+                        <iconify-icon icon="fa6-solid:person-walking-luggage" style="font-size: 26px;"></iconify-icon>
                     </div>
+                    
+                    <div style="position: absolute; left: 30px; top: 100px; transform: translate(-50%, -50%);">
+                        <div class="timeline-dot" style="width: 10px; height: 10px; background: rgba(255,255,255,0.6); border-radius: 50%;"></div>
+                        <span class="timeline-label i-trans" data-key="step0" style="position: absolute; top: 16px; left: 50%; transform: translateX(-50%); white-space: nowrap; font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.5); opacity: 0.8;">休息等候</span>
+                    </div>
+                    <div style="position: absolute; left: 70px; top: 31px; transform: translate(-50%, -50%);">
+                        <div class="timeline-dot" style="width: 10px; height: 10px; background: rgba(255,255,255,0.6); border-radius: 50%;"></div>
+                        <span class="timeline-label i-trans" data-key="step1" style="position: absolute; top: 16px; left: 50%; transform: translateX(-50%); white-space: nowrap; font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.5); opacity: 0.8;">大促開團</span>
+                    </div>
+                    <div style="position: absolute; left: 150px; top: 31px; transform: translate(-50%, -50%);">
+                        <div class="timeline-dot" style="width: 10px; height: 10px; background: rgba(255,255,255,0.6); border-radius: 50%;"></div>
+                        <span class="timeline-label i-trans" data-key="step2" style="position: absolute; top: 16px; left: 50%; transform: translateX(-50%); white-space: nowrap; font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.5); opacity: 0.8;">最後倒數</span>
+                    </div>
+                    <div style="position: absolute; left: 190px; top: 100px; transform: translate(-50%, -50%);">
+                        <div class="timeline-dot" style="width: 10px; height: 10px; background: rgba(255,255,255,0.6); border-radius: 50%;"></div>
+                        <span class="timeline-label i-trans" id="final-step-label" data-key="step3" style="position: absolute; top: 16px; left: 50%; transform: translateX(-50%); white-space: nowrap; font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.5); opacity: 0.8;">行程結束</span>
+                    </div>
+
                 </div>
             </div>
         </section>
 
         <section id="page-orders" class="page-content">
             <div class="nav-header">
-                <button class="back-btn" onclick="switchPage('passport')"><i data-feather="chevron-left" class="i-trans"></i></button>
                 <div class="page-title i-trans" data-key="ordersTitle">訂單追蹤</div>
             </div>
             <div id="order-list-container" style="padding-top: 10px;"></div>
         </section>
 
         <section id="page-process" class="page-content">
-            <div class="nav-header">
-                <button class="back-btn" onclick="switchPage('passport')"><i data-feather="chevron-left" class="i-trans"></i></button>
-                <div class="page-title i-trans" data-key="processTitle">下單流程</div>
-            </div>
+            <div class="nav-header"><button class="back-btn" onclick="switchPage('passport')"><i data-feather="chevron-left"></i></button><div class="page-title i-trans" data-key="processTitle">下單流程</div></div>
             <div class="process-img-box">
                 <img src="網站下單.jpg" alt="Order Process Instruction" class="process-image">
             </div>
@@ -443,7 +410,7 @@
                     <div class="form-item"><label class="form-label">選擇類別<span class="req-tag" id="tag-in-cat">*必填</span></label><select id="in-cat" class="input-box" onchange="changeCat(this)"><option value="">請選擇</option><option value="化妝水">化妝水</option><option value="精華液">精華液</option><option value="乳液">乳液</option><option value="面膜棉片">面膜棉片</option><option value="洗臉洗澡">洗臉洗澡</option><option value="美髮護髮">美髮護髮</option><option value="彩妝遮瑕">彩妝遮瑕</option><option value="口腔護理">口腔護理</option><option value="防曬">防曬</option><option value="藥膏藥品">藥膏藥品</option><option value="食品（含保健）">食品（含保健）</option><option value="其他">其他</option></select></div>
                     <div class="form-item"><label class="form-label">商品名稱<span class="req-tag" id="tag-in-name">*必填</span></label><textarea id="in-name" class="input-box" placeholder="例如：Torriden 面膜"></textarea></div>
                     <div class="form-item"><label class="form-label">款式規格</label><textarea id="in-option" class="input-box" placeholder="example：藍色保濕型" oninput="autoGrow(this)"></textarea></div>
-                    <div class="form-item"><label class="form-label">價格 NT$</label><input type="number" id="in-price" class="input-box" placeholder="金額"></div>
+                    <div class="form-item"><label class="form-label">價格 NT$</label><input type="number" id="in-price" class="input-box" placeholder="金額"></input></div>
                     <div class="form-item"><label class="form-label">來源網址</label><input type="url" id="in-url" class="input-box" placeholder="請輸入網址（選填）"></div>
                 </div>
                 <div class="modal-footer"><button type="button" class="btn-main" onclick="upload()">確認登錄</button></div>
@@ -486,7 +453,6 @@
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         let userLineId = "", userLinePicture = "", userData = null, selectedGender = "", allProducts = [], cart = {}, shipMethod = '', packingQty = 1, currentRawOrderId = "", allUserOrders = [], isFromCheckout = false;
         
-        // 建立完整、穩固的多國語系字典對照表（排除商品名稱）
         let currentLang = 'zh';
         const TRANSLATIONS = {
             zh: {
@@ -626,7 +592,6 @@
 
                     if (sys.open) activeStep = 1;
                     if (sys.finally) activeStep = 2;
-                    
                     if (sys.finish && sys.finish === todayStr && currentHour >= 12) {
                         activeStep = 3;
                     }
@@ -657,18 +622,36 @@
             }
         }
 
+        // 修正 1 & 2：將指標與進度槽歸納入進度線槽內，並完美放慢至 2.6s 平滑蓄能過渡動效
         function renderTimelineUI(step) {
             const dots = document.querySelectorAll('.timeline-dot');
             const labels = document.querySelectorAll('.timeline-label');
             const indicator = document.getElementById('timeline-indicator');
-            const progress = document.getElementById('timeline-progress');
+            const arcPath = document.getElementById('timeline-arc-path');
 
-            if (indicator) indicator.style.left = "0%";
-            if (progress) progress.style.width = "0%";
+            // 圓弧在 220px 軌道上的精確節點坐標
+            const coords = [
+                { left: '30px', top: '100px' },
+                { left: '70px', top: '31px' },
+                { left: '150px', top: '31px' },
+                { left: '190px', top: '100px' }
+            ];
+
+            const totalLength = 251.3;
+            
+            // 初始化歸零
+            if (indicator) {
+                indicator.style.left = coords[0].left;
+                indicator.style.top = coords[0].top;
+            }
+            if (arcPath) {
+                arcPath.style.strokeDashoffset = totalLength;
+            }
             
             dots.forEach(dot => dot.classList.remove('active'));
             labels.forEach(label => label.classList.remove('active'));
 
+            // 觸發 2.6 秒優雅慢速圓弧移動與充能
             setTimeout(() => {
                 dots.forEach((dot, idx) => {
                     if (idx <= step) dot.classList.add('active');
@@ -678,9 +661,14 @@
                     if (idx === step) label.classList.add('active');
                 });
 
-                const percentage = (step / 3) * 100;
-                if (indicator) indicator.style.left = `${percentage}%`;
-                if (progress) progress.style.width = `${percentage}%`;
+                if (indicator && coords[step]) {
+                    indicator.style.left = coords[step].left;
+                    indicator.style.top = coords[step].top;
+                }
+                if (arcPath) {
+                    const targetOffset = totalLength - (step / 3) * totalLength;
+                    arcPath.style.strokeDashoffset = targetOffset;
+                }
             }, 150);
         }
 
@@ -895,7 +883,7 @@
             container.innerHTML = '<p style="text-align:center; padding:40px; color:#999;">努力載入訂單中...</p>';
             const { data, error } = await supabaseClient.from('orders').select('*').eq('user_id', userLineId).order('created_at', { ascending: false });
             if(error || !data || data.length === 0) {
-                container.innerHTML = `<p style="text-align:center; padding:40px; color:#999; font-weight:700;" class="i-trans" data-key="emptyOrders">${TRANSLATIONS[currentLang]['emptyOrders']}</p>`;
+                container.innerHTML = '<p style="text-align:center; padding:40px; color:#999; font-weight:700;" class="i-trans" data-key="emptyOrders">行李箱空空如也～</p>';
                 return;
             }
             allUserOrders = data;
