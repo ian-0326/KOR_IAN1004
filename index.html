@@ -133,7 +133,7 @@
         .pass-label { font-size: 11px; font-weight: 900; color: #d4af37; text-transform: uppercase; margin-bottom: 2px; } /* 金黃色標籤 */
         .pass-val { font-size: 18px; font-weight: 900; color: #ffffff; word-break: break-all; text-shadow: 0 1px 2px rgba(0,0,0,0.4); } /* 白色資料 */
 
-        /* 修正 1：護照頁面指定套用 KIbackground.png，改為相對定位，以利左上角圓形指標按鈕精確錨定 */
+        /* 護照頁面指定套用 KIbackground.png，改為相對定位，以利左上角圓形指標按鈕精確錨定 */
         #page-passport.active { 
             display: flex; 
             flex-direction: column; 
@@ -141,10 +141,10 @@
             background: url('KIbackground.png') no-repeat center center; 
             background-size: cover; 
             padding-bottom: 110px; /* 留出底部導覽選單空間避免重疊 */
-            position: relative; /* 核心修正點：設定相對定位基準線 */
+            position: relative; /* 設定相對定位基準線 */
         }
 
-        /* 修正 1：「下單流程」左上角客製化純圖示圓形按鈕 CSS 規則，脫離常規文檔流 */
+        /* 「下單流程」左上角客製化純圖示圓形按鈕 CSS 規則，脫離常規文檔流 */
         .passport-circle-btn {
             width: 44px;
             height: 44px;
@@ -161,12 +161,38 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
             transition: 0.2s;
             flex-shrink: 0;
-            position: absolute; /* 核心修正點：絕對定位至最左上角 */
+            position: absolute; /* 絕對定位至最左上角 */
             top: 24px;
             left: 16px;
             z-index: 10;
         }
         .passport-circle-btn:active { transform: scale(0.95); background: rgba(255, 255, 255, 0.35); }
+
+        /* 功能選單按鈕橫向並排一行的方形長方形美學設計（長寬比為 2 / 1，縮短高度不拆成兩行） */
+        .passport-btn-group { display: flex; flex-direction: row; gap: 16px; margin-top: 24px; width: 100%; box-sizing: border-box; }
+        .passport-action-btn { 
+            flex: 1; 
+            height: 46px; /* 高度縮小一點變扁平精緻 */
+            background: #ffffff; 
+            border: none; 
+            border-radius: 24px; 
+            padding: 0 12px; 
+            font-size: 15px; 
+            font-weight: 900; 
+            color: #191f28; 
+            cursor: pointer; 
+            display: flex; 
+            flex-direction: row; /* 橫向排列，將選單圖示移動到選單文字的左側 */
+            align-items: center; 
+            justify-content: center; 
+            gap: 8px; 
+            box-shadow: 0 8px 24px rgba(0,0,0,0.04); 
+            border: 1px solid rgba(0,0,0,0.01); 
+            transition: 0.15s ease-in-out; 
+            box-sizing: border-box;
+        }
+        .passport-action-btn:active { background: #f8f9fa; transform: translateY(2px); }
+        .passport-action-btn svg, .passport-action-btn iconify-icon { width: 22px; height: 22px; color: #4e5968; display: flex; align-items: center; justify-content: center; }
 
         /* 階梯圖卡進度條狀態激活控量 */
         .timeline-card-container { margin-top: 24px; padding: 52px 20px 42px 20px; background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 28px; box-sizing: border-box; }
@@ -270,7 +296,7 @@
                 <iconify-icon icon="fe:notice-push" style="font-size: 24px; color: currentColor;"></iconify-icon>
             </button>
 
-            <div style="text-align: left; padding: 0 16px; color: #ffffff; margin-top: 64px; margin-bottom: auto;">
+            <div style="text-align: left; padding: 20px 16px 0 16px; color: #ffffff;">
                 <div style="font-size: 26px; font-weight: 900; letter-spacing: 1px;">護照</div>
                 <div style="font-size: 14px; font-weight: 700; letter-spacing: 2px; opacity: 0.8; margin-top: 2px;">PASSPORT</div>
             </div>
@@ -286,6 +312,13 @@
                         <div class="pass-row"><span class="pass-label">Date of Birth / 生日</span><span id="pass-birth" class="pass-val">---</span></div>
                     </div>
                 </div>
+            </div>
+
+            <div class="passport-btn-group">
+                <button class="passport-action-btn" onclick="switchPage('process')">
+                    <iconify-icon icon="fe:notice-push"></iconify-icon>
+                    <span>下單流程</span>
+                </button>
             </div>
 
             <div class="timeline-card-container">
@@ -418,6 +451,7 @@
                 userLinePicture = profile.pictureUrl || "https://img.icons8.com/illustrations/96/user.png";
 
                 await fetchProducts();
+                // 異步同步後端動態進度控制表狀態
                 await fetchSystemControl();
 
                 const { data } = await supabaseClient.from('profiles').select('*').or(`line_id.eq.${userLineId},user_id.eq.${userLineId}`);
@@ -586,14 +620,6 @@
             document.getElementById('login-gate').style.display = 'none';
         }
 
-        function setGender(g) {
-            selectedGender = g;
-            const maleBtn = document.getElementById('g-male'), femaleBtn = document.getElementById('g-female');
-            maleBtn.classList.remove('active-m'); femaleBtn.classList.remove('active-f');
-            if (g === 'M') maleBtn.classList.add('active-m');
-            if (g === 'F') femaleBtn.classList.add('active-f');
-        }
-
         UX_add_modal = function() { openAddModal(); }
         function openAddModal() { 
             document.body.classList.add('modal-open'); 
@@ -725,23 +751,6 @@
                 </div>
             `).join('');
             feather.replace();
-        }
-
-        function handleRegister() {
-            const btn = document.getElementById('btn-register');
-            const name = document.getElementById('reg-name'), tel = document.getElementById('reg-tel'), email = document.getElementById('reg-email');
-            const by = document.getElementById('reg-birth-y'), bm = document.getElementById('reg-birth-m'), bd = document.getElementById('reg-birth-d');
-            let valid = true;
-            if(!name.value.trim()){ name.classList.add('error'); document.getElementById('tag-reg-name').style.display='inline'; valid=false; }
-            if(!/^09\d{8}$/.test(tel.value)){ tel.classList.add('error'); document.getElementById('tag-reg-tel').style.display='inline'; valid=false; }
-            if(!by.value || !bm.value || !bd.value){ [by,bm,bd].forEach(s => s.classList.add('error')); document.getElementById('tag-reg-birth').style.display='inline'; valid=false; }
-            if(!valid) return;
-            if(!userLineId) return;
-            btn.disabled = true; 
-            const fullBirth = `${by.value}-${bm.value}-${bd.value}`;
-            supabaseClient.from('profiles').insert([{ line_id: userLineId, user_id: userLineId, full_name: name.value.trim(), phone: tel.value.trim(), birthday: fullBirth, gender: selectedGender, email: email.value.trim() }]).then(({error}) => {
-                if(!error) location.reload(); else { alert("失敗：" + error.message); btn.disabled = false; }
-            });
         }
 
         function renderUserProfile() { 
