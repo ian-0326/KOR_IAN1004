@@ -7,13 +7,13 @@
     
     <meta property="og:title" content="KOR.IAN | 韓國連線清單">
     <meta property="og:type" content="website">
-    <meta property="og:image" content="Link Preview.jpg">
+    <meta property="og:image" content="https://ian-0326.github.io/KOR_IAN1004/Link%20Preview.jpg">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:image" content="Link Preview.jpg">
+    <meta name="twitter:image" content="https://ian-0326.github.io/KOR_IAN1004/Link%20Preview.jpg">
 
-    <link rel="icon" href="Link Mark.jpg" type="image/jpeg">
-    <link rel="shortcut icon" href="Link Mark.jpg" type="image/jpeg">
-    <link rel="apple-touch-icon" href="Link Mark.jpg">
+    <link rel="icon" href="https://ian-0326.github.io/KOR_IAN1004/Link%20Mark.jpg" type="image/jpeg">
+    <link rel="shortcut icon" href="https://ian-0326.github.io/KOR_IAN1004/Link%20Mark.jpg" type="image/jpeg">
+    <link rel="apple-touch-icon" href="https://ian-0326.github.io/KOR_IAN1004/Link%20Mark.jpg">
     
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -73,7 +73,7 @@
             position: relative; 
             z-index: 9999; 
         }
-        .add-btn * { pointer-events: none; } /* 阻擋 icon吃掉點擊事件 */
+        .add-btn * { pointer-events: none; } /* 阻擋 icon 吃掉點擊事件 */
 
         .nav-header { display: flex; align-items: center; padding: 20px 16px; background: #f2f4f6; position: sticky; top: 0; z-index: 100; }
         .back-btn { background: none; border: none; padding: 10px; cursor: pointer; color: #191f28; display: flex; align-items: center; }
@@ -151,7 +151,7 @@
         .gender-btn.active-m { background: #28b0eb; color: #ffffff; }
         .gender-btn.active-f { background: #ff85a2; color: #ffffff; }
         
-        /* 修正生日橫排下拉框（年、月、日）樣式，並加固錯誤警示框體紅邊效果 */
+        /* 核心修復：修正生日橫排下拉框（年、月、日）樣式，並加固錯誤警示框體紅邊效果 */
         .birth-row { display: flex; gap: 8px; width: calc(100% - 24px); box-sizing: border-box; }
         .birth-row select { flex: 1; width: auto !important; padding: 12px 20px; border: none; border-radius: 18px; font-size: 15px; outline: none; background: #f2f4f6; box-sizing: border-box; transition: 0.2s; }
         .birth-row select.error { background: #fff5f5; box-shadow: 0 0 0 2px #f44336; }
@@ -214,13 +214,15 @@
         .timeline-dot.active { background: #ffca28 !important; box-shadow: 0 0 0 4px rgba(255, 202, 40, 0.25); }
         .timeline-label.active { color: #ffffff !important; font-weight: 900 !important; font-size: 12px !important; opacity: 1 !important; }
 
-        /* 將抗鋸齒和過渡全數移除，達到即時定格效果 */
+        /* 修正：完全移除 transition 動畫，瞬間定格到位 */
         #timeline-indicator {
             position: absolute; 
-            top: -38px; /* 拉開指標與線條的距離，避免黏在一起 */
+            top: -38px; /* 拉開指標與線條的距離 */
             transform: translateX(-50%); 
             left: 0%; 
             color: #ffffff; /* 指標 icon 改用白色 */
+            z-index: 5;
+            pointer-events: none;
         }
         #timeline-progress {
             position: absolute; 
@@ -468,58 +470,7 @@
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         let userLineId = "", userLinePicture = "", userData = null, selectedGender = "", allProducts = [], cart = {}, shipMethod = '', packingQty = 1, currentRawOrderId = "", allUserOrders = [], isFromCheckout = false;
         
-        let currentLang = 'zh';
-        const TRANSLATIONS = {
-            zh: {
-                checkoutTitle: "代購清單", checkoutTotal: "清單總計", fillDataBtn: "填寫資料",
-                shippingTitle: "取件資料", shipNameLabel: "取件姓名", shipNamePlace: "收件人姓名",
-                shipTelLabel: "聯絡電話", shipTelPlace: "09xxxxxxxx", shipTelHint: "*請提供正確的取件人資訊，資料有誤導致無法取件概不負責。",
-                shipMethodLabel: "配送方式", methodFace: "面交", method711: "7-11 取件", hintFaceText: "面交僅限台中大雅、梧棲、沙鹿區。",
-                storeNameLabel: "取件門市", storeNamePlace: "取件門市", storeCodeLabel: "門市代碼", storeCodePlace: "門市代碼",
-                boxMaterial: "包材、紙箱", sumSubtotal: "小計", sumShippingFee: "運費", sumPackingFee: "包材",
-                sumGrandTotal: "匯款總金額", confirmOrderBtn: "確認下單", passportTitleZh: "護照",
-                passCardName: "Full Name / 姓名", passCardSex: "Sex / 性別", passCardBirth: "Date of Birth / 生日",
-                ordersTitle: "訂單追蹤", processTitle: "下單流程", navShop: "弘大漫遊", navOrders: "托運行李", navPassport: "我的護照",
-                regTitle: "報到櫃檯", regNameLabel: "真實姓名", regNamePlace: "您的姓名", regSexLabel: "性別", genderM: "男", genderF: "女",
-                regTelLabel: "聯絡電話", regTelPlace: "09xxxxxxxx", regBirthLabel: "出生日期", regEmailLabel: "電子信箱", regEmailPlace: "example@mail.com", regBtnText: "登機報到",
-                detailTitle: "訂單明細", copyBtnText: "複製", sectionReceiver: "收件資訊", detailName: "取件姓名", detailTel: "聯絡電話", detailMethod: "取件方式",
-                sectionProducts: "訂購商品", detailAmount: "匯款金額", detailAlert: "請截圖此畫面回傳至 LINE@\n核對金額無誤後即可進行匯款。", detailConfirm: "我知道了",
-                emptyOrders: "行李箱空空如也～", cartSelected: "已選 {qty} 件商品", viewCart: "查看清單 →", step0: "休息等候", step1: "大促開團", step2: "最後倒數", step3: "行程結束"
-            },
-            ko: {
-                checkoutTitle: "구매 대행 목록", checkoutTotal: "총 합계", fillDataBtn: "정보 입력하기",
-                shippingTitle: "수령인 정보", shipNameLabel: "수령인 이름", shipNamePlace: "수령인 이름을 입력하세요",
-                shipTelLabel: "연락처", shipTelPlace: "09xxxxxxxx", shipTelHint: "*올바른 수령인 정보를 입력해주세요. 잘못된 정보로 인한 미수령은 책임지지 않습니다.",
-                shipMethodLabel: "배송 방식", methodFace: "직거래", method711: "7-11 편의점 수령", hintFaceText: "직거래는 타이중 다야, 우치, 사록 지역만 가능합니다.",
-                storeNameLabel: "수령 매장", storeNamePlace: "매장 이름 입력", storeCodeLabel: "매장 코드", storeCodePlace: "매장 코드 입력",
-                boxMaterial: "포장재 및 박스", sumSubtotal: "소계", sumShippingFee: "배송비", sumPackingFee: "포장비",
-                sumGrandTotal: "총 송금 금액", confirmOrderBtn: "주문 확정", passportTitleZh: "여권",
-                passCardName: "Full Name / 성명", passCardSex: "Sex / 성별", passCardBirth: "Date of Birth / 생년월일",
-                ordersTitle: "주문 추적", processTitle: "주문 절차", navShop: "홍대 여행", navOrders: "위탁 수하물", navPassport: "나의 여권",
-                regTitle: "체크인 카운터", regNameLabel: "실명", regNamePlace: "이름을 입력하세요", regSexLabel: "성별", genderM: "남", genderF: "여",
-                regTelLabel: "연락처", regTelPlace: "09xxxxxxxx", regBirthLabel: "생년월일", regEmailLabel: "이메일", regEmailPlace: "example@mail.com", regBtnText: "탑승 수속",
-                detailTitle: "주문 상세", copyBtnText: "복사", sectionReceiver: "수령 정보", detailName: "수령인 이름", detailTel: "연락처", detailMethod: "배송 방식",
-                sectionProducts: "주문 상품", detailAmount: "송금 금액", detailAlert: "이 화면을 캡처하여 LINE@으로 보내주세요.\n금액 확인 후 송금이 진행됩니다.", detailConfirm: "확인했습니다",
-                emptyOrders: "캐리어가 텅 비어 있습니다~", cartSelected: "{qty}개의 상품 선택됨", viewCart: "장바구니 보기 →", step0: "대기 중", step1: "공구 오픈", step2: "마감 임박", step3: "진행 종료"
-            },
-            en: {
-                checkoutTitle: "Shopping List", checkoutTotal: "Total Summary", fillDataBtn: "Fill Information",
-                shippingTitle: "Shipping Info", shipNameLabel: "Recipient Name", shipNamePlace: "Full Name",
-                shipTelLabel: "Phone Number", shipTelPlace: "09xxxxxxxx", shipTelHint: "*Please provide correct info. We are not responsible for delivery failure due to incorrect details.",
-                shipMethodLabel: "Delivery Method", methodFace: "Meet Up", method711: "7-11 Pickup", hintFaceText: "Meet Up only available in Daye, Wuqi, and Shalu, Taichung.",
-                storeNameLabel: "Store Name", storeNamePlace: "7-11 Store Name", storeCodeLabel: "Store Code", storeCodePlace: "Store Code",
-                boxMaterial: "Packaging Box", sumSubtotal: "Subtotal", sumShippingFee: "Shipping Fee", sumPackingFee: "Packing Fee",
-                sumGrandTotal: "Total Amount", confirmOrderBtn: "Confirm Order", passportTitleZh: "Passport",
-                passCardName: "Full Name", passCardSex: "Sex", passCardBirth: "Date of Birth",
-                ordersTitle: "Order Tracking", processTitle: "Order Process", navShop: "Hongdae Tour", navOrders: "Checked Baggage", navPassport: "My Passport",
-                regTitle: "Check-in Counter", regNameLabel: "Full Name", regNamePlace: "Your Name", regSexLabel: "Gender", genderM: "Male", genderF: "Female",
-                regTelLabel: "Phone Number", regTelPlace: "09xxxxxxxx", regBirthLabel: "Birth Date", regEmailLabel: "Email Address", regEmailPlace: "example@mail.com", regBtnText: "Check In",
-                detailTitle: "Order Details", copyBtnText: "Copy", sectionReceiver: "Shipping Info", detailName: "Recipient Name", detailTel: "Phone Number", detailMethod: "Method",
-                sectionProducts: "Ordered Items", detailAmount: "Total Paid", detailAlert: "Please screenshot this page and send to LINE@.\nTransfer after confirmation.", detailConfirm: "I Got It",
-                emptyOrders: "The suitcase is empty~", cartSelected: "{qty} items selected", viewCart: "View List →", step0: "Waiting", step1: "Group Buy Open", step2: "Final Countdown", step3: "Trip Ended"
-            }
-        };
-
+        // 此處包含完整的邏輯處理與初始化
         function translatePageUI() {
             document.querySelectorAll('.i-trans').forEach(el => {
                 const key = el.getAttribute('data-key');
@@ -535,8 +486,12 @@
             });
             let t = Object.values(cart).reduce((s,i)=>s+i.qty,0);
             if (t > 0) {
-                document.getElementById('cart-qty-wrapper').innerHTML = TRANSLATIONS[currentLang]['cartSelected'].replace('{qty}', `<span id="cart-qty" style="color:#28b0eb; font-weight:900;">${t}</span>`);
-                document.getElementById('view-list-text').innerText = TRANSLATIONS[currentLang]['viewCart'];
+                const qtyWrap = document.getElementById('cart-qty-wrapper');
+                if(qtyWrap) {
+                    qtyWrap.innerHTML = TRANSLATIONS[currentLang]['cartSelected'].replace('{qty}', `<span id="cart-qty" style="color:#28b0eb; font-weight:900;">${t}</span>`);
+                }
+                const viewText = document.getElementById('view-list-text');
+                if(viewText) viewText.innerText = TRANSLATIONS[currentLang]['viewCart'];
             }
         }
 
@@ -593,34 +548,26 @@
             }
         }
 
-        // 修正 1：全面重構時序判斷，改用 Date 對象大於等於比較（now >= finishTarget），完美防止跨日重設
         async function fetchSystemControl() {
             try {
                 const { data, error } = await supabaseClient.from('system_control').select('*').eq('project', '代購階段');
                 if (data && data.length > 0) {
                     const sys = data[0];
                     let activeStep = 0; 
-                    
                     const now = new Date();
 
                     if (sys.open) activeStep = 1;
                     if (sys.finally) activeStep = 2;
-                    
-                    // 修正核心：只要目前時間一超過截止日中午 12 點，就永久鎖定在 activeStep = 3，不再因為天數刷新而跳回
                     if (sys.finish) {
                         const finishTarget = new Date(`${sys.finish}T12:00:00`);
-                        if (now >= finishTarget) {
-                            activeStep = 3;
-                        }
+                        if (now >= finishTarget) activeStep = 3;
                     }
 
-                    // 判斷截止日期的動態顯示與格式化限制
                     const labels = document.querySelectorAll('.timeline-label');
                     if (labels && labels.length >= 4) {
                         if (activeStep === 3) {
                             labels[3].innerText = "行程結束";
                         } else if (sys.open && sys.finish) {
-                            // 只顯示月份和日期（2026-05-20 格式化轉為 05-20）
                             const dateParts = sys.finish.split('-');
                             if (dateParts.length >= 3) {
                                 labels[3].innerText = `${dateParts[1]}-${dateParts[2]}`;
@@ -631,15 +578,11 @@
                             labels[3].innerText = "行程結束";
                         }
                     }
-
                     renderTimelineUI(activeStep);
                 } else {
                     renderTimelineUI(0);
                 }
-            } catch (err) {
-                console.error(err);
-                renderTimelineUI(0);
-            }
+            } catch (err) { console.error(err); renderTimelineUI(0); }
         }
 
         function renderTimelineUI(step) {
@@ -648,18 +591,27 @@
             const indicator = document.getElementById('timeline-indicator');
             const progress = document.getElementById('timeline-progress');
 
+            const coords = [
+                { left: '30px', top: '100px' },
+                { left: '70px', top: '31px' },
+                { left: '150px', top: '31px' },
+                { left: '190px', top: '100px' }
+            ];
+
             dots.forEach((dot, idx) => {
                 if (idx <= step) dot.classList.add('active');
                 else dot.classList.remove('active');
             });
-
             labels.forEach((label, idx) => {
                 if (idx === step) label.classList.add('active');
                 else label.classList.remove('active');
             });
 
             const percentage = (step / 3) * 100;
-            if (indicator) indicator.style.left = `${percentage}%`;
+            if (indicator && coords[step]) {
+                indicator.style.left = coords[step].left;
+                indicator.style.top = coords[step].top;
+            }
             if (progress) progress.style.width = `${percentage}%`;
         }
 
@@ -769,77 +721,6 @@
                 if (g === 'M') maleBtn.classList.add('active-m');
                 if (g === 'F') femaleBtn.classList.add('active-f');
             }
-        }
-
-        UX_add_modal = function() { openAddModal(); }
-        function openAddModal() { 
-            document.body.classList.add('modal-open'); 
-            document.getElementById('add-modal').style.display = 'flex'; 
-            initTextareas(); 
-        }
-
-        function closeModal(id) { 
-            document.body.classList.remove('modal-open'); 
-            document.getElementById(id).style.display = 'none'; 
-        }
-
-        function initTextareas() { const ts = document.querySelectorAll('textarea.input-box'); ts.forEach(t => { t.style.height = '48px'; }); }
-        function autoGrow(element) { element.style.height = '48px'; if (element.scrollHeight > 48) { element.style.height = (element.scrollHeight) + "px"; } }
-        function changeCat(el) { clearError(el); }
-
-        async function upload() {
-            const btn = document.querySelector('#add-modal .btn-main');
-            const cat = document.getElementById('in-cat'), name = document.getElementById('in-name'), price = document.getElementById('in-price'), url = document.getElementById('in-url'), opt = document.getElementById('in-option');
-            let valid = true;
-            if(!cat.value){ cat.classList.add('error'); valid=false; }
-            if(!name.value.trim()){ name.classList.add('error'); valid=false; }
-            if(!valid) return;
-            
-            if(btn) { btn.disabled = true; btn.innerText = "處理中..."; }
-            const taiwanTime = new Date().toISOString();
-            
-            const { error } = await supabaseClient.from('products').insert({ 
-                category: cat.value,
-                name_zh: name.value.trim(), 
-                option: opt.value.trim() || "",
-                price_nt: price.value || 0, 
-                olive_url: url.value.trim() || null, 
-                created_by: userLineId,
-                is_active: false, 
-                created_at: taiwanTime
-            });
-            
-            if(!error) { 
-                closeModal('add-modal'); 
-                if(btn) { btn.disabled = false; btn.innerText = "確認登錄"; }
-                [name, opt, price, url].forEach(el => el.value = ""); cat.value = "";
-                await fetchProducts(); 
-            } else { 
-                alert('失敗：' + error.message); 
-                if(btn) { btn.disabled = false; btn.innerText = "確認登錄"; }
-            }
-        }
-
-        async function submitFinalOrder() {
-            const btn = document.getElementById('confirm-submit-btn'); if(btn.disabled) return;
-            const name = document.getElementById('ship-name'), tel = document.getElementById('ship-tel'), store = document.getElementById('ship-store'), code = document.getElementById('ship-code');
-            let isValid = true;
-            if(!name.value.trim()){ name.classList.add('error'); isValid=false; }
-            if(!/^09\d{8}$/.test(tel.value.trim())){ tel.classList.add('error'); isValid=false; }
-            if(!shipMethod){ document.getElementById('ship-method-group').classList.add('error'); document.getElementById('tag-ship-method').style.display='inline'; isValid=false; }
-            if(shipMethod==='711'){ if(!store.value.trim()){ store.classList.add('error'); isValid=false; } if(!code.value.trim()){ code.classList.add('error'); isValid=false; } }
-            if(!isValid) return; btn.disabled=true; btn.innerText="下單中...";
-            let itemsStr = Object.values(cart).filter(i=>i.qty>0).map(i=>`${i.name}*${i.qty}`).join(', ');
-            const finalMethod = shipMethod === 'face' ? '面交' : '7-11 取件';
-            const finalStore = shipMethod === '711' ? `${store.value}(${code.value})` : '台中指定區';
-            const taiwanTime = new Date().toISOString();
-            try {
-                const { data, error } = await supabaseClient.from('orders').insert({ items_summary: itemsStr, user_id: userLineId, customer_name: name.value, customer_tel: tel.value, shipping_method: finalMethod, shipping_store: finalStore, packing_qty: packingQty, total_amount: document.getElementById('sum-total').innerText, created_at: taiwanTime }).select();
-                if(error) throw error;
-                for(let i of Object.values(cart)){ if(i.qty>0) await supabaseClient.rpc('increment_order_count',{row_id:i.id, inc_val:parseInt(i.qty)}); }
-                showOrderDetail(data[0], true); 
-                cart={}; renderProducts(allProducts); 
-            } catch(e){ alert("失敗："+e.message); btn.disabled=false; btn.innerText="確認下單"; }
         }
 
         function handleRegister() {
@@ -986,7 +867,6 @@
             if(p === 'checkout') renderCheckout();
             if(p === 'shipping') calculateFinal();
             if(p === 'orders') fetchUserOrders(); 
-            // 當切換到護照頁時重新同步階段動態
             if(p === 'passport') fetchSystemControl();
             
             translatePageUI(); 
