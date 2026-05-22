@@ -26,54 +26,23 @@
         body { font-family: Georgia, Garamond, "Times New Roman", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", "Helvetica Neue", "Microsoft JhengHei", sans-serif; background-color: #f2f4f6; margin: 0; padding: 0; color: #191f28; -webkit-font-smoothing: antialiased; touch-action: manipulation; }
         body.modal-open { overflow: hidden; }
 
-        /* 強制登入天藍色開屏安全牆 */
         #login-gate { position: fixed; inset: 0; background: #28b0eb; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        
-        /* 核心動效：整體內容做純粹的同頻淡入淡出 */
         #loader-content { text-align: center; animation: fadeInOut 2s ease-in-out infinite; }
-        
-        /* 飛機圖片檔案獨立的上下浮動呼吸動畫 */
-        .custom-airplane-img { width: 90px; height: auto; display: block; margin: 0 auto; animation: floatAnimation 2s ease-in-out infinite; }
+        .custom-airplane-img { width: 65px; height: auto; display: block; margin: 0 auto; animation: floatAnimation 2s ease-in-out infinite; }
         .gate-text { font-size: 14px; font-weight: 700; color: #ffffff; margin-top: 24px; letter-spacing: 2px; opacity: 0.95; }
         
-        @keyframes floatAnimation {
-            0% { transform: translateY(0); }
-            50% { transform: translateY(-12px); }
-            100% { transform: translateY(0); }
-        }
-        
-        @keyframes fadeInOut {
-            0% { opacity: 0.4; }
-            50% { opacity: 1; }
-            100% { opacity: 0.4; }
-        }
+        @keyframes floatAnimation { 0% { transform: translateY(0); } 50% { transform: translateY(-12px); } 100% { transform: translateY(0); } }
+        @keyframes fadeInOut { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
 
-        /* 頂部固定 Header */
         .fixed-header { position: sticky; top: 0; background: #f2f4f6; z-index: 110; padding: 20px 16px 10px 16px; display: flex; justify-content: space-between; align-items: center; }
-        /* 將 Logo 放大至 64px 高度 */
         .page-logo { height: 64px; width: auto; object-fit: contain; }
         
-        /* 將「新增商品」按鈕的樣式改成跟「下單流程」按鈕一模一樣的圓形毛玻璃懸浮規格 */
         .add-btn { 
-            width: 44px; 
-            height: 44px; 
-            background: rgba(255, 255, 255, 0.2); 
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            color: #ffffff; 
-            border-radius: 50%; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05); 
-            cursor: pointer; 
-            transition: 0.2s;
-            flex-shrink: 0;
-            position: relative; 
-            z-index: 9999; 
+            width: 44px; height: 44px; background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.25); color: #ffffff; border-radius: 50%; display: flex; align-items: center; justify-content: center; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05); cursor: pointer; transition: 0.2s; position: relative; z-index: 9999; 
         }
-        .add-btn * { pointer-events: none; } /* 阻擋 icon 吃掉點擊事件 */
+        .add-btn * { pointer-events: none; }
 
         .nav-header { display: flex; align-items: center; padding: 20px 16px; background: #f2f4f6; position: sticky; top: 0; z-index: 100; }
         .back-btn { background: none; border: none; padding: 10px; cursor: pointer; color: #191f28; display: flex; align-items: center; }
@@ -81,23 +50,16 @@
         .page-content { display: none; padding: 0 16px 280px 16px; min-height: 100vh; box-sizing: border-box; }
         .page-content.active { display: block; }
         
-        /* 分類選單固定 */
         .category-wrapper { position: sticky; top: 75px; background: #f2f4f6; margin: 0 -16px 20px -16px; padding: 10px 16px; overflow-x: auto; display: flex; gap: 8px; scrollbar-width: none; z-index: 90; }
         .cat-pill { white-space: nowrap; padding: 10px 20px; background: #fff; border-radius: 50px; font-size: 14px; font-weight: 700; color: #4e5968; box-shadow: 0 2px 6px rgba(0,0,0,0.05); flex-shrink: 0; cursor: pointer; }
         .cat-pill.active { background: #28b0eb; color: #fff; }
 
-        /* 商品卡片 */
-        .item-card { background: #fff; padding: 20px; border-radius: 28px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 12px rgba(0,0,0,0.04); margin-bottom: 12px; position: relative; } /* 確保卡片容器具備相對定位以利皇冠貼附 */
-        .item-card:first-child { margin-top: 10px; }
-        .item-card * { pointer-events: auto; }
+        .item-card { background: #fff; padding: 20px; border-radius: 28px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 12px rgba(0,0,0,0.04); margin-bottom: 12px; position: relative; }
         .item-main { flex: 1; cursor: pointer; }
         .item-name { font-size: 16px; font-weight: 700; color: #191f28; display: inline-block; margin-bottom: 4px; }
         .item-option { font-size: 12px; color: #adb5bd; margin-left: 6px; font-weight: 400; }
         .item-price { color: #28b0eb; font-weight: 900; font-size: 17px; display: block; }
-
-        /* 熱銷黃色皇冠懸浮標籤樣式 */
         .crown-badge { position: absolute; top: -6px; left: 16px; background: #ffffff; color: #ffca28; padding: 2px 6px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); display: flex; align-items: center; justify-content: center; z-index: 10; }
-
         .qty-ctrl { display: flex; align-items: center; gap: 14px; background: #f8f9fa; padding: 8px 16px; border-radius: 50px; }
         .qty-btn { background: none; border: none; padding: 0; color: #4e5968; display: flex; align-items: center; cursor: pointer; }
         .qty-num { font-size: 16px; font-weight: 900; color: #28b0eb; min-width: 20px; text-align: center; }
@@ -110,7 +72,6 @@
         .list-s { font-size: 11px; color: #adb5bd; display: inline-block; margin-left: 6px; }
         .list-p { font-size: 13px; color: #28b0eb; display: block; font-weight: 900; margin-top: 2px; }
 
-        /* 表單設計 */
         .form-item { margin-bottom: 12px; width: 100%; display: flex; flex-direction: column; align-items: center; }
         .form-label { width: calc(100% - 24px); font-size: 14px; font-weight: 700; margin-bottom: 6px; color: #4e5968; display: flex; align-items: center; }
         .req-tag { color: #f44336; font-size: 12px; margin-left: 6px; display: none; }
@@ -144,132 +105,56 @@
         .copy-btn { background: #eee; border: none; padding: 4px 8px; border-radius: 8px; font-size: 10px; color: #4e5968; cursor: pointer; margin-left: 8px; display: inline-flex; align-items: center; gap: 4px; vertical-align: middle; }
         .modal-header-centered { text-align: center; margin-bottom: 24px; flex-shrink: 0; }
 
-        /* 報到櫃檯專屬排版 CSS 樣式規則 */
-        .row-flex { display: flex; gap: 16px; width: calc(100% - 24px); align-items: flex-end; justify-content: space-between; box-sizing: border-box; }
+        /* 報到櫃檯復原之高品質排版 CSS */
+        .row-flex { display: flex; gap: 16px; width: 100%; align-items: flex-end; justify-content: space-between; box-sizing: border-box; }
         .gender-group { display: flex; gap: 4px; background: #f2f4f6; padding: 4px; border-radius: 14px; height: 48px; box-sizing: border-box; align-items: center; }
         .gender-btn { background: none; border: none; padding: 0 16px; font-size: 14px; font-weight: 700; color: #4e5968; cursor: pointer; border-radius: 10px; height: 100%; transition: 0.2s; box-sizing: border-box; }
         .gender-btn.active-m { background: #28b0eb; color: #ffffff; }
         .gender-btn.active-f { background: #ff85a2; color: #ffffff; }
-        .birth-row { display: flex; gap: 8px; width: calc(100% - 24px); box-sizing: border-box; }
+        .birth-row { display: flex; gap: 8px; width: 100%; box-sizing: border-box; }
+        .birth-row select { flex: 1; padding: 12px; border: none; border-radius: 18px; background: #f2f4f6; outline: none; }
 
-        /* 護照資料圖卡排版設定（無白框樣式） */
         .passport-card-layer { background: url('KOR.IAN CARD.png') no-repeat center center; background-size: cover; border-radius: 32px; padding: 30px 20px; margin-top: 10px; width: 100%; box-sizing: border-box; }
         .passport-inner-card { display: flex; gap: 32px; text-align: left; box-sizing: border-box; align-items: center; }
         .passport-photo-box { width: 115px; display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
         .passport-photo { width: 115px; height: 150px; object-fit: cover; border-radius: 12px; background: #e5e8eb; border: 2px solid rgba(255,255,255,0.25); box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
         .passport-fields { flex: 1; display: flex; flex-direction: column; gap: 12px; }
         .pass-row { display: flex; flex-direction: column; line-height: 1.3; }
-        .pass-label { font-size: 11px; font-weight: 900; color: #d4af37; text-transform: uppercase; margin-bottom: 2px; } /* 金黃色標籤 */
-        .pass-val { font-size: 18px; font-weight: 900; color: #ffffff; word-break: break-all; text-shadow: 0 1px 2px rgba(0,0,0,0.4); } /* 白色資料 */
+        .pass-label { font-size: 11px; font-weight: 900; color: #d4af37; text-transform: uppercase; margin-bottom: 2px; }
+        .pass-val { font-size: 18px; font-weight: 900; color: #ffffff; word-break: break-all; text-shadow: 0 1px 2px rgba(0,0,0,0.4); }
 
-        /* 護照頁面指定套用 KIbackground.png，改為相對定位，以利左上角圓形指標按鈕精確錨定 */
         #page-passport.active { 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: flex-end; 
-            background: url('KIbackground.png') no-repeat center center; 
-            background-size: cover; 
-            padding-bottom: 110px; /* 留出底部導覽選單空間避免重疊 */
-            position: relative; /* 設定相對定位基準線 */
+            display: flex; flex-direction: column; justify-content: flex-end; background: url('KIbackground.png') no-repeat center center; background-size: cover; padding-bottom: 110px; position: relative; 
         }
 
-        /* 「下單流程」左上角客製化純圖示圓形按鈕 CSS 規則，脫離常規文檔流 */
         .passport-circle-btn {
-            width: 44px;
-            height: 44px;
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            color: #ffffff;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            transition: 0.2s;
-            flex-shrink: 0;
-            position: absolute; /* 絕對定位至最左上角 */
-            top: 24px;
-            left: 16px;
-            z-index: 10;
+            width: 44px; height: 44px; background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.25); color: #ffffff; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.05); transition: 0.2s; position: absolute; top: 24px; left: 16px; z-index: 10;
         }
         .passport-circle-btn:active { transform: scale(0.95); background: rgba(255, 255, 255, 0.35); }
+        #passport-lang-btn { left: 74px; }
 
-        /* 在下單流程按鈕右側加入一個一樣樣式的「語言轉換」按鈕，寬度間距推開 */
-        #passport-lang-btn {
-            left: 74px; /* 44px按鈕寬 + 16px左距 + 14px間距 */
-        }
-
-        /* 橫向並排一行的扁平橫式長方形按鈕排版優化設定 */
-        .passport-btn-group { display: flex; flex-direction: row; gap: 16px; margin-top: 24px; width: 100%; box-sizing: border-box; }
-        .passport-action-btn { 
-            flex: 1; 
-            height: 46px; /* 高度縮小一點變扁平精緻 */
-            background: #ffffff; 
-            border: none; 
-            border-radius: 24px; 
-            padding: 0 12px; 
-            font-size: 15px; 
-            font-weight: 900; 
-            color: #191f28; 
-            cursor: pointer; 
-            display: flex; 
-            flex-direction: row; /* 橫向排列，將選單圖示移動到選單文字的左側 */
-            align-items: center; 
-            justify-content: center; 
-            gap: 8px; 
-            box-shadow: 0 8px 24px rgba(0,0,0,0.04); 
-            border: 1px solid rgba(0,0,0,0.01); 
-            transition: 0.15s ease-in-out; 
-            box-sizing: border-box;
-        }
-        .passport-action-btn:active { background: #f8f9fa; transform: translateY(2px); }
-        .passport-action-btn svg, .passport-action-btn iconify-icon { width: 22px; height: 22px; color: #4e5968; display: flex; align-items: center; justify-content: center; }
-
-        /* 階梯圖卡進度條狀態激活控量 */
-        .timeline-card-container { margin-top: 24px; padding: 52px 20px 42px 20px; background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 28px; box-sizing: border-box; }
+        .timeline-card-container { margin-top: 24px; padding: 40px 20px 25px 20px; background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 28px; box-sizing: border-box; }
         .timeline-dot.active { background: #ffca28 !important; box-shadow: 0 0 0 4px rgba(255, 202, 40, 0.25); }
         .timeline-label.active { color: #ffffff !important; font-weight: 900 !important; font-size: 12px !important; opacity: 1 !important; }
 
-        /* 將抗鋸齒和過渡全數移除，達到即時定格效果 */
-        #timeline-indicator {
-            position: absolute; 
-            top: -38px; /* 拉開指標與線條的距離，避免黏在一起 */
-            transform: translateX(-50%); 
-            left: 0%; 
-            color: #ffffff; /* 指標 icon 改用白色 */
-        }
-        #timeline-progress {
-            position: absolute; 
-            left: 0; 
-            top: 0; 
-            height: 100%; 
-            background: #ffca28; 
-            width: 0%; 
-            border-radius: 2px;
-        }
+        #timeline-indicator { position: absolute; top: -38px; transform: translateX(-50%); left: 0%; color: #ffffff; z-index: 5; pointer-events: none; }
+        #timeline-progress { position: absolute; left: 0; top: 0; height: 100%; background: #ffca28; width: 0%; border-radius: 2px; }
 
-        /* 訂單列表追蹤樣式 */
         .order-list-item { background: #fff; padding: 20px; border-radius: 24px; margin-bottom: 12px; cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.03); display: flex; align-items: center; gap: 15px; border: 1px solid transparent; transition: 0.2s; }
         .order-list-item:active { background: #f8f9fa; border-color: #eee; }
-        .order-list-item * { pointer-events: none; } /* 阻擋 icon 吃掉點擊事件 */
+        .order-list-item * { pointer-events: none; }
         .order-icon-box { width: 44px; height: 44px; background: #f2f4f6; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #28b0eb; }
         .order-info { flex: 1; }
         .order-id-title { font-size: 16px; font-weight: 700; color: #191f28; margin-bottom: 4px; }
         .order-meta { font-size: 12px; color: #adb5bd; display: flex; justify-content: space-between; }
 
-        /* 下單流程展示滿版大圖樣式 */
         .process-img-box { background: transparent; border-radius: 0; padding: 0; box-shadow: none; display: block; width: 100%; margin-top: 10px; }
         .process-image { width: 100%; height: auto; border-radius: 16px; display: block; object-fit: contain; }
 
-        /* 按鈕規格定義 */
         .btn-main { background: #28b0eb; color: #fff; border: none; padding: 18px; width: 100%; border-radius: 20px; font-weight: 700; font-size: 17px; cursor: pointer; display: block; box-sizing: border-box; text-align: center; }
         .btn-main:disabled { background: #adb5bd; opacity: 0.7; }
         .btn-sub-small { background: #28b0eb; color: #fff; border: none; padding: 12px 40px; width: auto; min-width: 140px; border-radius: 50px; font-weight: 700; font-size: 15px; cursor: pointer; margin: 0 auto; display: block; }
 
-        /* 底部選單導覽 */
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; padding: 12px 0 calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid #e5e8eb; z-index: 200; }
         .nav-item { color: #adb5bd; text-align: center; flex: 1; font-size: 11px; font-weight: 700; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; }
         .nav-item.active { color: #28b0eb; }
@@ -374,11 +259,9 @@
                 <div style="position: relative;">
                     <div style="position: relative; height: 4px; background: rgba(255,255,255,0.3); border-radius: 2px; display: flex; justify-content: space-between; align-items: center; margin: 0 15px;">
                         <div id="timeline-progress"></div>
-                        
                         <div id="timeline-indicator">
                             <iconify-icon icon="fa6-solid:person-walking-luggage" style="font-size: 26px;"></iconify-icon>
                         </div>
-                        
                         <div class="timeline-dot" style="width: 12px; height: 12px; background: rgba(255,255,255,0.6); border-radius: 50%; z-index: 2; position: relative;">
                             <span class="timeline-label i-trans" data-key="step0" style="position: absolute; top: 20px; left: 50%; transform: translateX(-50%); white-space: nowrap; font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.5); opacity: 0.8; transition: 0.3s;">休息等候</span>
                         </div>
@@ -487,7 +370,6 @@
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         let userLineId = "", userLinePicture = "", userData = null, selectedGender = "", allProducts = [], cart = {}, shipMethod = '', packingQty = 1, currentRawOrderId = "", allUserOrders = [], isFromCheckout = false;
         
-        // 建立完整、穩固的多國語系字典對照表（排除商品名稱）
         let currentLang = 'zh';
         const TRANSLATIONS = {
             zh: {
@@ -663,19 +545,34 @@
             const indicator = document.getElementById('timeline-indicator');
             const progress = document.getElementById('timeline-progress');
 
+            const coords = [
+                { left: '30px', top: '100px' },
+                { left: '70px', top: '31px' },
+                { left: '150px', top: '31px' },
+                { left: '190px', top: '100px' }
+            ];
+
+            const totalLength = 251.3;
+            
+            dots.forEach(dot => dot.classList.remove('active'));
+            labels.forEach(label => label.classList.remove('active'));
+
             dots.forEach((dot, idx) => {
                 if (idx <= step) dot.classList.add('active');
-                else dot.classList.remove('active');
             });
 
             labels.forEach((label, idx) => {
                 if (idx === step) label.classList.add('active');
-                else label.classList.remove('active');
             });
 
-            const percentage = (step / 3) * 100;
-            if (indicator) indicator.style.left = `${percentage}%`;
-            if (progress) progress.style.width = `${percentage}%`;
+            if (indicator && coords[step]) {
+                indicator.style.left = coords[step].left;
+                indicator.style.top = coords[step].top;
+            }
+            if (progress) {
+                const percentage = (step / 3) * 100;
+                progress.style.width = `${percentage}%`;
+            }
         }
 
         async function fetchProducts() {
@@ -763,209 +660,4 @@
         
         function calculateFinal() { 
             let it=Object.values(cart).reduce((s,i)=>s+(i.price*i.qty),0); 
-            let sf=shipMethod==='711'?(80*packingQty):0; 
-            let pf=packingQty*10; 
-            document.getElementById('sum-items').innerText=`NT$ ${it.toLocaleString()}`; 
-            document.getElementById('sum-shipping').innerText=`NT$ ${sf.toLocaleString()}`; 
-            document.getElementById('sum-packing').innerText=`NT$ ${pf.toLocaleString()}`; 
-            document.getElementById('sum-total').innerText=`NT$ ${(it+sf+pf).toLocaleString()}`; 
-        }
-
-        function removeGateError() {
-            document.getElementById('main-app').style.display = 'block';
-            document.getElementById('login-gate').style.display = 'none';
-        }
-
-        UX_add_modal = function() { openAddModal(); }
-        function openAddModal() { 
-            document.body.classList.add('modal-open'); 
-            document.getElementById('add-modal').style.display = 'flex'; 
-            initTextareas(); 
-        }
-
-        function closeModal(id) { 
-            document.body.classList.remove('modal-open'); 
-            document.getElementById(id).style.display = 'none'; 
-        }
-
-        function initTextareas() { const ts = document.querySelectorAll('textarea.input-box'); ts.forEach(t => { t.style.height = '48px'; }); }
-        function autoGrow(element) { element.style.height = '48px'; if (element.scrollHeight > 48) { element.style.height = (element.scrollHeight) + "px"; } }
-        function changeCat(el) { clearError(el); }
-
-        async function upload() {
-            const btn = document.querySelector('#add-modal .btn-main');
-            const cat = document.getElementById('in-cat'), name = document.getElementById('in-name'), price = document.getElementById('in-price'), url = document.getElementById('in-url'), opt = document.getElementById('in-option');
-            let valid = true;
-            if(!cat.value){ cat.classList.add('error'); valid=false; }
-            if(!name.value.trim()){ name.classList.add('error'); valid=false; }
-            if(!valid) return;
-            
-            if(btn) { btn.disabled = true; btn.innerText = "處理中..."; }
-            const taiwanTime = new Date().toISOString();
-            
-            const { error } = await supabaseClient.from('products').insert({ 
-                category: cat.value,
-                name_zh: name.value.trim(), 
-                option: opt.value.trim() || "",
-                price_nt: price.value || 0, 
-                olive_url: url.value.trim() || null, 
-                created_by: userLineId,
-                is_active: false, 
-                created_at: taiwanTime
-            });
-            
-            if(!error) { 
-                closeModal('add-modal'); 
-                if(btn) { btn.disabled = false; btn.innerText = "確認登錄"; }
-                [name, opt, price, url].forEach(el => el.value = ""); cat.value = "";
-                await fetchProducts(); 
-            } else { 
-                alert('失敗：' + error.message); 
-                if(btn) { btn.disabled = false; btn.innerText = "確認登錄"; }
-            }
-        }
-
-        async function submitFinalOrder() {
-            const btn = document.getElementById('confirm-submit-btn'); if(btn.disabled) return;
-            const name = document.getElementById('ship-name'), tel = document.getElementById('ship-tel'), store = document.getElementById('ship-store'), code = document.getElementById('ship-code');
-            let isValid = true;
-            if(!name.value.trim()){ name.classList.add('error'); isValid=false; }
-            if(!/^09\d{8}$/.test(tel.value.trim())){ tel.classList.add('error'); isValid=false; }
-            if(!shipMethod){ document.getElementById('ship-method-group').classList.add('error'); document.getElementById('tag-ship-method').style.display='inline'; isValid=false; }
-            if(shipMethod==='711'){ if(!store.value.trim()){ store.classList.add('error'); isValid=false; } if(!code.value.trim()){ code.classList.add('error'); isValid=false; } }
-            if(!isValid) return; btn.disabled=true; btn.innerText="下單中...";
-            let itemsStr = Object.values(cart).filter(i=>i.qty>0).map(i=>`${i.name}*${i.qty}`).join(', ');
-            const finalMethod = shipMethod === 'face' ? '面交' : '7-11 取件';
-            const finalStore = shipMethod === '711' ? `${store.value}(${code.value})` : '台中指定區';
-            const taiwanTime = new Date().toISOString();
-            try {
-                const { data, error } = await supabaseClient.from('orders').insert({ items_summary: itemsStr, user_id: userLineId, customer_name: name.value, customer_tel: tel.value, shipping_method: finalMethod, shipping_store: finalStore, packing_qty: packingQty, total_amount: document.getElementById('sum-total').innerText, created_at: taiwanTime }).select();
-                if(error) throw error;
-                for(let i of Object.values(cart)){ if(i.qty>0) await supabaseClient.rpc('increment_order_count',{row_id:i.id, inc_val:parseInt(i.qty)}); }
-                showOrderDetail(data[0], true); 
-                cart={}; renderProducts(allProducts); 
-            } catch(e){ alert("失敗："+e.message); btn.disabled=false; btn.innerText="確認下單"; }
-        }
-
-        function showOrderDetail(order, fromCheckout = false) {
-            isFromCheckout = fromCheckout; 
-            currentRawOrderId = order.id.slice(-10).toUpperCase();
-            document.getElementById('m-order-id').innerText = "編號: " + currentRawOrderId;
-            document.getElementById('m-name').innerText = order.customer_name;
-            document.getElementById('m-tel').innerText = order.customer_tel;
-            document.getElementById('m-method').innerText = `${order.shipping_method} ${order.shipping_store || ''}`;
-            document.getElementById('m-total').innerText = order.total_amount;
-            const items = order.items_summary.split(', ');
-            document.getElementById('m-items-container').innerHTML = items.map(it => `
-                <div class="order-item-row">
-                    <div class="order-item-name">${it.split('*')[0]}</div>
-                    <div class="order-item-qty">× ${it.split('*')[1]}</div>
-                </div>
-            `).join('');
-            document.getElementById('order-detail-modal').style.display = 'flex';
-            feather.replace();
-        }
-
-        function closeOrderDetailModal() {
-            document.getElementById('order-detail-modal').style.display = 'none';
-            if (isFromCheckout) {
-                const btn = document.getElementById('confirm-submit-btn');
-                if (btn) {
-                    btn.disabled = false;
-                    btn.innerText = "確認下單";
-                }
-                switchPage('shop');
-            }
-        }
-
-        function viewOrder(idx) {
-            if (allUserOrders && allUserOrders[idx]) {
-                showOrderDetail(allUserOrders[idx], false);
-            }
-        }
-
-        async function fetchUserOrders() {
-            const container = document.getElementById('order-list-container');
-            container.innerHTML = '<p style="text-align:center; padding:40px; color:#999;">努力載入訂單中...</p>';
-            const { data, error } = await supabaseClient.from('orders').select('*').eq('user_id', userLineId).order('created_at', { ascending: false });
-            if(error || !data || data.length === 0) {
-                container.innerHTML = `<p style="text-align:center; padding:40px; color:#999; font-weight:700;" class="i-trans" data-key="emptyOrders">行李箱空空如也～</p>`;
-                return;
-            }
-            allUserOrders = data;
-            
-            container.innerHTML = data.map((order, index) => `
-                <div class="order-list-item" onclick="viewOrder(${index})">
-                    <div class="order-icon-box"><i data-feather="package"></i></div>
-                    <div class="order-info">
-                        <div class="order-id-title">${order.id.slice(-10).toUpperCase()}</div>
-                        <div class="order-meta">
-                            <span>${new Date(order.created_at).toLocaleDateString()}</span>
-                            <span style="color:var(--primary); font-weight:700;">${order.total_amount}</span>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-            feather.replace();
-        }
-
-        function renderUserProfile() { 
-            if(!userData) return;
-            document.getElementById('pass-avatar').src = userLinePicture;
-            document.getElementById('pass-name').innerText = userData.full_name || "---"; 
-            document.getElementById('pass-sex').innerText = userData.gender === 'M' ? '男 / M' : (userData.gender === 'F' ? '女 / F' : '---');
-            document.getElementById('pass-birth').innerText = userData.birthday || "---";
-        }
-        
-        function clearError(el) { 
-            el.classList.remove('error'); 
-            const baseId = el.id.startsWith('reg-birth') ? 'reg-birth' : el.id;
-            const tag = document.getElementById('tag-' + baseId);
-            if(tag) tag.style.display='none'; 
-            if(el.id.startsWith('reg-birth')) ['y','m','d'].forEach(suffix => document.getElementById('reg-birth-'+suffix).classList.remove('error'));
-        }
-        
-        async function copyOrderId() { try { await navigator.clipboard.writeText(currentRawOrderId); const btn = document.getElementById('copy-btn'); btn.innerHTML = '<i data-feather="check" style="width:12px;"></i>已複製'; feather.replace(); setTimeout(() => { btn.innerHTML = '<i data-feather="copy" style="width:12px;"></i>複製'; feather.replace(); }, 2000); } catch (err) { console.error(err); } }
-
-        function switchPage(p) {
-            document.querySelectorAll('.page-content').forEach(e=>e.classList.remove('active'));
-            const target = document.getElementById('page-'+p);
-            if(target) target.classList.add('active');
-            
-            document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-            if(document.getElementById('nav-'+p)) document.getElementById('nav-'+p).classList.add('active');
-            
-            if(p === 'shop' || p === 'passport') localStorage.setItem('korian_last_page', p);
-            
-            let t = Object.values(cart).reduce((s,i)=>s+i.qty,0);
-            
-            if (t > 0 && p == 'shop') {
-                document.getElementById('cart-bar').style.display = 'flex';
-                document.getElementById('cart-qty-wrapper').innerHTML = TRANSLATIONS[currentLang]['cartSelected'].replace('{qty}', `<span id="cart-qty" style="color:#28b0eb; font-weight:900;">${t}</span>`);
-                document.getElementById('view-list-text').innerText = TRANSLATIONS[currentLang]['viewCart'];
-            } else {
-                document.getElementById('cart-bar').style.display = 'none';
-            }
-            
-            if(p === 'shop') renderProducts(allProducts);
-            if(p === 'checkout') renderCheckout();
-            if(p === 'shipping') calculateFinal();
-            if(p === 'orders') fetchUserOrders(); 
-            // 當切換到護照頁時重新同步階段動態
-            if(p === 'passport') fetchSystemControl();
-            
-            translatePageUI(); 
-            window.scrollTo(0,0); feather.replace();
-        }
-
-        function initBirthSelects() {
-            const sy = document.getElementById('reg-birth-y'), sm = document.getElementById('reg-birth-m'), sd = document.getElementById('reg-birth-d');
-            sy.innerHTML = '<option value="">年</option>' + Array.from({length: 87}, (_, i) => `<option value="${1940+i}">${1940+i}</option>`).reverse().join('');
-            sm.innerHTML = '<option value="">月</option>' + Array.from({length: 12}, (_, i) => `<option value="${(i+1).toString().padStart(2,'0')}">${(i+1).toString().padStart(2,'0')}</option>`).join('');
-            sd.innerHTML = '<option value="">日</option>' + Array.from({length: 31}, (_, i) => `<option value="${(i+1).toString().padStart(2,'0')}">${(i+1).toString().padStart(2,'0')}</option>`).join('');
-        }
-
-        window.onload = init;
-    </script>
-</body>
-</html>
+            let sf=shipMethod==='711'?(
