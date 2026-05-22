@@ -224,13 +224,14 @@
         .timeline-dot.active { background: #ffca28 !important; box-shadow: 0 0 0 4px rgba(255, 202, 40, 0.25); }
         .timeline-label.active { color: #ffffff !important; font-weight: 900 !important; font-size: 12px !important; opacity: 1 !important; }
 
-        /* 代購階段動畫：指標逐格滑動，進度線像水管一樣流動到目前節點 */
+        /* 代購階段動畫：指標一次滑到正確節點，進度線像水管流動，節點等流到才亮起 */
         .timeline-dot { transition: background 0.28s ease, box-shadow 0.28s ease; }
+        .timeline-card-container { --timeline-duration: 900ms; }
         .timeline-card-container.timeline-animating #timeline-indicator {
-            transition: left 0.72s cubic-bezier(0.22, 1, 0.36, 1);
+            transition: left var(--timeline-duration) cubic-bezier(0.22, 1, 0.36, 1);
         }
         .timeline-card-container.timeline-animating #timeline-progress {
-            transition: width 0.72s linear;
+            transition: width var(--timeline-duration) linear;
             animation: pipeFlow 0.7s linear infinite;
         }
         #timeline-indicator {
@@ -722,13 +723,20 @@
         }
 
         let timelineAnimationToken = 0;
+        let timelineIntroPlayed = false;
+        let timelineCurrentStep = 0;
+
+        function getSafeTimelineStep(step) {
+            return Math.max(0, Math.min(3, Number(step) || 0));
+        }
 
         function applyTimelineState(step) {
             const dots = document.querySelectorAll('.timeline-dot');
             const labels = document.querySelectorAll('.timeline-label');
             const indicator = document.getElementById('timeline-indicator');
             const progress = document.getElementById('timeline-progress');
-            const safeStep = Math.max(0, Math.min(3, Number(step) || 0));
+            const safeStep = getSafeTimelineStep(step);
+            timelineCurrentStep = safeStep;
 
             dots.forEach((dot, idx) => {
                 if (idx <= safeStep) dot.classList.add('active');
@@ -745,44 +753,89 @@
             if (progress) progress.style.width = `${percentage}%`;
         }
 
-        function renderTimelineUI(step) {
-            const targetStep = Math.max(0, Math.min(3, Number(step) || 0));
+        function applyTimelineReachedStep(step, finalStep) {
+            const dots = document.querySelectorAll('.timeline-dot');
+            const labels = document.querySelectorAll('.timeline-label');
+            const safeStep = getSafeTimelineStep(step);
+            const safeFinal = getSafeTimelineStep(finalStep);
+
+            dots.forEach((dot, idx) => {
+                if (idx <= safeStep) dot.classList.add('active');
+                else dot.classList.remove('active');
+            });
+
+            labels.forEach((label, idx) => {
+                if (idx === Math.min(safeStep, safeFinal)) label.classList.add('active');
+                else label.classList.remove('active');
+            });
+        }
+
+        function animateTimelineTo(targetStep) {
             const card = document.querySelector('.timeline-card-container');
             const indicator = document.getElementById('timeline-indicator');
             const progress = document.getElementById('timeline-progress');
-            const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            const safeTarget = getSafeTimelineStep(targetStep);
             const token = ++timelineAnimationToken;
 
-            if (!card || !indicator || !progress || reduceMotion || targetStep === 0) {
-                if (card) card.classList.remove('timeline-animating');
-                applyTimelineState(targetStep);
+            if (!card || !indicator || !progress || safeTarget === 0) {
+                applyTimelineState(safeTarget);
+                return;
+            }
+
+            const duration = 780 * safeTarget;
+            card.classList.remove('timeline-animating');
+            card.style.setProperty('--timeline-duration', `${duration}ms`);
+
+            applyTimelineReachedStep(0, safeTarget);
+            indicator.style.left = '0%';
+            progress.style.width = '0%';
+
+            // 強制瀏覽器先吃到起點位置，再開始一次滑到正確節點，避免在中間節點停頓。
+            indicator.offsetHeight;
+
+            card.classList.add('timeline-animating');
+            indicator.style.left = `${(safeTarget / 3) * 100}%`;
+            progress.style.width = `${(safeTarget / 3) * 100}%`;
+
+            for (let i = 1; i <= safeTarget; i += 1) {
+                window.setTimeout(() => {
+                    if (token !== timelineAnimationToken) return;
+                    applyTimelineReachedStep(i, safeTarget);
+                }, Math.round((duration * i) / safeTarget));
+            }
+
+            window.setTimeout(() => {
+                if (token !== timelineAnimationToken) return;
+                card.classList.remove('timeline-animating');
+                applyTimelineState(safeTarget);
+            }, duration + 80);
+        }
+
+        function renderTimelineUI(step) {
+            const targetStep = getSafeTimelineStep(step);
+            const card = document.querySelector('.timeline-card-container');
+            const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            const passportPage = document.getElementById('page-passport');
+            const mainApp = document.getElementById('main-app');
+            const isPassportVisible = passportPage && passportPage.classList.contains('active');
+            const isAppVisible = mainApp && mainApp.style.display !== 'none';
+            const shouldPlayIntro = !timelineIntroPlayed && !reduceMotion && targetStep > 0 && isPassportVisible && isAppVisible;
+
+            timelineCurrentStep = targetStep;
+            ++timelineAnimationToken;
+
+            if (!card) {
+                return;
+            }
+
+            if (shouldPlayIntro) {
+                timelineIntroPlayed = true;
+                animateTimelineTo(targetStep);
                 return;
             }
 
             card.classList.remove('timeline-animating');
-            applyTimelineState(0);
-            // 強制瀏覽器先吃到起點位置，再開始逐格動畫，避免直接跳到終點。
-            indicator.offsetHeight;
-            card.classList.add('timeline-animating');
-
-            let currentStep = 1;
-            const runNextStep = () => {
-                if (token !== timelineAnimationToken) return;
-                applyTimelineState(currentStep);
-                if (currentStep >= targetStep) {
-                    window.setTimeout(() => {
-                        if (token === timelineAnimationToken) {
-                            card.classList.remove('timeline-animating');
-                            applyTimelineState(targetStep);
-                        }
-                    }, 760);
-                    return;
-                }
-                currentStep += 1;
-                window.setTimeout(runNextStep, 760);
-            };
-
-            window.setTimeout(runNextStep, 120);
+            applyTimelineState(targetStep);
         }
 
         async function fetchProducts() {
