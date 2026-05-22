@@ -782,7 +782,7 @@
                 return;
             }
 
-            const duration = 780 * safeTarget;
+            const duration = 1100 * safeTarget;
             card.classList.remove('timeline-animating');
             card.style.setProperty('--timeline-duration', `${duration}ms`);
 
@@ -914,7 +914,11 @@
             document.getElementById('btn-711').classList.toggle('active',m==='711'); 
             document.getElementById('hint-face').style.display=m==='face'?'block':'none'; 
             document.getElementById('form-711').style.display=m==='711'?'block':'none'; 
-            if(m==='711' && packingQty<1) packingQty=1; 
+            if(m==='711' && packingQty<1) {
+                packingQty=1;
+                const packingEl = document.getElementById('qty-packing');
+                if (packingEl) packingEl.innerText = packingQty;
+            }
             calculateFinal(); 
         }
         
