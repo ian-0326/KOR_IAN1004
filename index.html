@@ -284,8 +284,8 @@
         .locked-message { font-size: 13px; font-weight: 700; color: #8b95a1; letter-spacing: 0.5px; }
 
 
-        /* 穩定優化層：只保留不影響 fixed 底部區塊的安全設定 */
-        .item-card, .order-list-item {
+        /* 穩定優化層：避免 item-card 的人氣皇冠被 paint containment 裁切 */
+        .order-list-item {
             content-visibility: auto;
             contain-intrinsic-size: 96px;
         }
