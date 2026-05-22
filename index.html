@@ -33,8 +33,8 @@
         #loader-content { text-align: center; animation: fadeInOut 2s ease-in-out infinite; }
         
         /* 飛機圖片檔案獨立的上下浮動呼吸動畫 */
-        .custom-airplane-img { width: 90px; height: auto; display: block; margin: 0 auto; animation: floatAnimation 2s ease-in-out infinite; }
-        .gate-text { font-size: 14px; font-weight: 700; color: #ffffff; margin-top: 24px; letter-spacing: 2px; opacity: 0.95; }
+        .custom-airplane-img { width: 76px; height: auto; display: block; margin: 0 auto; animation: floatAnimation 2s ease-in-out infinite; }
+        .gate-text { font-size: 16px; font-weight: 700; color: #ffffff; margin-top: 24px; letter-spacing: 2px; opacity: 0.95; }
         
         @keyframes floatAnimation {
             0% { transform: translateY(0); }
@@ -263,7 +263,25 @@
         /* 底部選單導覽 */
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; padding: 12px 0 calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid #e5e8eb; z-index: 200; }
         .nav-item { color: #adb5bd; text-align: center; flex: 1; font-size: 11px; font-weight: 700; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; }
-        .nav-item.active { color: #28b0eb; }
+         .nav-item.active { color: #28b0eb; }
+
+        /* 訂單追蹤頁標題修正：此頁沒有返回鍵，因此移除 page-title 的右側補償距離，避免視覺偏左 */
+        #page-orders .page-title { margin-right: 0; text-align: center; }
+
+        /* 聖水 POP 暫時封閉頁面 */
+        .locked-page {
+            min-height: calc(100vh - 180px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #adb5bd;
+            padding-bottom: 120px;
+            box-sizing: border-box;
+        }
+        .locked-icon { font-size: 58px; color: #adb5bd; margin-bottom: 14px; }
+        .locked-message { font-size: 13px; font-weight: 700; color: #8b95a1; letter-spacing: 0.5px; }
 
 
         /* 穩定優化層：只保留不影響 fixed 底部區塊的安全設定 */
@@ -394,6 +412,13 @@
             </div>
         </section>
 
+        <section id="page-pop" class="page-content">
+            <div class="locked-page">
+                <iconify-icon icon="si:lock-fill" class="locked-icon"></iconify-icon>
+                <div class="locked-message i-trans" data-key="popClosedText">尚無活動，請繞道而行～</div>
+            </div>
+        </section>
+
         <section id="page-orders" class="page-content">
             <div class="nav-header">
                 <div class="page-title i-trans" data-key="ordersTitle">訂單追蹤</div>
@@ -412,6 +437,7 @@
         
         <nav class="bottom-nav">
             <div class="nav-item" id="nav-shop" onclick="switchPage('shop')"><iconify-icon icon="fluent:shopping-bag-28-filled" style="font-size: 24px; color: currentColor;"></iconify-icon><span class="i-trans" data-key="navShop">弘大漫遊</span></div>
+            <div class="nav-item" id="nav-pop" onclick="switchPage('pop')"><iconify-icon icon="icon-park-solid:soap-bubble" style="font-size: 24px; color: currentColor;"></iconify-icon><span class="i-trans" data-key="navPop">聖水POP</span></div>
             <div class="nav-item" id="nav-orders" onclick="switchPage('orders')"><iconify-icon icon="ic:round-luggage" style="font-size: 24px; color: currentColor;"></iconify-icon><span class="i-trans" data-key="navOrders">托運行李</span></div>
             <div class="nav-item" id="nav-passport" onclick="switchPage('passport')"><iconify-icon icon="ph:identification-badge-fill" style="font-size: 24px; color: currentColor;"></iconify-icon><span class="i-trans" data-key="navPassport">我的護照</span></div>
         </nav>
@@ -509,12 +535,12 @@
                 boxMaterial: "包材、紙箱", sumSubtotal: "小計", sumShippingFee: "運費", sumPackingFee: "包材",
                 sumGrandTotal: "匯款總金額", confirmOrderBtn: "確認下單", passportTitleZh: "護照",
                 passCardName: "Full Name / 姓名", passCardSex: "Sex / 性別", passCardBirth: "Date of Birth / 生日",
-                ordersTitle: "訂單追蹤", processTitle: "下單流程", navShop: "弘大漫遊", navOrders: "托運行李", navPassport: "我的護照",
+                ordersTitle: "訂單追蹤", processTitle: "下單流程", navShop: "弘大漫遊", navPop: "聖水POP", navOrders: "托運行李", navPassport: "我的護照",
                 regTitle: "報到櫃檯", regNameLabel: "真實姓名", regNamePlace: "您的姓名", regSexLabel: "性別", genderM: "男", genderF: "女",
                 regTelLabel: "聯絡電話", regTelPlace: "09xxxxxxxx", regBirthLabel: "出生日期", regEmailLabel: "電子信箱", regEmailPlace: "example@mail.com", regBtnText: "登機報到",
                 detailTitle: "訂單明細", copyBtnText: "複製", sectionReceiver: "收件資訊", detailName: "取件姓名", detailTel: "聯絡電話", detailMethod: "取件方式",
                 sectionProducts: "訂購商品", detailAmount: "匯款金額", detailAlert: "請截圖此畫面回傳至 LINE@\n核對金額無誤後即可進行匯款。", detailConfirm: "我知道了",
-                emptyOrders: "行李箱空空如也～", cartSelected: "已選 {qty} 件商品", viewCart: "查看清單 →", step0: "休息等候", step1: "大促開團", step2: "最後倒數", step3: "行程結束"
+                emptyOrders: "行李箱空空如也～", popClosedText: "尚無活動，請繞道而行～", cartSelected: "已選 {qty} 件商品", viewCart: "查看清單 →", step0: "休息等候", step1: "大促開團", step2: "最後倒數", step3: "行程結束"
             },
             ko: {
                 checkoutTitle: "구매 대행 목록", checkoutTotal: "총 합계", fillDataBtn: "정보 입력하기",
@@ -525,12 +551,12 @@
                 boxMaterial: "포장재 및 박스", sumSubtotal: "소계", sumShippingFee: "배송비", sumPackingFee: "포장비",
                 sumGrandTotal: "총 송금 금액", confirmOrderBtn: "주문 확정", passportTitleZh: "여권",
                 passCardName: "Full Name / 성명", passCardSex: "Sex / 성별", passCardBirth: "Date of Birth / 생년월일",
-                ordersTitle: "주문 추적", processTitle: "주문 절차", navShop: "홍대 여행", navOrders: "위탁 수하물", navPassport: "나의 여권",
+                ordersTitle: "주문 추적", processTitle: "주문 절차", navShop: "홍대 여행", navPop: "성수 POP", navOrders: "위탁 수하물", navPassport: "나의 여권",
                 regTitle: "체크인 카운터", regNameLabel: "실명", regNamePlace: "이름을 입력하세요", regSexLabel: "성별", genderM: "남", genderF: "여",
                 regTelLabel: "연락처", regTelPlace: "09xxxxxxxx", regBirthLabel: "생년월일", regEmailLabel: "이메일", regEmailPlace: "example@mail.com", regBtnText: "탑승 수속",
                 detailTitle: "주문 상세", copyBtnText: "복사", sectionReceiver: "수령 정보", detailName: "수령인 이름", detailTel: "연락처", detailMethod: "배송 방식",
                 sectionProducts: "주문 상품", detailAmount: "송금 금액", detailAlert: "이 화면을 캡처하여 LINE@으로 보내주세요.\n금액 확인 후 송금이 진행됩니다.", detailConfirm: "확인했습니다",
-                emptyOrders: "캐리어가 텅 비어 있습니다~", cartSelected: "{qty}개의 상품 선택됨", viewCart: "장바구니 보기 →", step0: "대기 중", step1: "공구 오픈", step2: "마감 임박", step3: "진행 종료"
+                emptyOrders: "캐리어가 텅 비어 있습니다~", popClosedText: "아직 진행 중인 이벤트가 없습니다~", cartSelected: "{qty}개의 상품 선택됨", viewCart: "장바구니 보기 →", step0: "대기 중", step1: "공구 오픈", step2: "마감 임박", step3: "진행 종료"
             },
             en: {
                 checkoutTitle: "Shopping List", checkoutTotal: "Total Summary", fillDataBtn: "Fill Information",
@@ -541,12 +567,12 @@
                 boxMaterial: "Packaging Box", sumSubtotal: "Subtotal", sumShippingFee: "Shipping Fee", sumPackingFee: "Packing Fee",
                 sumGrandTotal: "Total Amount", confirmOrderBtn: "Confirm Order", passportTitleZh: "Passport",
                 passCardName: "Full Name", passCardSex: "Sex", passCardBirth: "Date of Birth",
-                ordersTitle: "Order Tracking", processTitle: "Order Process", navShop: "Hongdae Tour", navOrders: "Checked Baggage", navPassport: "My Passport",
+                ordersTitle: "Order Tracking", processTitle: "Order Process", navShop: "Hongdae Tour", navPop: "Seongsu POP", navOrders: "Checked Baggage", navPassport: "My Passport",
                 regTitle: "Check-in Counter", regNameLabel: "Full Name", regNamePlace: "Your Name", regSexLabel: "Gender", genderM: "Male", genderF: "Female",
                 regTelLabel: "Phone Number", regTelPlace: "09xxxxxxxx", regBirthLabel: "Birth Date", regEmailLabel: "Email Address", regEmailPlace: "example@mail.com", regBtnText: "Check In",
                 detailTitle: "Order Details", copyBtnText: "Copy", sectionReceiver: "Shipping Info", detailName: "Recipient Name", detailTel: "Phone Number", detailMethod: "Method",
                 sectionProducts: "Ordered Items", detailAmount: "Total Paid", detailAlert: "Please screenshot this page and send to LINE@.\nTransfer after confirmation.", detailConfirm: "I Got It",
-                emptyOrders: "The suitcase is empty~", cartSelected: "{qty} items selected", viewCart: "View List →", step0: "Waiting", step1: "Group Buy Open", step2: "Final Countdown", step3: "Trip Ended"
+                emptyOrders: "The suitcase is empty~", popClosedText: "No event yet. Please take a detour~", cartSelected: "{qty} items selected", viewCart: "View List →", step0: "Waiting", step1: "Group Buy Open", step2: "Final Countdown", step3: "Trip Ended"
             }
         };
 
