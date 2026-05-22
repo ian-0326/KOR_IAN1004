@@ -73,7 +73,7 @@
             position: relative; 
             z-index: 9999; 
         }
-        .add-btn * { pointer-events: none; } /* 阻擋 icon 吃掉點擊事件 */
+        .add-btn * { pointer-events: none; } /* 阻擋 icon吃掉點擊事件 */
 
         .nav-header { display: flex; align-items: center; padding: 20px 16px; background: #f2f4f6; position: sticky; top: 0; z-index: 100; }
         .back-btn { background: none; border: none; padding: 10px; cursor: pointer; color: #191f28; display: flex; align-items: center; }
@@ -151,12 +151,12 @@
         .gender-btn.active-m { background: #28b0eb; color: #ffffff; }
         .gender-btn.active-f { background: #ff85a2; color: #ffffff; }
         
-        /* 核心修復：修正生日橫排下拉框（年、月、日）樣式，並加固錯誤警示框體紅邊效果 */
+        /* 修正生日橫排下拉框（年、月、日）樣式，並加固錯誤警示框體紅邊效果 */
         .birth-row { display: flex; gap: 8px; width: calc(100% - 24px); box-sizing: border-box; }
         .birth-row select { flex: 1; width: auto !important; padding: 12px 20px; border: none; border-radius: 18px; font-size: 15px; outline: none; background: #f2f4f6; box-sizing: border-box; transition: 0.2s; }
         .birth-row select.error { background: #fff5f5; box-shadow: 0 0 0 2px #f44336; }
 
-        /* 修正 1：指定「報到櫃檯」表單開啟時，將整體原先半透明的背景強制修改為乾淨、純色的天藍色空白頁面面牆 */
+        /* 指定「報到櫃檯」表單開啟時，將整體原先半透明的背景強制修改為乾淨、純色的天藍色空白頁面面牆 */
         #register-modal { background: #28b0eb !important; }
 
         /* 護照資料圖卡排版設定（無白框樣式） */
@@ -209,32 +209,6 @@
             left: 74px; /* 44px按鈕寬 + 16px左距 + 14px間距 */
         }
 
-        /* 橫向並排一行的扁平橫式長方形按鈕排版優化設定 */
-        .passport-btn-group { display: flex; flex-direction: row; gap: 16px; margin-top: 24px; width: 100%; box-sizing: border-box; }
-        .passport-action-btn { 
-            flex: 1; 
-            height: 46px; /* 高度縮小一點變扁平精緻 */
-            background: #ffffff; 
-            border: none; 
-            border-radius: 24px; 
-            padding: 0 12px; 
-            font-size: 15px; 
-            font-weight: 900; 
-            color: #191f28; 
-            cursor: pointer; 
-            display: flex; 
-            flex-direction: row; /* 橫向排列，將選單圖示移動到選單文字的左側 */
-            align-items: center; 
-            justify-content: center; 
-            gap: 8px; 
-            box-shadow: 0 8px 24px rgba(0,0,0,0.04); 
-            border: 1px solid rgba(0,0,0,0.01); 
-            transition: 0.15s ease-in-out; 
-            box-sizing: border-box;
-        }
-        .passport-action-btn:active { background: #f8f9fa; transform: translateY(2px); }
-        .passport-action-btn svg, .passport-action-btn iconify-icon { width: 22px; height: 22px; color: #4e5968; display: flex; align-items: center; justify-content: center; }
-
         /* 階梯圖卡進度條狀態激活控量 */
         .timeline-card-container { margin-top: 24px; padding: 52px 20px 42px 20px; background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 28px; box-sizing: border-box; }
         .timeline-dot.active { background: #ffca28 !important; box-shadow: 0 0 0 4px rgba(255, 202, 40, 0.25); }
@@ -243,7 +217,7 @@
         /* 將抗鋸齒和過渡全數移除，達到即時定格效果 */
         #timeline-indicator {
             position: absolute; 
-            top: -38px; /* 拉開指標與線條的距離 */
+            top: -38px; /* 拉開指標與線條的距離，避免黏在一起 */
             transform: translateX(-50%); 
             left: 0%; 
             color: #ffffff; /* 指標 icon 改用白色 */
@@ -494,7 +468,6 @@
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         let userLineId = "", userLinePicture = "", userData = null, selectedGender = "", allProducts = [], cart = {}, shipMethod = '', packingQty = 1, currentRawOrderId = "", allUserOrders = [], isFromCheckout = false;
         
-        // 建立完整、穩固的多國語系字典對照表（排除商品名稱）
         let currentLang = 'zh';
         const TRANSLATIONS = {
             zh: {
@@ -620,6 +593,7 @@
             }
         }
 
+        // 修正 1：全面重構時序判斷，改用 Date 對象大於等於比較（now >= finishTarget），完美防止跨日重設
         async function fetchSystemControl() {
             try {
                 const { data, error } = await supabaseClient.from('system_control').select('*').eq('project', '代購階段');
@@ -628,23 +602,25 @@
                     let activeStep = 0; 
                     
                     const now = new Date();
-                    const year = now.getFullYear();
-                    const month = String(now.getMonth() + 1).padStart(2, '0');
-                    const date = String(now.getDate()).padStart(2, '0');
-                    const todayStr = `${year}-${month}-${date}`;
-                    const currentHour = now.getHours();
 
                     if (sys.open) activeStep = 1;
                     if (sys.finally) activeStep = 2;
-                    if (sys.finish && sys.finish === todayStr && currentHour >= 12) {
-                        activeStep = 3;
+                    
+                    // 修正核心：只要目前時間一超過截止日中午 12 點，就永久鎖定在 activeStep = 3，不再因為天數刷新而跳回
+                    if (sys.finish) {
+                        const finishTarget = new Date(`${sys.finish}T12:00:00`);
+                        if (now >= finishTarget) {
+                            activeStep = 3;
+                        }
                     }
 
+                    // 判斷截止日期的動態顯示與格式化限制
                     const labels = document.querySelectorAll('.timeline-label');
                     if (labels && labels.length >= 4) {
-                        if (sys.finish && sys.finish === todayStr && currentHour >= 12) {
+                        if (activeStep === 3) {
                             labels[3].innerText = "行程結束";
                         } else if (sys.open && sys.finish) {
+                            // 只顯示月份和日期（2026-05-20 格式化轉為 05-20）
                             const dateParts = sys.finish.split('-');
                             if (dateParts.length >= 3) {
                                 labels[3].innerText = `${dateParts[1]}-${dateParts[2]}`;
@@ -866,18 +842,14 @@
             } catch(e){ alert("失敗："+e.message); btn.disabled=false; btn.innerText="確認下單"; }
         }
 
-        /* 修正點 2：補齊「報到櫃檯」完整資料防呆驗證與 Supabase 資料庫對接上傳函式 */
         function handleRegister() {
             const btn = document.getElementById('btn-register');
             const name = document.getElementById('reg-name'), tel = document.getElementById('reg-tel'), email = document.getElementById('reg-email');
             const by = document.getElementById('reg-birth-y'), bm = document.getElementById('reg-birth-m'), bd = document.getElementById('reg-birth-d');
             let valid = true;
             
-            // 姓名必填與高亮警告
             if(!name.value.trim()){ name.classList.add('error'); document.getElementById('tag-reg-name').style.display='inline'; valid=false; }
-            // 電話必填與格式正規化高亮警告
             if(!/^09\d{8}$/.test(tel.value.trim())){ tel.classList.add('error'); document.getElementById('tag-reg-tel').style.display='inline'; valid=false; }
-            // 生日年月日三者缺一不可必填高亮警告
             if(!by.value || !bm.value || !bd.value){ 
                 [by, bm, bd].forEach(s => s.classList.add('error')); 
                 document.getElementById('tag-reg-birth').style.display='inline'; 
@@ -1014,6 +986,7 @@
             if(p === 'checkout') renderCheckout();
             if(p === 'shipping') calculateFinal();
             if(p === 'orders') fetchUserOrders(); 
+            // 當切換到護照頁時重新同步階段動態
             if(p === 'passport') fetchSystemControl();
             
             translatePageUI(); 
