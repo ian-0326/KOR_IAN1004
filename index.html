@@ -96,7 +96,7 @@
         .item-card * { pointer-events: auto; }
         .item-main { flex: 1; cursor: pointer; }
         .item-name { font-size: 16px; font-weight: 700; color: #191f28; display: inline-block; margin-bottom: 4px; }
-        .item-option { font-size: 12px; color: #adb5bd; margin-left: 6px; font-weight: 400; }
+        .item-option { font-size: 12px; color: #adb5bd; margin-left: 0; margin-top: 2px; font-weight: 400; display: block; }
         .item-price { color: #28b0eb; font-weight: 900; font-size: 17px; display: block; }
 
         /* 熱銷黃色皇冠懸浮標籤樣式 */
@@ -335,19 +335,19 @@
                 <button type="button" class="add-btn" onclick="openAddModal()"><iconify-icon icon="si:ai-note-fill" style="font-size: 24px; color: var(--primary);"></iconify-icon></button>
             </div>
             <div class="category-wrapper" id="category-bar">
-                <div class="cat-pill active" onclick="filterCategory('全部', this)">全部</div>
-                <div class="cat-pill" onclick="filterCategory('化妝水', this)">化妝水</div>
-                <div class="cat-pill" onclick="filterCategory('精華液', this)">精華液</div>
-                <div class="cat-pill" onclick="filterCategory('乳液', this)">乳液</div>
-                <div class="cat-pill" onclick="filterCategory('面膜棉片', this)">面膜棉片</div>
-                <div class="cat-pill" onclick="filterCategory('洗臉洗澡', this)">洗臉洗澡</div>
-                <div class="cat-pill" onclick="filterCategory('美髮護髮', this)">美髮護髮</div>
-                <div class="cat-pill" onclick="filterCategory('彩妝遮瑕', this)">彩妝遮瑕</div>
-                <div class="cat-pill" onclick="filterCategory('口腔護理', this)">口腔護理</div>
-                <div class="cat-pill" onclick="filterCategory('防曬', this)">防曬</div>
-                <div class="cat-pill" onclick="filterCategory('藥膏藥品', this)">藥膏藥品</div>
-                <div class="cat-pill" onclick="filterCategory('食品（含保健）', this)">食品（含保健）</div>
-                <div class="cat-pill" onclick="filterCategory('其他', this)">其他</div>
+                <div class="cat-pill active" data-cat="全部" onclick="filterCategory('全部', this)">全部</div>
+                <div class="cat-pill" data-cat="化妝水" onclick="filterCategory('化妝水', this)">化妝水</div>
+                <div class="cat-pill" data-cat="精華液" onclick="filterCategory('精華液', this)">精華液</div>
+                <div class="cat-pill" data-cat="乳液" onclick="filterCategory('乳液', this)">乳液</div>
+                <div class="cat-pill" data-cat="面膜棉片" onclick="filterCategory('面膜棉片', this)">面膜棉片</div>
+                <div class="cat-pill" data-cat="洗臉洗澡" onclick="filterCategory('洗臉洗澡', this)">洗臉洗澡</div>
+                <div class="cat-pill" data-cat="美髮護髮" onclick="filterCategory('美髮護髮', this)">美髮護髮</div>
+                <div class="cat-pill" data-cat="彩妝遮瑕" onclick="filterCategory('彩妝遮瑕', this)">彩妝遮瑕</div>
+                <div class="cat-pill" data-cat="口腔護理" onclick="filterCategory('口腔護理', this)">口腔護理</div>
+                <div class="cat-pill" data-cat="防曬" onclick="filterCategory('防曬', this)">防曬</div>
+                <div class="cat-pill" data-cat="藥膏藥品" onclick="filterCategory('藥膏藥品', this)">藥膏藥品</div>
+                <div class="cat-pill" data-cat="食品（含保健）" onclick="filterCategory('食品（含保健）', this)">食品（含保健）</div>
+                <div class="cat-pill" data-cat="其他" onclick="filterCategory('其他', this)">其他</div>
             </div>
             <div id="item-list"></div>
         </section>
@@ -604,6 +604,27 @@
             }
         };
 
+        const CATEGORY_LABELS = {
+            zh: {
+                "全部": "全部", "化妝水": "化妝水", "精華液": "精華液", "乳液": "乳液", "面膜棉片": "面膜棉片", "洗臉洗澡": "洗臉洗澡", "美髮護髮": "美髮護髮", "彩妝遮瑕": "彩妝遮瑕", "口腔護理": "口腔護理", "防曬": "防曬", "藥膏藥品": "藥膏藥品", "食品（含保健）": "食品（含保健）", "其他": "其他"
+            },
+            ko: {
+                "全部": "전체", "化妝水": "토너", "精華液": "세럼", "乳液": "로션", "面膜棉片": "마스크/패드", "洗臉洗澡": "클렌징/바디", "美髮護髮": "헤어케어", "彩妝遮瑕": "메이크업/컨실러", "口腔護理": "구강 케어", "防曬": "선케어", "藥膏藥品": "연고/의약품", "食品（含保健）": "식품/건강", "其他": "기타"
+            },
+            en: {
+                "全部": "All", "化妝水": "Toner", "精華液": "Serum", "乳液": "Lotion", "面膜棉片": "Masks / Pads", "洗臉洗澡": "Cleanser / Body", "美髮護髮": "Hair Care", "彩妝遮瑕": "Makeup / Concealer", "口腔護理": "Oral Care", "防曬": "Sun Care", "藥膏藥品": "Ointment / Medicine", "食品（含保健）": "Food / Health", "其他": "Others"
+            }
+        };
+
+        function translateCategoryBar() {
+            document.querySelectorAll('.cat-pill').forEach(pill => {
+                const cat = pill.getAttribute('data-cat');
+                if (cat && CATEGORY_LABELS[currentLang] && CATEGORY_LABELS[currentLang][cat]) {
+                    pill.innerText = CATEGORY_LABELS[currentLang][cat];
+                }
+            });
+        }
+
         function translatePageUI() {
             document.querySelectorAll('.i-trans').forEach(el => {
                 const key = el.getAttribute('data-key');
@@ -617,6 +638,7 @@
                     el.setAttribute('placeholder', TRANSLATIONS[currentLang][key]);
                 }
             });
+            translateCategoryBar();
             let t = Object.values(cart).reduce((s,i)=>s+i.qty,0);
             if (t > 0) {
                 document.getElementById('cart-qty-wrapper').innerHTML = TRANSLATIONS[currentLang]['cartSelected'].replace('{qty}', `<span id="cart-qty" style="color:#28b0eb; font-weight:900;">${t}</span>`);
@@ -702,7 +724,7 @@
                     const labels = document.querySelectorAll('.timeline-label');
                     if (labels && labels.length >= 4) {
                         if (activeStep === 3) {
-                            labels[3].innerText = "行程結束";
+                            labels[3].innerText = TRANSLATIONS[currentLang].step3;
                         } else if (sys.open && sys.finish) {
                             // 只顯示月份和日期（2026-05-20 格式化轉為 05-20）
                             const dateParts = sys.finish.split('-');
@@ -712,7 +734,7 @@
                                 labels[3].innerText = sys.finish;
                             }
                         } else {
-                            labels[3].innerText = "行程結束";
+                            labels[3].innerText = TRANSLATIONS[currentLang].step3;
                         }
                     }
 
@@ -861,7 +883,10 @@
                 <div class="item-card">
                     ${(p.order_count >= 5) ? '<div class="crown-badge"><iconify-icon icon="material-symbols:crown-rounded" style="font-size: 16px; color: currentColor;"></iconify-icon></div>' : ''}
                     <div class="item-main" onclick="window.open('${p.olive_url}','_blank')">
-                        <div><span class="item-name">${p.name_zh}</span>${p.option ? `<span class="item-option">${p.option}</span>`:''}</div>
+                        <div>
+                            <span class="item-name">${p.name_zh}</span>
+                            ${p.option ? `<span class="item-option">${p.option}</span>`:''}
+                        </div>
                         <span class="item-price">NT$ ${Number(p.price_nt).toLocaleString()}</span>
                     </div>
                     <div class="qty-ctrl">
@@ -1109,7 +1134,7 @@
             container.innerHTML = '<p style="text-align:center; padding:40px; color:#999;">努力載入訂單中...</p>';
             const { data, error } = await supabaseClient.from('orders').select('*').eq('user_id', userLineId).order('created_at', { ascending: false });
             if(error || !data || data.length === 0) {
-                container.innerHTML = `<p style="text-align:center; padding:40px; color:#999; font-weight:700;" class="i-trans" data-key="emptyOrders">行李箱空空如也～</p>`;
+                container.innerHTML = `<p style="text-align:center; padding:40px; color:#999; font-weight:700;" class="i-trans" data-key="emptyOrders">${TRANSLATIONS[currentLang].emptyOrders}</p>`;
                 return;
             }
             allUserOrders = data;
