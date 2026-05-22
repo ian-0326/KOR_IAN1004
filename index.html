@@ -3,12 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>KOR.IAN | 韓國連線清單</title>
+    <title>KOR.IAN|飛向韓國代購去</title>
+    <meta name="description" content="飛往仁川KI-1004航班即將起飛，請旅客儘速至S2登機門登機">
     
-    <meta property="og:title" content="KOR.IAN | 韓國連線清單">
+    <meta property="og:title" content="KOR.IAN|飛向韓國代購去">
+    <meta property="og:description" content="飛往仁川KI-1004航班即將起飛，請旅客儘速至S2登機門登機">
     <meta property="og:type" content="website">
     <meta property="og:image" content="Link Preview.jpg">
     <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="KOR.IAN|飛向韓國代購去">
+    <meta name="twitter:description" content="飛往仁川KI-1004航班即將起飛，請旅客儘速至S2登機門登機">
     <meta name="twitter:image" content="Link Preview.jpg">
 
     <link rel="icon" href="Link Mark.jpg" type="image/jpeg">
@@ -225,13 +229,13 @@
         .timeline-label.active { color: #ffffff !important; font-weight: 900 !important; font-size: 12px !important; opacity: 1 !important; }
 
         /* 代購階段動畫：指標一次滑到正確節點，進度線像水管流動，節點等流到才亮起 */
-        .timeline-dot { transition: background 0.28s ease, box-shadow 0.28s ease; }
-        .timeline-card-container { --timeline-duration: 900ms; }
+        .timeline-dot { transition: background 0.2s ease, box-shadow 0.2s ease; }
+        .timeline-card-container { --timeline-indicator-duration: 1400ms; --timeline-progress-duration: 700ms; }
         .timeline-card-container.timeline-animating #timeline-indicator {
-            transition: left var(--timeline-duration) cubic-bezier(0.22, 1, 0.36, 1);
+            transition: left var(--timeline-indicator-duration) cubic-bezier(0.22, 1, 0.36, 1);
         }
         .timeline-card-container.timeline-animating #timeline-progress {
-            transition: width var(--timeline-duration) linear;
+            transition: width var(--timeline-progress-duration) linear;
             animation: pipeFlow 0.7s linear infinite;
         }
         #timeline-indicator {
@@ -320,7 +324,7 @@
     <div id="login-gate">
         <div id="loader-content">
             <img src="airplain loading.png" alt="Loading Airplane" class="custom-airplane-img">
-            <div class="gate-text">飛行中請繫好安全帶</div>
+            <div class="gate-text">飛往仁川KI-1004航班即將起飛，請旅客儘速至S2登機門登機</div>
         </div>
     </div>
 
@@ -656,8 +660,8 @@
                 if (data && data.length > 0) {
                     userData = data[0]; 
                     renderUserProfile(); 
-                    const lastPage = localStorage.getItem('korian_last_page') || 'passport';
-                    switchPage(lastPage);
+                    // 每次重新開啟網站固定回到「我的護照」頁面；站內切換頁面時仍維持原本 switchPage 行為。
+                    switchPage('passport');
                 } else {
                     initBirthSelects();
                     switchPage('passport'); 
@@ -782,9 +786,11 @@
                 return;
             }
 
-            const duration = 1100 * safeTarget;
+            const indicatorDuration = 1400 * safeTarget;
+            const progressDuration = 700 * safeTarget;
             card.classList.remove('timeline-animating');
-            card.style.setProperty('--timeline-duration', `${duration}ms`);
+            card.style.setProperty('--timeline-indicator-duration', `${indicatorDuration}ms`);
+            card.style.setProperty('--timeline-progress-duration', `${progressDuration}ms`);
 
             applyTimelineReachedStep(0, safeTarget);
             indicator.style.left = '0%';
@@ -801,14 +807,14 @@
                 window.setTimeout(() => {
                     if (token !== timelineAnimationToken) return;
                     applyTimelineReachedStep(i, safeTarget);
-                }, Math.round((duration * i) / safeTarget));
+                }, Math.round((progressDuration * i) / safeTarget));
             }
 
             window.setTimeout(() => {
                 if (token !== timelineAnimationToken) return;
                 card.classList.remove('timeline-animating');
                 applyTimelineState(safeTarget);
-            }, duration + 80);
+            }, Math.max(indicatorDuration, progressDuration) + 80);
         }
 
         function renderTimelineUI(step) {
