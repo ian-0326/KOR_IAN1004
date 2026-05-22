@@ -15,27 +15,16 @@
     <link rel="shortcut icon" href="Link Mark.jpg" type="image/jpeg">
     <link rel="apple-touch-icon" href="Link Mark.jpg">
     
-    <script defer src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.0/feather.min.js"></script>
-    <script defer src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.0/feather.min.js"></script>
+    <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
     
     <style>
         :root { --primary: #28b0eb; --pink: #ff85a2; --bg: #f2f4f6; --white: #ffffff; --text: #191f28; --sub: #4e5968; --gray: #adb5bd; --error: #f44336; }
         
         body { font-family: Georgia, Garamond, "Times New Roman", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", "Helvetica Neue", "Microsoft JhengHei", sans-serif; background-color: #f2f4f6; margin: 0; padding: 0; color: #191f28; -webkit-font-smoothing: antialiased; touch-action: manipulation; }
         body.modal-open { overflow: hidden; }
-
-
-        /* 穩定性與效能輔助：不更動視覺，只減少重繪與非必要渲染 */
-        *, *::before, *::after { box-sizing: border-box; }
-        .item-card, .order-list-item { contain: layout paint; }
-        @supports (content-visibility: auto) {
-            .item-card, .order-list-item { content-visibility: auto; contain-intrinsic-size: 96px; }
-        }
-        @media (prefers-reduced-motion: reduce) {
-            *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
-        }
 
         /* 強制登入天藍色開屏安全牆 */
         #login-gate { position: fixed; inset: 0; background: #28b0eb; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
@@ -265,6 +254,18 @@
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); display: flex; justify-content: space-around; padding: 12px 0 calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid #e5e8eb; z-index: 200; }
         .nav-item { color: #adb5bd; text-align: center; flex: 1; font-size: 11px; font-weight: 700; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; }
         .nav-item.active { color: #28b0eb; }
+
+
+        /* 穩定優化層：不改視覺，只降低大量商品卡片渲染負擔 */
+        .item-card, .order-list-item {
+            content-visibility: auto;
+            contain-intrinsic-size: 96px;
+        }
+
+        /* 穩定優化層：減少版面重排影響範圍 */
+        .page-content, .modal-card, .bottom-summary {
+            contain: layout paint;
+        }
     </style>
 </head>
 <body>
@@ -480,61 +481,6 @@
         let userLineId = "", userLinePicture = "", userData = null, selectedGender = "", allProducts = [], cart = {}, shipMethod = '', packingQty = 1, currentRawOrderId = "", allUserOrders = [], isFromCheckout = false;
         
         let currentLang = 'zh';
-
-        /*
-         * 維護輔助層：集中處理 DOM 取得、轉譯、購物車統計與 icon 重繪。
-         * 之後改 A 功能時，盡量先改這裡或下方單一函式，避免牽動其他頁面。
-         */
-        const $ = (selector, root = document) => root.querySelector(selector);
-        const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
-        const byId = (id) => document.getElementById(id);
-        const money = (value) => `NT$ ${Number(value || 0).toLocaleString()}`;
-        const getCartItems = () => Object.values(cart).filter(item => item && Number(item.qty) > 0);
-        const getCartCount = () => getCartItems().reduce((sum, item) => sum + Number(item.qty || 0), 0);
-        const getCartSubtotal = () => getCartItems().reduce((sum, item) => sum + (Number(item.price || 0) * Number(item.qty || 0)), 0);
-        const escapeHTML = (value = '') => String(value).replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
-        const escapeAttr = escapeHTML;
-
-        let featherReplaceQueued = false;
-        function refreshIcons() {
-            if (featherReplaceQueued) return;
-            featherReplaceQueued = true;
-            requestAnimationFrame(() => {
-                featherReplaceQueued = false;
-                if (window.feather && typeof feather.replace === 'function') feather.replace();
-            });
-        }
-
-        function setText(id, value) {
-            const el = byId(id);
-            if (el) el.innerText = value;
-        }
-
-        function setHTML(id, value) {
-            const el = byId(id);
-            if (el) el.innerHTML = value;
-        }
-
-        function updateCartBar(forcePage = null) {
-            const count = getCartCount();
-            const isShop = forcePage ? forcePage === 'shop' : !!byId('page-shop')?.classList.contains('active');
-            const bar = byId('cart-bar');
-            if (!bar) return;
-
-            if (count > 0 && isShop) {
-                bar.style.display = 'flex';
-                setHTML('cart-qty-wrapper', TRANSLATIONS[currentLang]['cartSelected'].replace('{qty}', `<span id="cart-qty" style="color:#28b0eb; font-weight:900;">${count}</span>`));
-                setText('view-list-text', TRANSLATIONS[currentLang]['viewCart']);
-            } else {
-                bar.style.display = 'none';
-            }
-        }
-
-        function openProductUrl(url) {
-            if (!url) return;
-            window.open(url, '_blank', 'noopener,noreferrer');
-        }
-
         const TRANSLATIONS = {
             zh: {
                 checkoutTitle: "代購清單", checkoutTotal: "清單總計", fillDataBtn: "填寫資料",
@@ -587,15 +533,23 @@
         };
 
         function translatePageUI() {
-            $$('.i-trans').forEach(el => {
+            document.querySelectorAll('.i-trans').forEach(el => {
                 const key = el.getAttribute('data-key');
-                if (key && TRANSLATIONS[currentLang][key]) el.innerText = TRANSLATIONS[currentLang][key];
+                if (key && TRANSLATIONS[currentLang][key]) {
+                    el.innerText = TRANSLATIONS[currentLang][key];
+                }
             });
-            $$('.i-trans-placeholder').forEach(el => {
+            document.querySelectorAll('.i-trans-placeholder').forEach(el => {
                 const key = el.getAttribute('data-placeholder-key');
-                if (key && TRANSLATIONS[currentLang][key]) el.setAttribute('placeholder', TRANSLATIONS[currentLang][key]);
+                if (key && TRANSLATIONS[currentLang][key]) {
+                    el.setAttribute('placeholder', TRANSLATIONS[currentLang][key]);
+                }
             });
-            updateCartBar();
+            let t = Object.values(cart).reduce((s,i)=>s+i.qty,0);
+            if (t > 0) {
+                document.getElementById('cart-qty-wrapper').innerHTML = TRANSLATIONS[currentLang]['cartSelected'].replace('{qty}', `<span id="cart-qty" style="color:#28b0eb; font-weight:900;">${t}</span>`);
+                document.getElementById('view-list-text').innerText = TRANSLATIONS[currentLang]['viewCart'];
+            }
         }
 
         function toggleLanguageMode() {
@@ -643,7 +597,7 @@
                     document.getElementById('register-modal').style.display = 'flex';
                 }
                 translatePageUI(); 
-                refreshIcons();
+                feather.replace();
             } catch (e) { 
                 console.error(e); 
                 document.getElementById('main-app').style.display = 'block';
@@ -723,50 +677,32 @@
 
         async function fetchProducts() {
             try {
-                const { data, error } = await supabaseClient.from('products').select('*').eq('is_active', true);
-                if (error) throw error;
-                allProducts = Array.isArray(data) ? data.sort((a,b)=>(b.order_count||0)-(a.order_count||0)) : [];
-                renderProducts(allProducts);
-            } catch (err) { 
-                console.error(err); 
-                allProducts = [];
-                renderProducts([]);
-            }
+                const { data } = await supabaseClient.from('products').select('*').eq('is_active', true);
+                if(data) {
+                    allProducts = data.sort((a,b)=>(b.order_count||0)-(a.order_count||0));
+                    renderProducts(allProducts);
+                }
+            } catch (err) { console.error(err); }
         }
 
-        function renderProducts(ps = []) {
-            const container = byId('item-list');
+        function renderProducts(ps) {
+            const container = document.getElementById('item-list');
             if(!container) return;
-
-            if (!Array.isArray(ps) || ps.length === 0) {
-                container.innerHTML = '<p style="text-align:center;padding:40px 0;color:#999;">目前沒有可顯示的商品</p>';
-                return;
-            }
-
-            container.innerHTML = ps.map(p => {
-                const id = escapeAttr(p.id || '');
-                const name = escapeHTML(p.name_zh || '');
-                const option = p.option ? `<span class="item-option">${escapeHTML(p.option)}</span>` : '';
-                const price = money(p.price_nt).replace('NT$ ', '');
-                const url = escapeAttr(p.olive_url || '');
-                const qty = cart[p.id] ? Number(cart[p.id].qty || 0) : 0;
-                const crown = (Number(p.order_count || 0) >= 5) ? '<div class="crown-badge"><iconify-icon icon="material-symbols:crown-rounded" style="font-size: 16px; color: currentColor;"></iconify-icon></div>' : '';
-
-                return `
-                    <div class="item-card">
-                        ${crown}
-                        <div class="item-main" onclick="openProductUrl('${url}')">
-                            <div><span class="item-name">${name}</span>${option}</div>
-                            <span class="item-price">NT$ ${price}</span>
-                        </div>
-                        <div class="qty-ctrl">
-                            <button class="qty-btn" type="button" onclick="updateQty('${id}',-1)"><i data-feather="minus" style="width:18px;"></i></button>
-                            <span class="qty-num" id="qty-${id}">${qty}</span>
-                            <button class="qty-btn" type="button" onclick="updateQty('${id}',1)"><i data-feather="plus" style="width:18px;"></i></button>
-                        </div>
-                    </div>`;
-            }).join('');
-            refreshIcons();
+            container.innerHTML = ps.map(p => `
+                <div class="item-card">
+                    ${(p.order_count >= 5) ? '<div class="crown-badge"><iconify-icon icon="material-symbols:crown-rounded" style="font-size: 16px; color: currentColor;"></iconify-icon></div>' : ''}
+                    <div class="item-main" onclick="window.open('${p.olive_url}','_blank')">
+                        <div><span class="item-name">${p.name_zh}</span>${p.option ? `<span class="item-option">${p.option}</span>`:''}</div>
+                        <span class="item-price">NT$ ${Number(p.price_nt).toLocaleString()}</span>
+                    </div>
+                    <div class="qty-ctrl">
+                        <button class="qty-btn" onclick="updateQty('${p.id}',-1)"><i data-feather="minus" style="width:18px;"></i></button>
+                        <span class="qty-num" id="qty-${p.id}">${cart[p.id]?cart[p.id].qty:0}</span>
+                        <button class="qty-btn" onclick="updateQty('${p.id}',1)"><i data-feather="plus" style="width:18px;"></i></button>
+                    </div>
+                </div>
+            `).join('');
+            feather.replace();
         }
 
         function filterCategory(cat, el) {
@@ -778,24 +714,34 @@
         function updateQty(id, d) {
             const p = allProducts.find(x=>x.id===id);
             if(!p) return;
-            if(!cart[id]) cart[id]={id:p.id, name:p.name_zh, option:p.option, price:Number(p.price_nt || 0), qty:0};
-            cart[id].qty=Math.max(0, Number(cart[id].qty || 0)+Number(d || 0));
-            const qtyEl = byId(`qty-${id}`);
-            if(qtyEl) qtyEl.innerText=cart[id].qty;
-            updateCartBar();
-            if(byId('page-checkout')?.classList.contains('active')) renderCheckout();
-            if(byId('page-shipping')?.classList.contains('active')) calculateFinal();
+            if(!cart[id]) cart[id]={id:p.id, name:p.name_zh, option:p.option, price:p.price_nt, qty:0};
+            cart[id].qty=Math.max(0, cart[id].qty+d);
+            if(document.getElementById(`qty-${id}`)) document.getElementById(`qty-${id}`).innerText=cart[id].qty;
+            let t = Object.values(cart).reduce((s,i)=>s+i.qty,0);
+            
+            if (t > 0 && document.getElementById('page-shop').classList.contains('active')) {
+                document.getElementById('cart-bar').style.display = 'flex';
+                document.getElementById('cart-qty-wrapper').innerHTML = TRANSLATIONS[currentLang]['cartSelected'].replace('{qty}', `<span id="cart-qty" style="color:#28b0eb; font-weight:900;">${t}</span>`);
+                document.getElementById('view-list-text').innerText = TRANSLATIONS[currentLang]['viewCart'];
+            } else {
+                document.getElementById('cart-bar').style.display = 'none';
+            }
+            
+            if(document.getElementById('page-checkout').classList.contains('active')) renderCheckout();
+            if(document.getElementById('page-shipping').classList.contains('active')) calculateFinal();
         }
 
         function renderCheckout() {
             let h='', t=0;
-            getCartItems().forEach(i=>{
-                h+=`<div class="list-row"><div class="list-left"><div><span class="list-n">${escapeHTML(i.name)}</span>${i.option?`<span class="list-s">${escapeHTML(i.option)}</span>`:''}</div><span class="list-p">${money(i.price)}</span></div><div class="qty-ctrl"><button class="qty-btn" type="button" onclick="updateQty('${escapeAttr(i.id)}',-1)"><i data-feather="minus" style="width:16px;"></i></button><span class="qty-num">${Number(i.qty || 0)}</span><button class="qty-btn" type="button" onclick="updateQty('${escapeAttr(i.id)}',1)"><i data-feather="plus" style="width:16px;"></i></button></div></div>`;
-                t+=Number(i.price || 0)*Number(i.qty || 0);
+            Object.values(cart).forEach(i=>{
+                if(i.qty>0){
+                    h+=`<div class="list-row"><div class="list-left"><div><span class="list-n">${i.name}</span>${i.option?`<span class="list-s">${i.option}</span>`:''}</div><span class="list-p">NT$ ${Number(i.price).toLocaleString()}</span></div><div class="qty-ctrl"><button class="qty-btn" onclick="updateQty('${i.id}',-1)"><i data-feather="minus" style="width:16px;"></i></button><span class="qty-num">${i.qty}</span><button class="qty-btn" onclick="updateQty('${i.id}',1)"><i data-feather="plus" style="width:16px;"></i></button></div></div>`;
+                    t+=i.price*i.qty;
+                }
             });
-            setHTML('checkout-container', h || `<p style="text-align:center;padding:40px 0;color:#999;">尚未選擇商品</p>`);
-            setText('checkout-grand-total', money(t));
-            refreshIcons();
+            document.getElementById('checkout-container').innerHTML=h||`<p style="text-align:center;padding:40px 0;color:#999;">尚未選擇商品</p>`;
+            document.getElementById('checkout-grand-total').innerText=`NT$ ${t.toLocaleString()}`;
+            feather.replace();
         }
 
         function setShipping(m) { 
@@ -813,13 +759,13 @@
         function updatePacking(d) { const min=shipMethod==='711'?1:0; packingQty=Math.max(min, packingQty+d); document.getElementById('qty-packing').innerText=packingQty; calculateFinal(); }
         
         function calculateFinal() { 
-            let it=getCartSubtotal(); 
+            let it=Object.values(cart).reduce((s,i)=>s+(i.price*i.qty),0); 
             let sf=shipMethod==='711'?(80*packingQty):0; 
             let pf=packingQty*10; 
-            setText('sum-items', money(it)); 
-            setText('sum-shipping', money(sf)); 
-            setText('sum-packing', money(pf)); 
-            setText('sum-total', money(it+sf+pf)); 
+            document.getElementById('sum-items').innerText=`NT$ ${it.toLocaleString()}`; 
+            document.getElementById('sum-shipping').innerText=`NT$ ${sf.toLocaleString()}`; 
+            document.getElementById('sum-packing').innerText=`NT$ ${pf.toLocaleString()}`; 
+            document.getElementById('sum-total').innerText=`NT$ ${(it+sf+pf).toLocaleString()}`; 
         }
 
         function removeGateError() {
@@ -849,46 +795,7 @@
             document.getElementById(id).style.display = 'none'; 
         }
 
-        async function init() {
-            try {
-                if (!window.liff || !window.supabase) throw new Error('必要套件尚未載入，請重新整理頁面。');
-
-                await liff.init({ liffId: LIFF_ID });
-                if (!liff.isLoggedIn()) { liff.login(); return; }
-
-                const profile = await liff.getProfile();
-                userLineId = profile.userId;
-                userLinePicture = profile.pictureUrl || "https://img.icons8.com/illustrations/96/user.png";
-
-                const profilePromise = supabaseClient.from('profiles').select('*').or(`line_id.eq.${userLineId},user_id.eq.${userLineId}`);
-                await Promise.all([fetchProducts(), fetchSystemControl()]);
-                const { data } = await profilePromise;
-                
-                const mainApp = byId('main-app');
-                const gate = byId('login-gate');
-                if (mainApp) mainApp.style.display = 'block';
-                if (gate) gate.style.display = 'none';
-
-                if (data && data.length > 0) {
-                    userData = data[0]; 
-                    renderUserProfile(); 
-                    const lastPage = localStorage.getItem('korian_last_page') || 'passport';
-                    switchPage(lastPage);
-                } else {
-                    initBirthSelects();
-                    switchPage('passport'); 
-                    document.body.classList.add('modal-open');
-                    const registerModal = byId('register-modal');
-                    if (registerModal) registerModal.style.display = 'flex';
-                }
-                translatePageUI(); 
-                refreshIcons();
-            } catch (e) { 
-                console.error(e); 
-                removeGateError();
-            }
-        }
-
+        function initTextareas() { const ts = document.querySelectorAll('textarea.input-box'); ts.forEach(t => { t.style.height = '48px'; }); }
         function autoGrow(element) { element.style.height = '48px'; if (element.scrollHeight > 48) { element.style.height = (element.scrollHeight) + "px"; } }
         function changeCat(el) { clearError(el); }
 
@@ -1003,7 +910,7 @@
                 </div>
             `).join('');
             document.getElementById('order-detail-modal').style.display = 'flex';
-            refreshIcons();
+            feather.replace();
         }
 
         function closeOrderDetailModal() {
@@ -1046,7 +953,7 @@
                     </div>
                 </div>
             `).join('');
-            refreshIcons();
+            feather.replace();
         }
 
         function renderUserProfile() { 
@@ -1065,28 +972,37 @@
             if(el.id.startsWith('reg-birth')) ['y','m','d'].forEach(suffix => document.getElementById('reg-birth-'+suffix).classList.remove('error'));
         }
         
-        async function copyOrderId() { try { await navigator.clipboard.writeText(currentRawOrderId); const btn = document.getElementById('copy-btn'); btn.innerHTML = '<i data-feather="check" style="width:12px;"></i>已複製'; refreshIcons(); setTimeout(() => { btn.innerHTML = '<i data-feather="copy" style="width:12px;"></i>複製'; refreshIcons(); }, 2000); } catch (err) { console.error(err); } }
+        async function copyOrderId() { try { await navigator.clipboard.writeText(currentRawOrderId); const btn = document.getElementById('copy-btn'); btn.innerHTML = '<i data-feather="check" style="width:12px;"></i>已複製'; feather.replace(); setTimeout(() => { btn.innerHTML = '<i data-feather="copy" style="width:12px;"></i>複製'; feather.replace(); }, 2000); } catch (err) { console.error(err); } }
 
         function switchPage(p) {
-            $$('.page-content').forEach(e=>e.classList.remove('active'));
-            const target = byId('page-'+p);
+            document.querySelectorAll('.page-content').forEach(e=>e.classList.remove('active'));
+            const target = document.getElementById('page-'+p);
             if(target) target.classList.add('active');
             
-            $$('.nav-item').forEach(n=>n.classList.remove('active'));
-            byId('nav-'+p)?.classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+            if(document.getElementById('nav-'+p)) document.getElementById('nav-'+p).classList.add('active');
             
             if(p === 'shop' || p === 'passport') localStorage.setItem('korian_last_page', p);
-            updateCartBar(p);
+            
+            let t = Object.values(cart).reduce((s,i)=>s+i.qty,0);
+            
+            if (t > 0 && p == 'shop') {
+                document.getElementById('cart-bar').style.display = 'flex';
+                document.getElementById('cart-qty-wrapper').innerHTML = TRANSLATIONS[currentLang]['cartSelected'].replace('{qty}', `<span id="cart-qty" style="color:#28b0eb; font-weight:900;">${t}</span>`);
+                document.getElementById('view-list-text').innerText = TRANSLATIONS[currentLang]['viewCart'];
+            } else {
+                document.getElementById('cart-bar').style.display = 'none';
+            }
             
             if(p === 'shop') renderProducts(allProducts);
             if(p === 'checkout') renderCheckout();
             if(p === 'shipping') calculateFinal();
             if(p === 'orders') fetchUserOrders(); 
+            // 當切換到護照頁時重新同步階段動態
             if(p === 'passport') fetchSystemControl();
             
             translatePageUI(); 
-            window.scrollTo(0,0); 
-            refreshIcons();
+            window.scrollTo(0,0); feather.replace();
         }
 
         function initBirthSelects() {
@@ -1096,7 +1012,19 @@
             sd.innerHTML = '<option value="">日</option>' + Array.from({length: 31}, (_, i) => `<option value="${(i+1).toString().padStart(2,'0')}">${(i+1).toString().padStart(2,'0')}</option>`).join('');
         }
 
-        window.addEventListener('DOMContentLoaded', init);
+        // 穩定啟動：維持原本 window.onload 流程，避免 LIFF / Supabase SDK 尚未載入時提前初始化。
+        window.onload = init;
+
+        // 只在發生未攔截錯誤時提供保護，避免畫面永久卡在 loading。
+        window.addEventListener('unhandledrejection', function (event) {
+            console.error(event.reason);
+            const app = document.getElementById('main-app');
+            const gate = document.getElementById('login-gate');
+            if (app && gate) {
+                app.style.display = 'block';
+                gate.style.display = 'none';
+            }
+        });
     </script>
 </body>
 </html>
