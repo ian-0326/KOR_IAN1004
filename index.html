@@ -256,15 +256,10 @@
         .nav-item.active { color: #28b0eb; }
 
 
-        /* 穩定優化層：不改視覺，只降低大量商品卡片渲染負擔 */
+        /* 穩定優化層：只保留不影響 fixed 底部區塊的安全設定 */
         .item-card, .order-list-item {
             content-visibility: auto;
             contain-intrinsic-size: 96px;
-        }
-
-        /* 穩定優化層：減少版面重排影響範圍 */
-        .page-content, .modal-card, .bottom-summary {
-            contain: layout paint;
         }
     </style>
 </head>
