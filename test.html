@@ -94,7 +94,12 @@
         .item-card { background: #fff; padding: 20px; border-radius: 28px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 12px rgba(0,0,0,0.04); margin-bottom: 12px; position: relative; } /* 確保卡片容器具備相對定位以利皇冠貼附 */
         .item-card:first-child { margin-top: 10px; }
         .item-card * { pointer-events: auto; }
-        .item-main { flex: 1; cursor: pointer; }
+        .item-main { flex: 1; cursor: pointer; min-width: 0; }
+        .item-main.no-link { cursor: default; }
+        .item-card.product-image-mode { gap: 12px; padding: 16px; }
+        .item-product-image { width: 72px; height: 72px; aspect-ratio: 1 / 1; border-radius: 20px; object-fit: cover; background: #f2f4f6; flex-shrink: 0; display: block; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .item-product-image-placeholder { width: 72px; height: 72px; aspect-ratio: 1 / 1; border-radius: 20px; background: #f2f4f6; color: #adb5bd; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+        .item-text-wrap { min-width: 0; }
         .item-name { font-size: 16px; font-weight: 700; color: #191f28; display: inline-block; margin-bottom: 4px; }
         .item-option { font-size: 12px; color: #adb5bd; margin-left: 0; margin-top: 2px; font-weight: 400; display: block; }
         .item-price { color: #28b0eb; font-weight: 900; font-size: 17px; display: block; }
@@ -551,6 +556,7 @@
         
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         let userLineId = "", userLinePicture = "", userData = null, selectedGender = "", allProducts = [], cart = {}, shipMethod = '', packingQty = 1, currentRawOrderId = "", allUserOrders = [], isFromCheckout = false;
+        let productImageModeEnabled = false;
         
         let currentLang = 'zh';
         const TRANSLATIONS = {
@@ -671,6 +677,7 @@
                 userLineId = profile.userId;
                 userLinePicture = profile.pictureUrl || "https://img.icons8.com/illustrations/96/user.png";
 
+                await fetchProductDisplayMode();
                 await fetchProducts();
                 await fetchSystemControl();
 
@@ -866,6 +873,44 @@
             applyTimelineState(targetStep);
         }
 
+        async function fetchProductDisplayMode() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('system_control')
+                    .select('product_display_mode')
+                    .eq('project', '版本切換')
+                    .maybeSingle();
+
+                if (error) throw error;
+                productImageModeEnabled = data?.product_display_mode === true;
+            } catch (err) {
+                console.error('fetchProductDisplayMode error:', err);
+                productImageModeEnabled = false;
+            }
+        }
+
+        function getProductImageUrl(fileName) {
+            if (!fileName) return '';
+            const { data } = supabaseClient
+                .storage
+                .from('product-images')
+                .getPublicUrl(fileName);
+            return data?.publicUrl || '';
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        function escapeJsString(value) {
+            return String(value ?? '').replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\n/g, '\\n').replace(/\r/g, '');
+        }
+
         async function fetchProducts() {
             try {
                 const { data } = await supabaseClient.from('products').select('*').eq('is_active', true);
@@ -879,23 +924,35 @@
         function renderProducts(ps) {
             const container = document.getElementById('item-list');
             if(!container) return;
-            container.innerHTML = ps.map(p => `
-                <div class="item-card">
+            container.innerHTML = ps.map(p => {
+                const imageUrl = productImageModeEnabled ? getProductImageUrl(p.image_file) : '';
+                const productImageHtml = productImageModeEnabled
+                    ? (imageUrl
+                        ? `<img class="item-product-image" src="${escapeHtml(imageUrl)}" alt="${escapeHtml(p.name_zh || '商品圖片')}" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><div class="item-product-image-placeholder" style="display:none;"><iconify-icon icon="mdi:image-off-outline" style="font-size: 26px; color: currentColor;"></iconify-icon></div>`
+                        : `<div class="item-product-image-placeholder"><iconify-icon icon="mdi:image-off-outline" style="font-size: 26px; color: currentColor;"></iconify-icon></div>`)
+                    : '';
+                const linkAction = (!productImageModeEnabled && p.olive_url) ? `onclick="window.open('${escapeJsString(p.olive_url)}','_blank')"` : '';
+                const linkClass = productImageModeEnabled ? 'no-link' : '';
+                const cardClass = productImageModeEnabled ? 'item-card product-image-mode' : 'item-card';
+
+                return `
+                <div class="${cardClass}">
                     ${(p.order_count >= 5) ? '<div class="crown-badge"><iconify-icon icon="material-symbols:crown-rounded" style="font-size: 16px; color: currentColor;"></iconify-icon></div>' : ''}
-                    <div class="item-main" onclick="window.open('${p.olive_url}','_blank')">
-                        <div>
-                            <span class="item-name">${p.name_zh}</span>
-                            ${p.option ? `<span class="item-option">${p.option}</span>`:''}
+                    ${productImageHtml}
+                    <div class="item-main ${linkClass}" ${linkAction}>
+                        <div class="item-text-wrap">
+                            <span class="item-name">${escapeHtml(p.name_zh)}</span>
+                            ${p.option ? `<span class="item-option">${escapeHtml(p.option)}</span>`:''}
                         </div>
-                        <span class="item-price">NT$ ${Number(p.price_nt).toLocaleString()}</span>
+                        <span class="item-price">NT$ ${Number(p.price_nt || 0).toLocaleString()}</span>
                     </div>
                     <div class="qty-ctrl">
-                        <button class="qty-btn" onclick="updateQty('${p.id}',-1)"><i data-feather="minus" style="width:18px;"></i></button>
-                        <span class="qty-num" id="qty-${p.id}">${cart[p.id]?cart[p.id].qty:0}</span>
-                        <button class="qty-btn" onclick="updateQty('${p.id}',1)"><i data-feather="plus" style="width:18px;"></i></button>
+                        <button class="qty-btn" onclick="updateQty('${escapeJsString(p.id)}',-1)"><i data-feather="minus" style="width:18px;"></i></button>
+                        <span class="qty-num" id="qty-${escapeHtml(p.id)}">${cart[p.id]?cart[p.id].qty:0}</span>
+                        <button class="qty-btn" onclick="updateQty('${escapeJsString(p.id)}',1)"><i data-feather="plus" style="width:18px;"></i></button>
                     </div>
-                </div>
-            `).join('');
+                </div>`;
+            }).join('');
             feather.replace();
         }
 
