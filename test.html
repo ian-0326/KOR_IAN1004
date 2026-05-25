@@ -1096,7 +1096,7 @@
             if(!shipMethod){ document.getElementById('ship-method-group').classList.add('error'); document.getElementById('tag-ship-method').style.display='inline'; isValid=false; }
             if(shipMethod==='711'){ if(!store.value.trim()){ store.classList.add('error'); isValid=false; } if(!code.value.trim()){ code.classList.add('error'); isValid=false; } }
             if(!isValid) return; btn.disabled=true; btn.innerText="下單中...";
-            let itemsStr = Object.values(cart).filter(i=>i.qty>0).map(i=>`${i.name}*${i.qty}`).join(', ');
+            let itemsStr = Object.values(cart).filter(i=>i.qty>0).map(i=>`${i.name}${i.option ? `（${i.option}）` : ''}*${i.qty}`).join(', ');
             const finalMethod = shipMethod === 'face' ? '面交' : '7-11 取件';
             const finalStore = shipMethod === '711' ? `${store.value}(${code.value})` : '台中指定區';
             const taiwanTime = new Date().toISOString();
@@ -1158,12 +1158,16 @@
             document.getElementById('m-method').innerText = `${order.shipping_method} ${order.shipping_store || ''}`;
             document.getElementById('m-total').innerText = order.total_amount;
             const items = order.items_summary.split(', ');
-            document.getElementById('m-items-container').innerHTML = items.map(it => `
+            document.getElementById('m-items-container').innerHTML = items.map(it => {
+                const parts = it.split('*');
+                const qty = parts.length > 1 ? parts.pop() : '1';
+                const itemName = parts.join('*');
+                return `
                 <div class="order-item-row">
-                    <div class="order-item-name">${it.split('*')[0]}</div>
-                    <div class="order-item-qty">× ${it.split('*')[1]}</div>
-                </div>
-            `).join('');
+                    <div class="order-item-name">${itemName}</div>
+                    <div class="order-item-qty">× ${qty}</div>
+                </div>`;
+            }).join('');
             document.getElementById('order-detail-modal').style.display = 'flex';
             feather.replace();
         }
