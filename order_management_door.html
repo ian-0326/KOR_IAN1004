@@ -31,6 +31,7 @@
     .subline{font-size:12px;color:var(--gray);font-weight:700;margin-top:4px}
     .refresh-btn,.language-btn,.copy-btn,.clear-btn{border:0;border-radius:999px;background:#fff;color:var(--text);font-weight:900;padding:12px 14px;box-shadow:0 4px 14px rgba(0,0,0,.05);display:inline-flex;align-items:center;gap:6px;cursor:pointer;white-space:nowrap}
     .refresh-btn,.language-btn{color:var(--primary)}
+    .language-btn.icon-only{width:44px;height:44px;padding:0;justify-content:center;gap:0}.language-btn.icon-only iconify-icon{font-size:22px!important}
     .filters{display:grid;grid-template-columns:1fr;gap:10px;margin-top:16px}.filter-card{background:#fff;border-radius:22px;padding:12px 14px;box-shadow:0 3px 14px rgba(0,0,0,.035)}
     .filter-label{font-size:11px;color:var(--gray);font-weight:900;margin-bottom:6px}.filter-input{width:100%;border:0;background:#f7f9fb;border-radius:14px;padding:12px 13px;font-size:14px;outline:none;color:var(--text);font-weight:700}
     .section-title{font-size:16px;font-weight:900;margin:18px 0 10px;display:flex;align-items:center;gap:8px}
@@ -54,9 +55,8 @@
             <div class="subline" id="lastUpdated">尚未載入資料</div>
           </div>
         </div>
-        <button class="language-btn" onclick="toggleAdminLanguage()" type="button">
-          <iconify-icon id="adminLangIcon" icon="emojione-v1:flag-for-taiwan" style="font-size:18px"></iconify-icon>
-          <span id="adminLangText">語言切換</span>
+        <button class="language-btn icon-only" onclick="toggleAdminLanguage()" type="button" aria-label="語言切換" title="語言切換">
+          <iconify-icon id="adminLangIcon" icon="emojione-v1:flag-for-taiwan"></iconify-icon>
         </button>
       </div>
       <div class="filters">
@@ -196,7 +196,6 @@
       document.title = t('title');
       const map = {
         pageTitle: t('title'),
-        adminLangText: t('langButton'),
         searchLabel: t('searchLabel'),
         sectionTitleText: t('sectionTitle'),
         copyBtnText: t('copy'),
@@ -208,6 +207,11 @@
       });
       const icon = document.getElementById('adminLangIcon');
       if(icon) icon.setAttribute('icon', currentLang === 'zh' ? 'emojione-v1:flag-for-taiwan' : 'twemoji:flag-south-korea');
+      const langButton = document.querySelector('.language-btn');
+      if(langButton){
+        langButton.setAttribute('aria-label', t('langButton'));
+        langButton.setAttribute('title', t('langButton'));
+      }
       const keyword = document.getElementById('keyword');
       if(keyword) keyword.setAttribute('placeholder', t('searchPlaceholder'));
       const lastUpdated = document.getElementById('lastUpdated');
@@ -328,8 +332,14 @@
     }
 
     function getProductId(product){ return String(product.id ?? `${getProductName(product)}_${getProductOption(product)}`); }
-    function getProductName(product){ return product.name_zh || product.name || product.product_name || product.title || t('unnamed'); }
-    function getProductOption(product){ return product.option || product.variant || product.spec || ''; }
+    function getProductName(product){
+      if(currentLang === 'ko') return product.name_kr || product.name_zh || product.name || product.product_name || product.title || t('unnamed');
+      return product.name_zh || product.name || product.product_name || product.title || t('unnamed');
+    }
+    function getProductOption(product){
+      if(currentLang === 'ko') return product.option_kr || product.option || product.variant || product.spec || '';
+      return product.option || product.variant || product.spec || '';
+    }
     function getProductUrl(product){ return product.olive_url || product.product_url || product.url || product.link || ''; }
 
     function findProductById(id){
