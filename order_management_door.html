@@ -61,6 +61,7 @@
   </div>
 
   <main class="app">
+    <div class="system-error" id="systemError"></div>
     <div class="topbar">
       <div class="brand-row">
         <div class="brand">
@@ -117,14 +118,36 @@
   <script>
     const SUPABASE_URL = 'https://ivpctyqlrkjstfsoweeh.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml2cGN0eXFscmtqc3Rmc293ZWVoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTk1MTksImV4cCI6MjA4ODc3NTUxOX0.DYgzhaTH3_5NFwv009ZfZAshfUnCW2PeTuNcJ9feyMU';
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     const ADMIN_PASSWORD = 'KORIAN1004';
+
+    let supabaseClient = null;
     let allOrders = [];
     let activeTab = 'purchase';
+
+    function initSupabaseClient(){
+      if(supabaseClient) return supabaseClient;
+      if(!window.supabase || typeof window.supabase.createClient !== 'function'){
+        showSystemError('Supabase 套件尚未成功載入。請確認網路狀態，或重新整理頁面。');
+        return null;
+      }
+      supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      return supabaseClient;
+    }
+
+    function showSystemError(message){
+      const box = document.getElementById('systemError');
+      if(box){ box.style.display = 'block'; box.innerText = message; }
+    }
+
+    function clearSystemError(){
+      const box = document.getElementById('systemError');
+      if(box){ box.style.display = 'none'; box.innerText = ''; }
+    }
 
     function checkPassword(){
       const input = document.getElementById('adminPassword');
       const error = document.getElementById('loginError');
+      if(!input) return;
       if(input.value === ADMIN_PASSWORD){
         sessionStorage.setItem('korian_admin_ok','1');
         document.getElementById('loginWall').style.display='none';
@@ -136,8 +159,17 @@
       }
     }
 
-    document.getElementById('adminPassword').addEventListener('keydown', e => { if(e.key === 'Enter') checkPassword(); });
-    window.addEventListener('load', () => {
+    window.checkPassword = checkPassword;
+    window.switchTab = switchTab;
+    window.loadOrders = loadOrders;
+    window.copyPurchaseText = copyPurchaseText;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const passwordInput = document.getElementById('adminPassword');
+      if(passwordInput){
+        passwordInput.addEventListener('keydown', e => { if(e.key === 'Enter') checkPassword(); });
+      }
+      initSupabaseClient();
       if(sessionStorage.getItem('korian_admin_ok') === '1'){
         document.getElementById('loginWall').style.display='none';
         loadOrders();
@@ -147,29 +179,40 @@
     function switchTab(tab, btn){
       activeTab = tab;
       document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-      btn.classList.add('active');
+      if(btn) btn.classList.add('active');
       document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-      document.getElementById('panel-' + tab).classList.add('active');
+      const panel = document.getElementById('panel-' + tab);
+      if(panel) panel.classList.add('active');
     }
 
     async function loadOrders(){
+      clearSystemError();
+      const client = initSupabaseClient();
+      if(!client) return;
+
       document.getElementById('purchaseList').innerHTML = loadingHtml('正在整理採購清單...');
       document.getElementById('orderList').innerHTML = loadingHtml('正在讀取訂單...');
-      let query = supabaseClient.from('orders').select('*').order('created_at', { ascending:false });
-      const start = document.getElementById('startDate').value;
-      const end = document.getElementById('endDate').value;
-      if(start) query = query.gte('created_at', `${start}T00:00:00`);
-      if(end) query = query.lte('created_at', `${end}T23:59:59`);
-      const { data, error } = await query;
-      if(error){
-        const msg = `<div class="empty"><iconify-icon icon="solar:danger-triangle-bold"></iconify-icon>讀取失敗：${escapeHtml(error.message)}</div>`;
+
+      try{
+        let query = client.from('orders').select('*').order('created_at', { ascending:false });
+        const start = document.getElementById('startDate').value;
+        const end = document.getElementById('endDate').value;
+        if(start) query = query.gte('created_at', `${start}T00:00:00`);
+        if(end) query = query.lte('created_at', `${end}T23:59:59`);
+
+        const { data, error } = await query;
+        if(error) throw error;
+
+        allOrders = Array.isArray(data) ? data : [];
+        document.getElementById('lastUpdated').innerText = `最後更新：${new Date().toLocaleString('zh-TW')}`;
+        renderAll();
+      }catch(error){
+        const message = error && error.message ? error.message : String(error);
+        const msg = `<div class="empty"><iconify-icon icon="solar:danger-triangle-bold"></iconify-icon>讀取失敗：${escapeHtml(message)}</div>`;
         document.getElementById('purchaseList').innerHTML = msg;
         document.getElementById('orderList').innerHTML = msg;
-        return;
+        showSystemError('訂單資料讀取失敗。這通常是 orders 的 RLS/SELECT 權限、網路連線，或 Supabase 暫時無法連線造成。');
       }
-      allOrders = data || [];
-      document.getElementById('lastUpdated').innerText = `最後更新：${new Date().toLocaleString('zh-TW')}`;
-      renderAll();
     }
 
     function loadingHtml(text){ return `<div class="empty"><iconify-icon icon="svg-spinners:180-ring"></iconify-icon>${text}</div>`; }
@@ -178,7 +221,7 @@
       const kw = document.getElementById('keyword').value.trim().toLowerCase();
       if(!kw) return allOrders;
       return allOrders.filter(order => {
-        const text = [order.id, order.customer_name, order.customer_tel, order.shipping_method, order.shipping_store, order.total_amount, order.items_summary].filter(Boolean).join(' ').toLowerCase();
+        const text = [order.id, order.customer_name, order.customer_tel, order.shipping_method, order.shipping_store, order.total_amount, order.items_summary, order.user_id].filter(Boolean).join(' ').toLowerCase();
         return text.includes(kw);
       });
     }
@@ -186,12 +229,21 @@
     function parseItems(summary){
       if(!summary) return [];
       return String(summary).split(',').map(raw => raw.trim()).filter(Boolean).map(raw => {
-        const qtyMatch = raw.match(/\*(\d+)\s*$/);
+        const qtyMatch = raw.match(/[×xX＊*]\s*(\d+)\s*$/);
         const qty = qtyMatch ? parseInt(qtyMatch[1],10) : 1;
-        const withoutQty = raw.replace(/\*\d+\s*$/,'').trim();
+        const withoutQty = raw.replace(/[×xX＊*]\s*\d+\s*$/,'').trim();
         let name = withoutQty;
         let option = '';
-        if(withoutQty.includes('｜')){
+
+        const twParen = withoutQty.match(/^(.*?)（(.+?)）$/);
+        const normalParen = withoutQty.match(/^(.*?)\((.+?)\)$/);
+        if(twParen){
+          name = twParen[1].trim();
+          option = twParen[2].trim();
+        }else if(normalParen){
+          name = normalParen[1].trim();
+          option = normalParen[2].trim();
+        }else if(withoutQty.includes('｜')){
           const parts = withoutQty.split('｜');
           name = parts[0].trim();
           option = parts.slice(1).join('｜').trim();
@@ -230,7 +282,7 @@
           row.orders.push(shortId(order.id));
         });
       });
-      const rows = [...map.values()].sort((a,b)=> a.name.localeCompare(b.name,'zh-Hant') || a.option.localeCompare(b.option,'zh-Hant'));
+      const rows = Array.from(map.values()).sort((a,b)=> a.name.localeCompare(b.name,'zh-Hant') || a.option.localeCompare(b.option,'zh-Hant'));
       const box = document.getElementById('purchaseList');
       if(!rows.length){ box.innerHTML = emptyHtml('目前沒有可彙整的商品'); return; }
       box.innerHTML = rows.map(row => `
@@ -239,7 +291,7 @@
             <div class="purchase-main">
               <div class="purchase-name">${escapeHtml(row.name)}</div>
               ${row.option ? `<div class="purchase-option">${escapeHtml(row.option)}</div>` : ''}
-              <div class="purchase-meta">來源訂單：${escapeHtml([...new Set(row.orders)].join('、'))}</div>
+              <div class="purchase-meta">來源訂單：${escapeHtml(Array.from(new Set(row.orders)).join('、'))}</div>
             </div>
             <div>
               <div class="purchase-qty">× ${row.qty}</div>
@@ -294,10 +346,27 @@
         if(!map.has(key)) map.set(key, { name:item.name, option:item.option, qty:0 });
         map.get(key).qty += item.qty;
       }));
-      const rows = [...map.values()].sort((a,b)=> a.name.localeCompare(b.name,'zh-Hant') || a.option.localeCompare(b.option,'zh-Hant'));
+      const rows = Array.from(map.values()).sort((a,b)=> a.name.localeCompare(b.name,'zh-Hant') || a.option.localeCompare(b.option,'zh-Hant'));
       if(!rows.length) return alert('目前沒有可複製的採購清單');
       const text = rows.map(r => `${r.name}${r.option ? '｜' + r.option : ''} × ${r.qty}`).join('\n');
-      navigator.clipboard.writeText(text).then(()=>alert('已複製採購清單'));
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(text).then(()=>alert('已複製採購清單')).catch(()=>fallbackCopy(text));
+      }else{
+        fallbackCopy(text);
+      }
+    }
+
+    function fallbackCopy(text){
+      const area = document.createElement('textarea');
+      area.value = text;
+      area.style.position = 'fixed';
+      area.style.left = '-9999px';
+      document.body.appendChild(area);
+      area.focus();
+      area.select();
+      document.execCommand('copy');
+      area.remove();
+      alert('已複製採購清單');
     }
 
     function parseMoney(value){
@@ -308,11 +377,13 @@
     function shortId(id){ return String(id || '').slice(-10).toUpperCase(); }
     function formatDate(value){
       if(!value) return '-';
-      return new Date(value).toLocaleString('zh-TW', { month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit' });
+      const date = new Date(value);
+      if(Number.isNaN(date.getTime())) return '-';
+      return date.toLocaleString('zh-TW', { month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit' });
     }
     function emptyHtml(text){ return `<div class="empty"><iconify-icon icon="solar:suitcase-bold"></iconify-icon>${text}</div>`; }
     function escapeHtml(v){
-      return String(v ?? '').replace(/[&<>'"]/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[s]));
+      return String(v == null ? '' : v).replace(/[&<>'"]/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[s]));
     }
   </script>
 </body>
