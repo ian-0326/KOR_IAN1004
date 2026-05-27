@@ -37,10 +37,10 @@
     .section-title{font-size:16px;font-weight:900;margin:18px 0 10px;display:flex;align-items:center;gap:8px}
     .product-card{background:#fff;border-radius:28px;padding:16px 16px;margin-bottom:12px;box-shadow:var(--shadow);position:relative;overflow:hidden;display:grid;grid-template-columns:34px 1fr auto;gap:12px;align-items:flex-start}.product-card:before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--primary);opacity:.9}
     .product-check{width:24px;height:24px;border:2px solid var(--gray);border-radius:7px;margin-top:2px;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;z-index:1;flex-shrink:0}.product-card.done .product-check{background:var(--primary);border-color:var(--primary);color:#fff}.product-check iconify-icon{display:none;font-size:18px}.product-card.done .product-check iconify-icon{display:block}.product-card.done .product-name,.product-card.done .product-url{opacity:.42;text-decoration:line-through}
-    .product-main{min-width:0;position:relative;z-index:1}.product-name{font-size:16px;font-weight:900;line-height:1.45;word-break:break-word}.product-option{font-size:13px;color:var(--gray);font-weight:900;margin-top:4px}.product-url{margin-top:12px;display:flex;align-items:center;gap:8px}.product-link-btn{border:0;border-radius:999px;background:var(--primary);color:#fff;font-size:13px;font-weight:900;line-height:1;text-decoration:none;padding:11px 14px;display:inline-flex;align-items:center;gap:6px;box-shadow:0 6px 18px rgba(40,176,235,.24);white-space:nowrap}.product-link-btn:active{transform:scale(.98)}.product-url.empty-url{background:#f7f9fb;border-radius:18px;padding:12px 13px;font-size:13px;color:var(--gray);font-weight:800;line-height:1.45;display:flex;gap:8px;align-items:center}.product-qty{text-align:right;position:relative;z-index:1}.qty-label{font-size:11px;color:var(--gray);font-weight:900}.qty-num{font-size:30px;color:var(--primary);font-weight:900;line-height:1.1;margin-top:4px}
+    .product-main{min-width:0;position:relative;z-index:1}.product-name{font-size:16px;font-weight:900;line-height:1.45;word-break:break-word}.product-option{font-size:13px;color:var(--gray);font-weight:900;margin-top:4px}.product-url{margin-top:10px;display:flex;justify-content:flex-end;align-items:center;gap:8px}.product-link-btn{border:0;border-radius:999px;background:var(--primary);color:#fff;font-size:12px;font-weight:900;letter-spacing:.8px;line-height:1;text-decoration:none;padding:10px 13px;display:inline-flex;align-items:center;gap:5px;box-shadow:0 6px 18px rgba(40,176,235,.24);white-space:nowrap}.product-link-btn:active{transform:scale(.98)}.product-url.empty-url{font-size:12px;color:var(--gray);font-weight:900;line-height:1.45;justify-content:flex-end}.product-qty{text-align:right;position:relative;z-index:1;display:flex;flex-direction:column;align-items:flex-end}.qty-label{font-size:11px;color:var(--gray);font-weight:900}.qty-num{font-size:30px;color:var(--primary);font-weight:900;line-height:1.1;margin-top:4px}
     .empty{background:#fff;border-radius:28px;padding:40px 20px;text-align:center;color:var(--gray);font-weight:900;box-shadow:var(--shadow);margin-top:20px}.empty iconify-icon{font-size:46px;color:var(--gray);display:block;margin:0 auto 12px}
     .bottom-actions{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(255,255,255,.94);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:12px 16px calc(12px + env(safe-area-inset-bottom));display:flex;gap:10px;justify-content:center}.bottom-actions button{max-width:260px;flex:1;justify-content:center}
-    @media(max-width:640px){.app{padding-left:14px;padding-right:14px}.topbar{margin-left:-14px;margin-right:-14px}.brand-row{align-items:flex-start}.refresh-btn span{display:none}.stats{grid-template-columns:1fr 1fr}.stat:last-child{grid-column:1/-1}.product-card{grid-template-columns:32px 1fr;gap:10px}.product-qty{grid-column:2;text-align:left;display:flex;align-items:baseline;gap:8px}.qty-num{font-size:24px}.product-url{font-size:12px}}
+    @media(max-width:640px){.app{padding-left:14px;padding-right:14px}.topbar{margin-left:-14px;margin-right:-14px}.brand-row{align-items:flex-start}.refresh-btn span{display:none}.stats{grid-template-columns:1fr 1fr}.product-card{grid-template-columns:32px 1fr auto;gap:10px}.product-qty{text-align:right;align-items:flex-end}.qty-num{font-size:24px}.product-url{font-size:12px}.product-link-btn{padding:9px 12px}}
     @media print{body{background:#fff}.topbar,.bottom-actions{display:none!important}.app{max-width:none;padding:0}.product-card{box-shadow:none;border:1px solid #ddd;break-inside:avoid}}
   </style>
 </head>
@@ -69,7 +69,6 @@
     <div class="stats">
       <div class="stat primary"><div class="stat-title">採購品項</div><div class="stat-num" id="statProducts">0</div></div>
       <div class="stat"><div class="stat-title">下單總數</div><div class="stat-num" id="statQty">0</div></div>
-      <div class="stat"><div class="stat-title">已有網址</div><div class="stat-num" id="statUrls">0</div></div>
     </div>
 
     <section>
@@ -165,10 +164,8 @@
 
     function renderStats(products){
       const qty = products.reduce((sum,p)=>sum + Number(p.order_count || 0),0);
-      const urlCount = products.filter(p => !!getProductUrl(p)).length;
       document.getElementById('statProducts').innerText = products.length;
       document.getElementById('statQty').innerText = qty;
-      document.getElementById('statUrls').innerText = urlCount;
     }
 
     function renderProducts(products){
@@ -190,23 +187,20 @@
             <div class="product-main">
               <div class="product-name">${escapeHtml(name)}</div>
               ${option ? `<div class="product-option">${escapeHtml(option)}</div>` : ''}
-              ${url ? `
-                <div class="product-url">
-                  <a class="product-link-btn" href="${escapeAttr(url)}" target="_blank" rel="noopener noreferrer">
-                    <iconify-icon icon="solar:link-bold" style="font-size:16px;flex-shrink:0"></iconify-icon>
-                    查看商品頁
-                  </a>
-                </div>
-              ` : `
-                <div class="product-url empty-url">
-                  <iconify-icon icon="solar:link-broken-bold" style="font-size:18px;flex-shrink:0"></iconify-icon>
-                  尚未設定商品網址
-                </div>
-              `}
             </div>
             <div class="product-qty">
               <div class="qty-label">下單數量</div>
               <div class="qty-num">${qty}</div>
+              ${url ? `
+                <div class="product-url">
+                  <a class="product-link-btn" href="${escapeAttr(url)}" target="_blank" rel="noopener noreferrer">
+                    <iconify-icon icon="solar:link-bold" style="font-size:14px;flex-shrink:0"></iconify-icon>
+                    LINK
+                  </a>
+                </div>
+              ` : `
+                <div class="product-url empty-url">無連結</div>
+              `}
             </div>
           </div>
         `;
