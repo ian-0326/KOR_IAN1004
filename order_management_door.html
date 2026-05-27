@@ -35,12 +35,11 @@
     .filter-label{font-size:11px;color:var(--gray);font-weight:900;margin-bottom:6px}.filter-input{width:100%;border:0;background:#f7f9fb;border-radius:14px;padding:12px 13px;font-size:14px;outline:none;color:var(--text);font-weight:700}
     .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0}.stat{background:#fff;border-radius:24px;padding:16px;box-shadow:var(--shadow)}.stat-title{font-size:12px;color:var(--gray);font-weight:900}.stat-num{font-size:24px;font-weight:900;margin-top:8px;color:var(--text)}.stat.primary .stat-num{color:var(--primary)}
     .section-title{font-size:16px;font-weight:900;margin:18px 0 10px;display:flex;align-items:center;gap:8px}
-    .product-card{background:#fff;border-radius:28px;padding:16px 16px;margin-bottom:12px;box-shadow:var(--shadow);position:relative;overflow:hidden;display:grid;grid-template-columns:34px 1fr auto;gap:12px;align-items:flex-start}.product-card:before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--primary);opacity:.9}
-    .product-check{width:24px;height:24px;border:2px solid var(--gray);border-radius:7px;margin-top:2px;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;z-index:1;flex-shrink:0}.product-card.done .product-check{background:var(--primary);border-color:var(--primary);color:#fff}.product-check iconify-icon{display:none;font-size:18px}.product-card.done .product-check iconify-icon{display:block}.product-card.done .product-name,.product-card.done .product-url{opacity:.42;text-decoration:line-through}
-    .product-main{min-width:0;position:relative;z-index:1}.product-name{font-size:16px;font-weight:900;line-height:1.45;word-break:break-word}.product-option{font-size:13px;color:var(--gray);font-weight:900;margin-top:4px}.product-url{margin-top:10px;display:flex;justify-content:flex-end;align-items:center;gap:8px}.product-link-btn{border:0;border-radius:999px;background:var(--primary);color:#fff;font-size:12px;font-weight:900;letter-spacing:.8px;line-height:1;text-decoration:none;padding:10px 13px;display:inline-flex;align-items:center;gap:5px;box-shadow:0 6px 18px rgba(40,176,235,.24);white-space:nowrap}.product-link-btn:active{transform:scale(.98)}.product-url.empty-url{font-size:12px;color:var(--gray);font-weight:900;line-height:1.45;justify-content:flex-end}.product-qty{text-align:right;position:relative;z-index:1;display:flex;flex-direction:column;align-items:flex-end}.qty-label{font-size:11px;color:var(--gray);font-weight:900}.qty-num{font-size:30px;color:var(--primary);font-weight:900;line-height:1.1;margin-top:4px}
+    .product-card{background:#fff;border-radius:28px;padding:16px 16px;margin-bottom:12px;box-shadow:var(--shadow);position:relative;overflow:hidden;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:flex-start}.product-card:before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--primary);opacity:.9}.product-card.completed:before{background:var(--green)}
+    .product-main{min-width:0;position:relative;z-index:1}.product-name{font-size:16px;font-weight:900;line-height:1.45;word-break:break-word}.product-option{font-size:13px;color:var(--gray);font-weight:900;margin-top:4px}.product-card.completed .product-main,.product-card.completed .qty-row{opacity:.45;text-decoration:line-through;text-decoration-thickness:2px}.product-url{margin-top:10px;display:flex;justify-content:flex-end;align-items:center;gap:8px}.product-link-btn{border:0;border-radius:999px;background:var(--primary);color:#fff;font-size:12px;font-weight:900;letter-spacing:.8px;line-height:1;text-decoration:none;padding:10px 13px;display:inline-flex;align-items:center;gap:5px;box-shadow:0 6px 18px rgba(40,176,235,.24);white-space:nowrap}.product-link-btn:active{transform:scale(.98)}.product-url.empty-url{font-size:12px;color:var(--gray);font-weight:900;line-height:1.45;justify-content:flex-end}.product-qty{text-align:right;position:relative;z-index:1;display:flex;flex-direction:column;align-items:flex-end;gap:10px}.qty-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;min-width:146px}.qty-block{background:#f7f9fb;border-radius:18px;padding:10px 12px;text-align:center}.qty-label{font-size:11px;color:var(--gray);font-weight:900;white-space:nowrap}.qty-num{font-size:24px;color:var(--primary);font-weight:900;line-height:1.1;margin-top:4px}.qty-num.purchased{color:var(--green)}.purchase-control{display:flex;align-items:center;justify-content:flex-end;gap:7px;flex-wrap:wrap}.stepper{display:flex;align-items:center;background:#f7f9fb;border-radius:999px;padding:4px;gap:4px}.step-btn{width:28px;height:28px;border:0;border-radius:999px;background:#fff;color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,.05);font-weight:900;display:flex;align-items:center;justify-content:center;cursor:pointer}.step-btn:disabled{opacity:.35;cursor:not-allowed}.step-num{min-width:24px;text-align:center;font-weight:900;color:var(--text)}.finish-btn{border:0;border-radius:999px;background:var(--green);color:#fff;font-size:12px;font-weight:900;padding:10px 13px;box-shadow:0 6px 18px rgba(33,198,122,.22);cursor:pointer;white-space:nowrap}.finish-btn:disabled{background:#d1d6dc;box-shadow:none;cursor:not-allowed}.finish-btn.is-loading{opacity:.7;pointer-events:none}
     .empty{background:#fff;border-radius:28px;padding:40px 20px;text-align:center;color:var(--gray);font-weight:900;box-shadow:var(--shadow);margin-top:20px}.empty iconify-icon{font-size:46px;color:var(--gray);display:block;margin:0 auto 12px}
     .bottom-actions{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(255,255,255,.94);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:12px 16px calc(12px + env(safe-area-inset-bottom));display:flex;gap:10px;justify-content:center}.bottom-actions button{max-width:260px;flex:1;justify-content:center}
-    @media(max-width:640px){.app{padding-left:14px;padding-right:14px}.topbar{margin-left:-14px;margin-right:-14px}.brand-row{align-items:flex-start}.refresh-btn span{display:none}.stats{grid-template-columns:1fr 1fr}.product-card{grid-template-columns:32px 1fr auto;gap:10px}.product-qty{text-align:right;align-items:flex-end}.qty-num{font-size:24px}.product-url{font-size:12px}.product-link-btn{padding:9px 12px}}
+    @media(max-width:640px){.app{padding-left:14px;padding-right:14px}.topbar{margin-left:-14px;margin-right:-14px}.brand-row{align-items:flex-start}.refresh-btn span{display:none}.stats{grid-template-columns:1fr 1fr}.product-card{grid-template-columns:1fr;gap:12px}.product-qty{text-align:left;align-items:stretch}.qty-row{min-width:0}.product-url{font-size:12px;justify-content:flex-end}.product-link-btn{padding:9px 12px}.purchase-control{justify-content:space-between}}
     @media print{body{background:#fff}.topbar,.bottom-actions{display:none!important}.app{max-width:none;padding:0}.product-card{box-shadow:none;border:1px solid #ddd;break-inside:avoid}}
   </style>
 </head>
@@ -91,6 +90,7 @@
     const REAL_SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml2cGN0eXFscmtqc3Rmc293ZWVoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTk1MTksImV4cCI6MjA4ODc3NTUxOX0.DYgzhaTH3_5NFwv009ZfZAshfUnCW2PeTuNcJ9feyMU';
     let supabaseClient = null;
     let allProducts = [];
+    const purchaseDrafts = {};
 
     function initSupabaseClient(){
       if(supabaseClient) return supabaseClient;
@@ -115,7 +115,8 @@
     window.loadProducts = loadProducts;
     window.renderAll = renderAll;
     window.copyPurchaseText = copyPurchaseText;
-    window.toggleDone = toggleDone;
+    window.updatePurchaseDraft = updatePurchaseDraft;
+    window.completePurchase = completePurchase;
 
     document.addEventListener('DOMContentLoaded', () => {
       initSupabaseClient();
@@ -177,20 +178,36 @@
         const name = getProductName(product);
         const option = getProductOption(product);
         const url = getProductUrl(product);
-        const qty = Number(product.order_count || 0);
-        const done = isDone(id);
+        const orderQty = Number(product.order_count || 0);
+        const purchasedQty = Number(product.purchase_count || 0);
+        const remainingQty = Math.max(orderQty - purchasedQty, 0);
+        const draftQty = Number(purchaseDrafts[id] ?? (remainingQty > 0 ? remainingQty : 0));
+        const isCompleted = purchasedQty >= orderQty && orderQty > 0;
         return `
-          <div class="product-card ${done ? 'done' : ''}" data-product-id="${escapeHtml(id)}">
-            <button class="product-check" type="button" aria-label="標記已採購" onclick="toggleDone('${escapeJs(id)}')">
-              <iconify-icon icon="solar:check-bold"></iconify-icon>
-            </button>
+          <div class="product-card ${isCompleted ? 'completed' : ''}" data-product-id="${escapeHtml(id)}">
             <div class="product-main">
               <div class="product-name">${escapeHtml(name)}</div>
               ${option ? `<div class="product-option">${escapeHtml(option)}</div>` : ''}
             </div>
             <div class="product-qty">
-              <div class="qty-label">下單數量</div>
-              <div class="qty-num">${qty}</div>
+              <div class="qty-row">
+                <div class="qty-block">
+                  <div class="qty-label">下單數量</div>
+                  <div class="qty-num">${orderQty}</div>
+                </div>
+                <div class="qty-block">
+                  <div class="qty-label">已下單數量</div>
+                  <div class="qty-num purchased">${purchasedQty}</div>
+                </div>
+              </div>
+              <div class="purchase-control">
+                <div class="stepper" aria-label="調整本次完成數量">
+                  <button class="step-btn" type="button" onclick="updatePurchaseDraft('${escapeJs(id)}', -1)" ${draftQty <= 0 ? 'disabled' : ''}>−</button>
+                  <span class="step-num" id="draft-${escapeAttr(id)}">${draftQty}</span>
+                  <button class="step-btn" type="button" onclick="updatePurchaseDraft('${escapeJs(id)}', 1)" ${draftQty >= remainingQty ? 'disabled' : ''}>＋</button>
+                </div>
+                <button class="finish-btn" type="button" onclick="completePurchase('${escapeJs(id)}')" ${draftQty <= 0 || remainingQty <= 0 ? 'disabled' : ''}>完成</button>
+              </div>
               ${url ? `
                 <div class="product-url">
                   <a class="product-link-btn" href="${escapeAttr(url)}" target="_blank" rel="noopener noreferrer">
@@ -212,18 +229,55 @@
     function getProductOption(product){ return product.option || product.variant || product.spec || ''; }
     function getProductUrl(product){ return product.olive_url || product.product_url || product.url || product.link || ''; }
 
-    function toggleDone(id){
-      const key = 'korian_purchase_done_products';
-      const list = JSON.parse(localStorage.getItem(key) || '[]');
-      const set = new Set(list);
-      if(set.has(id)) set.delete(id); else set.add(id);
-      localStorage.setItem(key, JSON.stringify(Array.from(set)));
+    function findProductById(id){
+      return allProducts.find(product => getProductId(product) === String(id));
+    }
+
+    function getRemainingQty(product){
+      return Math.max(Number(product.order_count || 0) - Number(product.purchase_count || 0), 0);
+    }
+
+    function updatePurchaseDraft(id, delta){
+      const product = findProductById(id);
+      if(!product) return;
+      const max = getRemainingQty(product);
+      const current = Number(purchaseDrafts[id] ?? (max > 0 ? max : 0));
+      purchaseDrafts[id] = Math.max(0, Math.min(max, current + Number(delta || 0)));
       renderAll();
     }
 
-    function isDone(id){
-      const list = JSON.parse(localStorage.getItem('korian_purchase_done_products') || '[]');
-      return list.includes(id);
+    async function completePurchase(id){
+      const product = findProductById(id);
+      if(!product) return alert('找不到這個商品資料，請重新整理後再試一次。');
+
+      const addQty = Number(purchaseDrafts[id] ?? getRemainingQty(product));
+      if(addQty <= 0) return alert('請先設定本次完成數量。');
+
+      const client = initSupabaseClient();
+      if(!client) return;
+
+      const currentPurchased = Number(product.purchase_count || 0);
+      const orderQty = Number(product.order_count || 0);
+      const newPurchased = Math.min(currentPurchased + addQty, orderQty);
+
+      const btn = document.querySelector(`[data-product-id="${cssEscape(id)}"] .finish-btn`);
+      if(btn){ btn.classList.add('is-loading'); btn.innerText = '寫入中'; }
+
+      try{
+        const { error } = await client
+          .from('products')
+          .update({ purchase_count: newPurchased })
+          .eq('id', product.id);
+
+        if(error) throw error;
+
+        product.purchase_count = newPurchased;
+        purchaseDrafts[id] = Math.max(orderQty - newPurchased, 0);
+        renderAll();
+      }catch(error){
+        const message = error && error.message ? error.message : String(error);
+        alert(`寫入 purchase_count 失敗：${message}`);
+      }
     }
 
     function copyPurchaseText(){
