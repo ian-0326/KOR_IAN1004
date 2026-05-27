@@ -49,17 +49,6 @@
   </style>
 </head>
 <body>
-  <div class="login-wall" id="loginWall">
-    <div class="login-card">
-      <div class="login-icon"><iconify-icon icon="si:lock-fill" style="font-size:34px"></iconify-icon></div>
-      <div class="login-title">KOR.IAN 採購後台</div>
-      <div class="login-desc">此頁用來查看所有訂單，並自動彙整要採購的商品與款式。</div>
-      <input id="adminPassword" class="password-input" type="password" placeholder="請輸入後台密碼" autocomplete="off" />
-      <button class="login-btn" onclick="checkPassword()">進入後台</button>
-      <div class="login-error" id="loginError">密碼錯誤，請再確認一次。</div>
-    </div>
-  </div>
-
   <main class="app">
     <div class="system-error" id="systemError"></div>
     <div class="topbar">
@@ -118,7 +107,6 @@
   <script>
     const SUPABASE_URL = 'https://ivpctyqlrkjstfsoweeh.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml2cGN0eXFscmtqc3Rmc293ZWVoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTk1MTksImV4cCI6MjA4ODc3NTUxOX0.DYgzhaTH3_5NFwv009ZfZAshfUnCW2PeTuNcJ9feyMU';
-    const ADMIN_PASSWORD = 'KORIAN1004';
 
     let supabaseClient = null;
     let allOrders = [];
@@ -144,36 +132,13 @@
       if(box){ box.style.display = 'none'; box.innerText = ''; }
     }
 
-    function checkPassword(){
-      const input = document.getElementById('adminPassword');
-      const error = document.getElementById('loginError');
-      if(!input) return;
-      if(input.value === ADMIN_PASSWORD){
-        sessionStorage.setItem('korian_admin_ok','1');
-        document.getElementById('loginWall').style.display='none';
-        loadOrders();
-      }else{
-        error.style.display='block';
-        input.value='';
-        input.focus();
-      }
-    }
-
-    window.checkPassword = checkPassword;
     window.switchTab = switchTab;
     window.loadOrders = loadOrders;
     window.copyPurchaseText = copyPurchaseText;
 
     document.addEventListener('DOMContentLoaded', () => {
-      const passwordInput = document.getElementById('adminPassword');
-      if(passwordInput){
-        passwordInput.addEventListener('keydown', e => { if(e.key === 'Enter') checkPassword(); });
-      }
       initSupabaseClient();
-      if(sessionStorage.getItem('korian_admin_ok') === '1'){
-        document.getElementById('loginWall').style.display='none';
-        loadOrders();
-      }
+      loadOrders();
     });
 
     function switchTab(tab, btn){
