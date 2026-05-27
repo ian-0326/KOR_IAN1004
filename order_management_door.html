@@ -15,7 +15,6 @@
       --sub:#4e5968;
       --gray:#adb5bd;
       --line:#e5e8eb;
-      --yellow:#ffca28;
       --green:#21c67a;
       --red:#ff5b5b;
       --shadow:0 8px 28px rgba(0,0,0,.06);
@@ -23,6 +22,7 @@
     *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
     body{margin:0;background:var(--bg);color:var(--text);font-family:Georgia,Garamond,"Times New Roman",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang TC","Microsoft JhengHei",sans-serif;-webkit-font-smoothing:antialiased}
     .app{max-width:980px;margin:0 auto;min-height:100vh;padding:18px 16px 110px}
+    .system-error{display:none;background:#fff0f0;color:#d93636;border:1px solid #ffd1d1;border-radius:20px;padding:14px 16px;margin-bottom:12px;font-size:13px;font-weight:800;line-height:1.6}
     .topbar{position:sticky;top:0;z-index:20;margin:0 -16px;padding:18px 16px 14px;background:rgba(242,244,246,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(229,232,235,.72)}
     .brand-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
     .brand{display:flex;align-items:center;gap:12px;min-width:0}
@@ -31,21 +31,17 @@
     .subline{font-size:12px;color:var(--gray);font-weight:700;margin-top:4px}
     .refresh-btn,.copy-btn,.clear-btn{border:0;border-radius:999px;background:#fff;color:var(--text);font-weight:900;padding:12px 14px;box-shadow:0 4px 14px rgba(0,0,0,.05);display:inline-flex;align-items:center;gap:6px;cursor:pointer;white-space:nowrap}
     .refresh-btn{color:var(--primary)}
-    .tabs{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin-top:18px;padding-bottom:2px}.tabs::-webkit-scrollbar{display:none}
-    .tab{border:0;background:#fff;color:var(--sub);border-radius:999px;padding:12px 18px;font-size:14px;font-weight:900;box-shadow:0 4px 14px rgba(0,0,0,.04);white-space:nowrap;cursor:pointer}.tab.active{background:var(--primary);color:#fff}
-    .filters{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}.filter-card{background:#fff;border-radius:22px;padding:12px 14px;box-shadow:0 3px 14px rgba(0,0,0,.035)}
-    .filter-label{font-size:11px;color:var(--gray);font-weight:900;margin-bottom:6px}.filter-input{width:100%;border:0;background:#f7f9fb;border-radius:14px;padding:12px 13px;font-size:14px;outline:none;color:var(--text);font-weight:700}.search-card{grid-column:1/-1}
+    .filters{display:grid;grid-template-columns:1fr;gap:10px;margin-top:16px}.filter-card{background:#fff;border-radius:22px;padding:12px 14px;box-shadow:0 3px 14px rgba(0,0,0,.035)}
+    .filter-label{font-size:11px;color:var(--gray);font-weight:900;margin-bottom:6px}.filter-input{width:100%;border:0;background:#f7f9fb;border-radius:14px;padding:12px 13px;font-size:14px;outline:none;color:var(--text);font-weight:700}
     .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0}.stat{background:#fff;border-radius:24px;padding:16px;box-shadow:var(--shadow)}.stat-title{font-size:12px;color:var(--gray);font-weight:900}.stat-num{font-size:24px;font-weight:900;margin-top:8px;color:var(--text)}.stat.primary .stat-num{color:var(--primary)}
-    .panel{display:none}.panel.active{display:block}
     .section-title{font-size:16px;font-weight:900;margin:18px 0 10px;display:flex;align-items:center;gap:8px}
-    .purchase-card,.order-card{background:#fff;border-radius:28px;padding:18px 18px;margin-bottom:12px;box-shadow:var(--shadow);position:relative;overflow:hidden}.purchase-card:before,.order-card:before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--primary);opacity:.9}
-    .purchase-row{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.purchase-main{min-width:0}.purchase-name{font-size:16px;font-weight:900;line-height:1.35;word-break:break-word}.purchase-option{font-size:13px;color:var(--gray);font-weight:900;margin-top:4px}.purchase-meta{font-size:12px;color:var(--sub);font-weight:700;margin-top:8px}.purchase-qty{font-size:28px;color:var(--primary);font-weight:900;white-space:nowrap}.purchase-orders{font-size:12px;color:var(--gray);font-weight:700;margin-top:4px;text-align:right}
-    .order-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.order-id{font-size:16px;font-weight:900}.order-date{font-size:12px;color:var(--gray);font-weight:700;margin-top:4px}.order-total{color:var(--primary);font-size:18px;font-weight:900;white-space:nowrap}.order-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:14px 0}.info-pill{background:#f7f9fb;border-radius:16px;padding:10px 12px}.info-label{font-size:11px;color:var(--gray);font-weight:900}.info-val{font-size:13px;color:var(--text);font-weight:800;margin-top:4px;word-break:break-word}.items{border-top:1px solid var(--line);padding-top:12px}.item-line{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;padding:7px 0;font-size:13px}.item-left{min-width:0}.item-name{font-weight:900;line-height:1.35}.item-opt{font-size:12px;color:var(--gray);font-weight:800;margin-top:2px}.item-qty{font-weight:900;color:var(--primary);white-space:nowrap}
+    .product-card{background:#fff;border-radius:28px;padding:16px 16px;margin-bottom:12px;box-shadow:var(--shadow);position:relative;overflow:hidden;display:grid;grid-template-columns:34px 1fr auto;gap:12px;align-items:flex-start}.product-card:before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--primary);opacity:.9}
+    .product-check{width:24px;height:24px;border:2px solid var(--gray);border-radius:7px;margin-top:2px;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;z-index:1;flex-shrink:0}.product-card.done .product-check{background:var(--primary);border-color:var(--primary);color:#fff}.product-check iconify-icon{display:none;font-size:18px}.product-card.done .product-check iconify-icon{display:block}.product-card.done .product-name,.product-card.done .product-url{opacity:.42;text-decoration:line-through}
+    .product-main{min-width:0;position:relative;z-index:1}.product-name{font-size:16px;font-weight:900;line-height:1.45;word-break:break-word}.product-option{font-size:13px;color:var(--gray);font-weight:900;margin-top:4px}.product-url{margin-top:12px;background:#f7f9fb;border-radius:18px;padding:12px 13px;font-size:13px;color:var(--sub);font-weight:800;line-height:1.45;word-break:break-all;display:flex;gap:8px;align-items:flex-start}.product-url a{color:var(--sub);text-decoration:underline;text-underline-offset:3px}.product-url.empty-url{color:var(--gray);text-decoration:none}.product-qty{text-align:right;position:relative;z-index:1}.qty-label{font-size:11px;color:var(--gray);font-weight:900}.qty-num{font-size:30px;color:var(--primary);font-weight:900;line-height:1.1;margin-top:4px}
     .empty{background:#fff;border-radius:28px;padding:40px 20px;text-align:center;color:var(--gray);font-weight:900;box-shadow:var(--shadow);margin-top:20px}.empty iconify-icon{font-size:46px;color:var(--gray);display:block;margin:0 auto 12px}
-    .login-wall{position:fixed;inset:0;background:#28b0eb;z-index:999;display:flex;align-items:center;justify-content:center;padding:22px}.login-card{background:#fff;border-radius:34px;padding:28px 22px;width:100%;max-width:380px;box-shadow:0 20px 60px rgba(0,0,0,.18);text-align:center}.login-icon{width:64px;height:64px;border-radius:24px;background:#eaf7ff;color:#28b0eb;display:flex;align-items:center;justify-content:center;margin:0 auto 18px}.login-title{font-size:22px;font-weight:900;margin-bottom:6px}.login-desc{font-size:13px;color:var(--gray);font-weight:700;line-height:1.6;margin-bottom:18px}.password-input{width:100%;border:0;background:#f2f4f6;border-radius:18px;padding:16px 18px;font-size:16px;font-weight:800;outline:none;text-align:center;margin-bottom:12px}.login-btn{width:100%;border:0;background:#28b0eb;color:#fff;border-radius:18px;padding:16px;font-size:16px;font-weight:900;cursor:pointer}.login-error{display:none;color:var(--red);font-size:12px;font-weight:900;margin-top:12px}
     .bottom-actions{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(255,255,255,.94);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:12px 16px calc(12px + env(safe-area-inset-bottom));display:flex;gap:10px;justify-content:center}.bottom-actions button{max-width:260px;flex:1;justify-content:center}
-    @media(max-width:640px){.app{padding-left:14px;padding-right:14px}.filters{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}.stat:last-child{grid-column:1/-1}.brand-row{align-items:flex-start}.refresh-btn span{display:none}.order-info-grid{grid-template-columns:1fr}.topbar{margin-left:-14px;margin-right:-14px}.purchase-qty{font-size:24px}}
-    @media print{body{background:#fff}.topbar,.bottom-actions,.login-wall,.tabs,.filters{display:none!important}.app{max-width:none;padding:0}.panel{display:block!important}.order-card,.purchase-card{box-shadow:none;border:1px solid #ddd;break-inside:avoid}.panel:not(#panel-purchase){display:none!important}}
+    @media(max-width:640px){.app{padding-left:14px;padding-right:14px}.topbar{margin-left:-14px;margin-right:-14px}.brand-row{align-items:flex-start}.refresh-btn span{display:none}.stats{grid-template-columns:1fr 1fr}.stat:last-child{grid-column:1/-1}.product-card{grid-template-columns:32px 1fr;gap:10px}.product-qty{grid-column:2;text-align:left;display:flex;align-items:baseline;gap:8px}.qty-num{font-size:24px}.product-url{font-size:12px}}
+    @media print{body{background:#fff}.topbar,.bottom-actions{display:none!important}.app{max-width:none;padding:0}.product-card{box-shadow:none;border:1px solid #ddd;break-inside:avoid}}
   </style>
 </head>
 <body>
@@ -60,57 +56,42 @@
             <div class="subline" id="lastUpdated">尚未載入資料</div>
           </div>
         </div>
-        <button class="refresh-btn" onclick="loadOrders()"><iconify-icon icon="solar:refresh-bold" style="font-size:18px"></iconify-icon><span>重新整理</span></button>
-      </div>
-      <div class="tabs">
-        <button class="tab active" onclick="switchTab('purchase', this)">採購彙整</button>
-        <button class="tab" onclick="switchTab('orders', this)">訂單明細</button>
+        <button class="refresh-btn" onclick="loadProducts()"><iconify-icon icon="solar:refresh-bold" style="font-size:18px"></iconify-icon><span>重新整理</span></button>
       </div>
       <div class="filters">
-        <div class="filter-card search-card">
-          <div class="filter-label">搜尋商品、款式、客人、電話、取件門市</div>
+        <div class="filter-card">
+          <div class="filter-label">搜尋商品名稱、款式、商品網址</div>
           <input id="keyword" class="filter-input" type="search" placeholder="輸入關鍵字即時篩選" oninput="renderAll()" />
-        </div>
-        <div class="filter-card">
-          <div class="filter-label">開始日期</div>
-          <input id="startDate" class="filter-input" type="date" onchange="loadOrders()" />
-        </div>
-        <div class="filter-card">
-          <div class="filter-label">結束日期</div>
-          <input id="endDate" class="filter-input" type="date" onchange="loadOrders()" />
         </div>
       </div>
     </div>
 
     <div class="stats">
-      <div class="stat primary"><div class="stat-title">訂單數</div><div class="stat-num" id="statOrders">0</div></div>
-      <div class="stat"><div class="stat-title">商品總件數</div><div class="stat-num" id="statQty">0</div></div>
-      <div class="stat"><div class="stat-title">總金額</div><div class="stat-num" id="statAmount">NT$ 0</div></div>
+      <div class="stat primary"><div class="stat-title">採購品項</div><div class="stat-num" id="statProducts">0</div></div>
+      <div class="stat"><div class="stat-title">下單總數</div><div class="stat-num" id="statQty">0</div></div>
+      <div class="stat"><div class="stat-title">已有網址</div><div class="stat-num" id="statUrls">0</div></div>
     </div>
 
-    <section id="panel-purchase" class="panel active">
-      <div class="section-title"><iconify-icon icon="solar:cart-check-bold" style="color:var(--primary)"></iconify-icon>採購彙整</div>
-      <div id="purchaseList"></div>
-    </section>
-
-    <section id="panel-orders" class="panel">
-      <div class="section-title"><iconify-icon icon="solar:clipboard-list-bold" style="color:var(--primary)"></iconify-icon>訂單明細</div>
-      <div id="orderList"></div>
+    <section>
+      <div class="section-title"><iconify-icon icon="solar:cart-check-bold" style="color:var(--primary)"></iconify-icon>待採購清單</div>
+      <div id="productList"></div>
     </section>
   </main>
 
   <div class="bottom-actions">
-    <button class="copy-btn" onclick="copyPurchaseText()"><iconify-icon icon="solar:copy-bold" style="font-size:18px"></iconify-icon>複製採購清單</button>
+    <button class="copy-btn" onclick="copyPurchaseText()"><iconify-icon icon="solar:copy-bold" style="font-size:18px"></iconify-icon>複製清單</button>
     <button class="clear-btn" onclick="window.print()"><iconify-icon icon="solar:printer-bold" style="font-size:18px"></iconify-icon>列印</button>
   </div>
 
   <script>
     const SUPABASE_URL = 'https://ivpctyqlrkjstfsoweeh.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml2cGN0eXFscmtqc3Rmc293ZWVoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTk1MTksImV4cCI6MjA4ODc3NTUxOX0.DYgzhaTH3_5NFwv009ZfZAshfUnCW2PeTuNcJ9feyMU';
-
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJIUzI1NiIsInJlZiI6Iml2cGN0eXFscmtqc3Rmc293ZWVoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTk1MTksImV4cCI6MjA4ODc3NTUxOX0.DYgzhaTH3_5NFwv009ZfZAshfUnCW2PeTuNcJ9feyMU';
+  </script>
+  <script>
+    // 修正上一段常數中的 JWT iss 文字，避免手動搬移時誤改。
+    const REAL_SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml2cGN0eXFscmtqc3Rmc293ZWVoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTk1MTksImV4cCI6MjA4ODc3NTUxOX0.DYgzhaTH3_5NFwv009ZfZAshfUnCW2PeTuNcJ9feyMU';
     let supabaseClient = null;
-    let allOrders = [];
-    let activeTab = 'purchase';
+    let allProducts = [];
 
     function initSupabaseClient(){
       if(supabaseClient) return supabaseClient;
@@ -118,7 +99,7 @@
         showSystemError('Supabase 套件尚未成功載入。請確認網路狀態，或重新整理頁面。');
         return null;
       }
-      supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      supabaseClient = window.supabase.createClient(SUPABASE_URL, REAL_SUPABASE_KEY);
       return supabaseClient;
     }
 
@@ -132,188 +113,134 @@
       if(box){ box.style.display = 'none'; box.innerText = ''; }
     }
 
-    window.switchTab = switchTab;
-    window.loadOrders = loadOrders;
+    window.loadProducts = loadProducts;
+    window.renderAll = renderAll;
     window.copyPurchaseText = copyPurchaseText;
+    window.toggleDone = toggleDone;
 
     document.addEventListener('DOMContentLoaded', () => {
       initSupabaseClient();
-      loadOrders();
+      loadProducts();
     });
 
-    function switchTab(tab, btn){
-      activeTab = tab;
-      document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-      if(btn) btn.classList.add('active');
-      document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-      const panel = document.getElementById('panel-' + tab);
-      if(panel) panel.classList.add('active');
-    }
-
-    async function loadOrders(){
+    async function loadProducts(){
       clearSystemError();
       const client = initSupabaseClient();
       if(!client) return;
-
-      document.getElementById('purchaseList').innerHTML = loadingHtml('正在整理採購清單...');
-      document.getElementById('orderList').innerHTML = loadingHtml('正在讀取訂單...');
+      document.getElementById('productList').innerHTML = loadingHtml('正在讀取待採購商品...');
 
       try{
-        let query = client.from('orders').select('*').order('created_at', { ascending:false });
-        const start = document.getElementById('startDate').value;
-        const end = document.getElementById('endDate').value;
-        if(start) query = query.gte('created_at', `${start}T00:00:00`);
-        if(end) query = query.lte('created_at', `${end}T23:59:59`);
+        const { data, error } = await client
+          .from('products')
+          .select('*')
+          .gte('order_count', 1)
+          .order('order_count', { ascending:false });
 
-        const { data, error } = await query;
         if(error) throw error;
-
-        allOrders = Array.isArray(data) ? data : [];
+        allProducts = Array.isArray(data) ? data : [];
         document.getElementById('lastUpdated').innerText = `最後更新：${new Date().toLocaleString('zh-TW')}`;
         renderAll();
       }catch(error){
         const message = error && error.message ? error.message : String(error);
-        const msg = `<div class="empty"><iconify-icon icon="solar:danger-triangle-bold"></iconify-icon>讀取失敗：${escapeHtml(message)}</div>`;
-        document.getElementById('purchaseList').innerHTML = msg;
-        document.getElementById('orderList').innerHTML = msg;
-        showSystemError('訂單資料讀取失敗。這通常是 orders 的 RLS/SELECT 權限、網路連線，或 Supabase 暫時無法連線造成。');
+        document.getElementById('productList').innerHTML = `<div class="empty"><iconify-icon icon="solar:danger-triangle-bold"></iconify-icon>讀取失敗：${escapeHtml(message)}</div>`;
+        showSystemError('products 資料讀取失敗。請確認 products 的 SELECT 權限、order_count 欄位是否存在，或網路連線是否正常。');
       }
     }
 
-    function loadingHtml(text){ return `<div class="empty"><iconify-icon icon="svg-spinners:180-ring"></iconify-icon>${text}</div>`; }
-
-    function getFilteredOrders(){
+    function getFilteredProducts(){
       const kw = document.getElementById('keyword').value.trim().toLowerCase();
-      if(!kw) return allOrders;
-      return allOrders.filter(order => {
-        const text = [order.id, order.customer_name, order.customer_tel, order.shipping_method, order.shipping_store, order.total_amount, order.items_summary, order.user_id].filter(Boolean).join(' ').toLowerCase();
+      const rows = allProducts.filter(product => Number(product.order_count || 0) >= 1);
+      if(!kw) return rows;
+      return rows.filter(product => {
+        const text = [getProductName(product), getProductOption(product), getProductUrl(product)].filter(Boolean).join(' ').toLowerCase();
         return text.includes(kw);
       });
     }
 
-    function parseItems(summary){
-      if(!summary) return [];
-      return String(summary).split(',').map(raw => raw.trim()).filter(Boolean).map(raw => {
-        const qtyMatch = raw.match(/[×xX＊*]\s*(\d+)\s*$/);
-        const qty = qtyMatch ? parseInt(qtyMatch[1],10) : 1;
-        const withoutQty = raw.replace(/[×xX＊*]\s*\d+\s*$/,'').trim();
-        let name = withoutQty;
-        let option = '';
-
-        const twParen = withoutQty.match(/^(.*?)（(.+?)）$/);
-        const normalParen = withoutQty.match(/^(.*?)\((.+?)\)$/);
-        if(twParen){
-          name = twParen[1].trim();
-          option = twParen[2].trim();
-        }else if(normalParen){
-          name = normalParen[1].trim();
-          option = normalParen[2].trim();
-        }else if(withoutQty.includes('｜')){
-          const parts = withoutQty.split('｜');
-          name = parts[0].trim();
-          option = parts.slice(1).join('｜').trim();
-        }else if(withoutQty.includes(' - ')){
-          const parts = withoutQty.split(' - ');
-          name = parts[0].trim();
-          option = parts.slice(1).join(' - ').trim();
-        }
-        return { name, option, qty, raw };
-      });
-    }
-
     function renderAll(){
-      const orders = getFilteredOrders();
-      renderStats(orders);
-      renderPurchase(orders);
-      renderOrders(orders);
+      const products = getFilteredProducts();
+      renderStats(products);
+      renderProducts(products);
     }
 
-    function renderStats(orders){
-      const qty = orders.reduce((sum,o)=>sum + parseItems(o.items_summary).reduce((s,i)=>s+i.qty,0),0);
-      const amount = orders.reduce((sum,o)=>sum + parseMoney(o.total_amount),0);
-      document.getElementById('statOrders').innerText = orders.length;
+    function renderStats(products){
+      const qty = products.reduce((sum,p)=>sum + Number(p.order_count || 0),0);
+      const urlCount = products.filter(p => !!getProductUrl(p)).length;
+      document.getElementById('statProducts').innerText = products.length;
       document.getElementById('statQty').innerText = qty;
-      document.getElementById('statAmount').innerText = formatMoney(amount);
+      document.getElementById('statUrls').innerText = urlCount;
     }
 
-    function renderPurchase(orders){
-      const map = new Map();
-      orders.forEach(order => {
-        parseItems(order.items_summary).forEach(item => {
-          const key = `${item.name}__${item.option}`;
-          if(!map.has(key)) map.set(key, { name:item.name, option:item.option, qty:0, orders:[] });
-          const row = map.get(key);
-          row.qty += item.qty;
-          row.orders.push(shortId(order.id));
-        });
-      });
-      const rows = Array.from(map.values()).sort((a,b)=> a.name.localeCompare(b.name,'zh-Hant') || a.option.localeCompare(b.option,'zh-Hant'));
-      const box = document.getElementById('purchaseList');
-      if(!rows.length){ box.innerHTML = emptyHtml('目前沒有可彙整的商品'); return; }
-      box.innerHTML = rows.map(row => `
-        <div class="purchase-card">
-          <div class="purchase-row">
-            <div class="purchase-main">
-              <div class="purchase-name">${escapeHtml(row.name)}</div>
-              ${row.option ? `<div class="purchase-option">${escapeHtml(row.option)}</div>` : ''}
-              <div class="purchase-meta">來源訂單：${escapeHtml(Array.from(new Set(row.orders)).join('、'))}</div>
-            </div>
-            <div>
-              <div class="purchase-qty">× ${row.qty}</div>
-              <div class="purchase-orders">${new Set(row.orders).size} 筆訂單</div>
-            </div>
-          </div>
-        </div>
-      `).join('');
-    }
+    function renderProducts(products){
+      const box = document.getElementById('productList');
+      if(!products.length){ box.innerHTML = emptyHtml('目前沒有 order_count 大於等於 1 的商品'); return; }
 
-    function renderOrders(orders){
-      const box = document.getElementById('orderList');
-      if(!orders.length){ box.innerHTML = emptyHtml('目前沒有訂單資料'); return; }
-      box.innerHTML = orders.map(order => {
-        const items = parseItems(order.items_summary);
+      box.innerHTML = products.map(product => {
+        const id = getProductId(product);
+        const name = getProductName(product);
+        const option = getProductOption(product);
+        const url = getProductUrl(product);
+        const qty = Number(product.order_count || 0);
+        const done = isDone(id);
         return `
-          <div class="order-card">
-            <div class="order-head">
-              <div>
-                <div class="order-id"># ${shortId(order.id)}</div>
-                <div class="order-date">${formatDate(order.created_at)}</div>
-              </div>
-              <div class="order-total">${escapeHtml(order.total_amount || '')}</div>
-            </div>
-            <div class="order-info-grid">
-              <div class="info-pill"><div class="info-label">客戶</div><div class="info-val">${escapeHtml(order.customer_name || '-')}</div></div>
-              <div class="info-pill"><div class="info-label">電話</div><div class="info-val">${escapeHtml(order.customer_tel || '-')}</div></div>
-              <div class="info-pill"><div class="info-label">取件方式</div><div class="info-val">${escapeHtml(order.shipping_method || '-')}</div></div>
-              <div class="info-pill"><div class="info-label">門市／地點</div><div class="info-val">${escapeHtml(order.shipping_store || '-')}</div></div>
-            </div>
-            <div class="items">
-              ${items.map(item => `
-                <div class="item-line">
-                  <div class="item-left">
-                    <div class="item-name">${escapeHtml(item.name)}</div>
-                    ${item.option ? `<div class="item-opt">${escapeHtml(item.option)}</div>` : ''}
-                  </div>
-                  <div class="item-qty">× ${item.qty}</div>
+          <div class="product-card ${done ? 'done' : ''}" data-product-id="${escapeHtml(id)}">
+            <button class="product-check" type="button" aria-label="標記已採購" onclick="toggleDone('${escapeJs(id)}')">
+              <iconify-icon icon="solar:check-bold"></iconify-icon>
+            </button>
+            <div class="product-main">
+              <div class="product-name">${escapeHtml(name)}</div>
+              ${option ? `<div class="product-option">${escapeHtml(option)}</div>` : ''}
+              ${url ? `
+                <div class="product-url">
+                  <iconify-icon icon="solar:link-bold" style="font-size:18px;flex-shrink:0;color:var(--primary)"></iconify-icon>
+                  <a href="${escapeAttr(url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(url)}</a>
                 </div>
-              `).join('')}
+              ` : `
+                <div class="product-url empty-url">
+                  <iconify-icon icon="solar:link-broken-bold" style="font-size:18px;flex-shrink:0"></iconify-icon>
+                  尚未設定商品網址
+                </div>
+              `}
+            </div>
+            <div class="product-qty">
+              <div class="qty-label">下單數量</div>
+              <div class="qty-num">${qty}</div>
             </div>
           </div>
         `;
       }).join('');
     }
 
+    function getProductId(product){ return String(product.id ?? `${getProductName(product)}_${getProductOption(product)}`); }
+    function getProductName(product){ return product.name_zh || product.name || product.product_name || product.title || '未命名商品'; }
+    function getProductOption(product){ return product.option || product.variant || product.spec || ''; }
+    function getProductUrl(product){ return product.olive_url || product.product_url || product.url || product.link || ''; }
+
+    function toggleDone(id){
+      const key = 'korian_purchase_done_products';
+      const list = JSON.parse(localStorage.getItem(key) || '[]');
+      const set = new Set(list);
+      if(set.has(id)) set.delete(id); else set.add(id);
+      localStorage.setItem(key, JSON.stringify(Array.from(set)));
+      renderAll();
+    }
+
+    function isDone(id){
+      const list = JSON.parse(localStorage.getItem('korian_purchase_done_products') || '[]');
+      return list.includes(id);
+    }
+
     function copyPurchaseText(){
-      const orders = getFilteredOrders();
-      const map = new Map();
-      orders.forEach(order => parseItems(order.items_summary).forEach(item => {
-        const key = `${item.name}__${item.option}`;
-        if(!map.has(key)) map.set(key, { name:item.name, option:item.option, qty:0 });
-        map.get(key).qty += item.qty;
-      }));
-      const rows = Array.from(map.values()).sort((a,b)=> a.name.localeCompare(b.name,'zh-Hant') || a.option.localeCompare(b.option,'zh-Hant'));
-      if(!rows.length) return alert('目前沒有可複製的採購清單');
-      const text = rows.map(r => `${r.name}${r.option ? '｜' + r.option : ''} × ${r.qty}`).join('\n');
+      const products = getFilteredProducts();
+      if(!products.length) return alert('目前沒有可複製的採購清單');
+      const text = products.map(product => {
+        const name = getProductName(product);
+        const option = getProductOption(product);
+        const qty = Number(product.order_count || 0);
+        const url = getProductUrl(product) || '未設定網址';
+        return `${name}${option ? '｜' + option : ''}\n下單數量：${qty}\n商品網址：${url}`;
+      }).join('\n\n');
+
       if(navigator.clipboard && navigator.clipboard.writeText){
         navigator.clipboard.writeText(text).then(()=>alert('已複製採購清單')).catch(()=>fallbackCopy(text));
       }else{
@@ -334,22 +261,11 @@
       alert('已複製採購清單');
     }
 
-    function parseMoney(value){
-      const n = String(value || '').replace(/[^0-9.-]/g,'');
-      return Number(n) || 0;
-    }
-    function formatMoney(n){ return 'NT$ ' + Number(n || 0).toLocaleString('zh-TW'); }
-    function shortId(id){ return String(id || '').slice(-10).toUpperCase(); }
-    function formatDate(value){
-      if(!value) return '-';
-      const date = new Date(value);
-      if(Number.isNaN(date.getTime())) return '-';
-      return date.toLocaleString('zh-TW', { month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit' });
-    }
+    function loadingHtml(text){ return `<div class="empty"><iconify-icon icon="svg-spinners:180-ring"></iconify-icon>${text}</div>`; }
     function emptyHtml(text){ return `<div class="empty"><iconify-icon icon="solar:suitcase-bold"></iconify-icon>${text}</div>`; }
-    function escapeHtml(v){
-      return String(v == null ? '' : v).replace(/[&<>'"]/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[s]));
-    }
+    function escapeHtml(v){ return String(v == null ? '' : v).replace(/[&<>'"]/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[s])); }
+    function escapeAttr(v){ return escapeHtml(v); }
+    function escapeJs(v){ return String(v == null ? '' : v).replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/\n/g,'\\n').replace(/\r/g,''); }
   </script>
 </body>
 </html>
