@@ -208,16 +208,29 @@
       }
       const keyword = document.getElementById('keyword');
       if(keyword) keyword.setAttribute('placeholder', t('searchPlaceholder'));
+      updateLastUpdatedLabel();
+    }
+
+    function formatDeviceTime(date){
+      return date.toLocaleString(currentLang === 'ko' ? 'ko-KR' : 'zh-TW');
+    }
+
+    function updateLastUpdatedLabel(){
       const lastUpdated = document.getElementById('lastUpdated');
-      if(lastUpdated){
-        if(lastUpdatedAt){
-          lastUpdated.innerText = `${t('lastUpdated')}：${lastUpdatedAt.toLocaleString(currentLang === 'ko' ? 'ko-KR' : 'zh-TW')}`;
-          lastUpdated.dataset.loadedAt = '1';
-        }else{
-          lastUpdated.innerText = t('notLoaded');
-          delete lastUpdated.dataset.loadedAt;
-        }
+      if(!lastUpdated) return;
+      if(lastUpdatedAt){
+        lastUpdated.innerText = `${t('lastUpdated')}：${formatDeviceTime(lastUpdatedAt)}`;
+        lastUpdated.dataset.loadedAt = '1';
+      }else{
+        lastUpdated.innerText = t('notLoaded');
+        delete lastUpdated.dataset.loadedAt;
       }
+    }
+
+    function markUpdatedByDeviceTime(){
+      // 使用操作者當下裝置的系統時間，不讀資料庫時間。
+      lastUpdatedAt = new Date();
+      updateLastUpdatedLabel();
     }
 
     async function loadProducts(){
@@ -235,10 +248,7 @@
 
         if(error) throw error;
         allProducts = Array.isArray(data) ? data : [];
-        lastUpdatedAt = new Date();
-        const updatedEl = document.getElementById('lastUpdated');
-        updatedEl.innerText = `${t('lastUpdated')}：${lastUpdatedAt.toLocaleString(currentLang === 'ko' ? 'ko-KR' : 'zh-TW')}`;
-        updatedEl.dataset.loadedAt = '1';
+        markUpdatedByDeviceTime();
         renderAll();
       }catch(error){
         const message = error && error.message ? error.message : String(error);
@@ -370,6 +380,7 @@
 
         product.purchase_count = newPurchased;
         purchaseDrafts[id] = Math.max(orderQty - newPurchased, 0);
+        markUpdatedByDeviceTime();
         renderAll();
       }catch(error){
         const message = error && error.message ? error.message : String(error);
