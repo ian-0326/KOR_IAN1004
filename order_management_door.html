@@ -37,6 +37,7 @@
     .section-title{font-size:16px;font-weight:900;margin:18px 0 10px;display:flex;align-items:center;gap:8px}.section-title iconify-icon{font-size:28px!important}
     .product-card{background:#fff;border-radius:28px;padding:16px 16px;margin-bottom:12px;box-shadow:var(--shadow);position:relative;overflow:hidden;display:flex;flex-direction:column;gap:12px}.product-card:before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--primary);opacity:.9}.product-card.completed:before{background:var(--green)}
     .product-top{display:block;position:relative;z-index:1}.product-main{min-width:0;position:relative;z-index:1}.product-name{font-size:16px;font-weight:900;line-height:1.45;word-break:break-word}.product-name-link{display:block;color:inherit;text-decoration:none;cursor:pointer}.product-name-link:active{opacity:.72}.product-name-link:hover{text-decoration:underline;text-underline-offset:3px}.product-option{font-size:13px;color:var(--gray);font-weight:900;margin-top:4px}.product-card.completed .product-main,.product-card.completed .qty-row{opacity:.45;text-decoration:line-through;text-decoration-thickness:2px}.product-url{display:flex;justify-content:flex-start;align-items:center;gap:8px;flex-shrink:0}.product-link-btn{border:0;border-radius:999px;background:var(--primary);color:#fff;font-size:12px;font-weight:900;letter-spacing:.8px;line-height:1;text-decoration:none;padding:10px 13px;display:inline-flex;align-items:center;gap:5px;box-shadow:0 6px 18px rgba(40,176,235,.24);white-space:nowrap}.product-link-btn:active{transform:scale(.98)}.product-url.empty-url{font-size:12px;color:var(--gray);font-weight:900;line-height:1.45;justify-content:flex-start}.product-qty{position:relative;z-index:1;display:flex;flex-direction:column;gap:10px}.qty-row{display:flex;align-items:center;justify-content:flex-start;gap:8px;flex-shrink:0}.qty-block{background:#f7f9fb;border-radius:16px;padding:8px 10px;text-align:center;min-width:86px}.qty-label{font-size:11px;color:var(--gray);font-weight:900;white-space:nowrap}.qty-num{font-size:20px;color:var(--primary);font-weight:900;line-height:1.05;margin-top:4px}.qty-num.purchased{color:var(--green)}.purchase-control{display:flex;align-items:center;justify-content:flex-start;gap:10px;flex-wrap:nowrap;position:relative;z-index:1}.purchase-control .product-url{margin-right:0}.stepper{display:flex;align-items:center;background:#f7f9fb;border-radius:999px;padding:5px;gap:4px;flex-shrink:0}.step-btn{width:36px;height:36px;border:0;border-radius:999px;background:#fff;color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,.05);font-size:20px;font-weight:900;display:flex;align-items:center;justify-content:center;cursor:pointer}.step-btn:disabled{opacity:.35;cursor:not-allowed}.step-num{min-width:34px;text-align:center;font-size:18px;font-weight:900;color:var(--text)}.finish-btn{border:0;border-radius:999px;background:var(--green);color:#fff;font-size:14px;font-weight:900;padding:13px 18px;box-shadow:0 6px 18px rgba(33,198,122,.22);cursor:pointer;white-space:nowrap;flex-shrink:0}.finish-btn:disabled{background:#d1d6dc;box-shadow:none;cursor:not-allowed}.finish-btn.is-loading{opacity:.7;pointer-events:none}
+    .food-section-title{margin:18px 0 10px;padding:12px 14px;border-radius:18px;background:#fff7d6;color:#8a5a00;border:1px solid #ffe39a;font-size:14px;font-weight:900;display:flex;align-items:center;gap:8px}.food-section-title iconify-icon{font-size:22px!important;color:#f7b500}.product-card.food-card{background:#fffaf0;border:1px solid #ffe6a6}.product-card.food-card:before{background:#f7b500}.product-card.food-card .qty-num{color:#d99100}.product-card.food-card .qty-num.purchased{color:#b87900}.product-card.food-card .finish-btn{background:#f7b500;box-shadow:0 6px 18px rgba(247,181,0,.24)}
     .empty{background:#fff;border-radius:28px;padding:40px 20px;text-align:center;color:var(--gray);font-weight:900;box-shadow:var(--shadow);margin-top:20px}.empty iconify-icon{font-size:46px;color:var(--gray);display:block;margin:0 auto 12px}
     .bottom-actions{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(255,255,255,.94);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:12px 16px calc(12px + env(safe-area-inset-bottom));display:flex;gap:10px;justify-content:center}.bottom-actions button{max-width:260px;flex:1;justify-content:center}
     @media(max-width:640px){.app{padding-left:14px;padding-right:14px}.topbar{margin-left:-14px;margin-right:-14px}.brand-row{align-items:flex-start}.language-btn span{font-size:12px}.refresh-btn span{display:none}.qty-row{gap:6px}.qty-block{min-width:70px;padding:7px 8px;border-radius:14px}.qty-label{font-size:10px}.qty-num{font-size:18px}.product-link-btn{padding:9px 11px}.purchase-control{justify-content:flex-start;gap:8px}.purchase-control .product-url{margin-right:0}.stepper{gap:4px;padding:5px}.step-btn{width:34px;height:34px;font-size:19px}.step-num{min-width:30px;font-size:17px}.finish-btn{font-size:13px;padding:12px 16px}}
@@ -96,6 +97,7 @@
         searchLabel: '搜尋商品名稱、款式、商品網址',
         searchPlaceholder: '輸入關鍵字即時篩選',
         sectionTitle: '待採購清單',
+        foodSectionTitle: '食品類（無法海運配送）',
         loading: '正在讀取待採購商品...',
         empty: '目前沒有 order_count 大於等於 1 的商品',
         orderedQty: '下單數量',
@@ -124,6 +126,7 @@
         searchLabel: '상품명, 옵션, 상품 링크 검색',
         searchPlaceholder: '키워드를 입력하면 바로 필터링됩니다',
         sectionTitle: '구매 대행 리스트',
+        foodSectionTitle: '식품류（해운 배송 불가）',
         loading: '구매 대행 상품을 불러오는 중...',
         empty: 'order_count가 1 이상인 상품이 없습니다',
         orderedQty: '주문 수량',
@@ -284,45 +287,59 @@
       const box = document.getElementById('productList');
       if(!products.length){ box.innerHTML = emptyHtml(t('empty')); return; }
 
-      box.innerHTML = products.map(product => {
-        const id = getProductId(product);
-        const name = getProductName(product);
-        const option = getProductOption(product);
-        const url = getProductUrl(product);
-        const orderQty = Number(product.order_count || 0);
-        const purchasedQty = Number(product.purchase_count || 0);
-        const remainingQty = Math.max(orderQty - purchasedQty, 0);
-        const draftQty = Number(purchaseDrafts[id] ?? (remainingQty > 0 ? remainingQty : 0));
-        const isCompleted = purchasedQty >= orderQty && orderQty > 0;
-        return `
-          <div class="product-card ${isCompleted ? 'completed' : ''}" data-product-id="${escapeHtml(id)}">
-            <div class="product-top">
-              <div class="product-main">
-                ${url ? `<a class="product-name product-name-link" href="${escapeAttr(url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(name)}</a>` : `<div class="product-name">${escapeHtml(name)}</div>`}
-                ${option ? `<div class="product-option">${escapeHtml(option)}</div>` : ''}
-              </div>
-            </div>
-            <div class="purchase-control">
-              <div class="qty-row">
-                <div class="qty-block">
-                  <div class="qty-label">${t('orderedQty')}</div>
-                  <div class="qty-num">${orderQty}</div>
-                </div>
-                <div class="qty-block">
-                  <div class="qty-label">${t('purchasedQty')}</div>
-                  <div class="qty-num purchased">${purchasedQty}</div>
-                </div>
-              </div>
-              <div class="stepper" aria-label="調整本次完成數量">
-                <button class="step-btn" type="button" onclick="updatePurchaseDraft('${escapeJs(id)}', -1)" ${draftQty <= 0 ? 'disabled' : ''}>−</button>
-                <span class="step-num" id="draft-${escapeAttr(id)}">${draftQty}</span>
-                <button class="step-btn" type="button" onclick="updatePurchaseDraft('${escapeJs(id)}', 1)" ${draftQty >= remainingQty ? 'disabled' : ''}>＋</button>
-              </div>
-              <button class="finish-btn" type="button" onclick="completePurchase('${escapeJs(id)}')" ${draftQty <= 0 || remainingQty <= 0 ? 'disabled' : ''}>${t('finish')}</button>
+      const normalProducts = products.filter(product => !isFoodProduct(product));
+      const foodProducts = products.filter(product => isFoodProduct(product));
+      const normalHtml = normalProducts.map(product => buildProductCard(product)).join('');
+      const foodHtml = foodProducts.length ? `
+        <div class="food-section-title"><iconify-icon icon="solar:donut-bold"></iconify-icon><span>${t('foodSectionTitle')}</span></div>
+        ${foodProducts.map(product => buildProductCard(product, 'food-card')).join('')}
+      ` : '';
+
+      box.innerHTML = `${normalHtml}${foodHtml}`;
+    }
+
+    function isFoodProduct(product){
+      return String(product.category || '').trim() === '食品（含保健）';
+    }
+
+    function buildProductCard(product, extraClass = ''){
+      const id = getProductId(product);
+      const name = getProductName(product);
+      const option = getProductOption(product);
+      const url = getProductUrl(product);
+      const orderQty = Number(product.order_count || 0);
+      const purchasedQty = Number(product.purchase_count || 0);
+      const remainingQty = Math.max(orderQty - purchasedQty, 0);
+      const draftQty = Number(purchaseDrafts[id] ?? (remainingQty > 0 ? remainingQty : 0));
+      const isCompleted = purchasedQty >= orderQty && orderQty > 0;
+      return `
+        <div class="product-card ${extraClass} ${isCompleted ? 'completed' : ''}" data-product-id="${escapeHtml(id)}">
+          <div class="product-top">
+            <div class="product-main">
+              ${url ? `<a class="product-name product-name-link" href="${escapeAttr(url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(name)}</a>` : `<div class="product-name">${escapeHtml(name)}</div>`}
+              ${option ? `<div class="product-option">${escapeHtml(option)}</div>` : ''}
             </div>
           </div>
-        `;
-      }).join('');
+          <div class="purchase-control">
+            <div class="qty-row">
+              <div class="qty-block">
+                <div class="qty-label">${t('orderedQty')}</div>
+                <div class="qty-num">${orderQty}</div>
+              </div>
+              <div class="qty-block">
+                <div class="qty-label">${t('purchasedQty')}</div>
+                <div class="qty-num purchased">${purchasedQty}</div>
+              </div>
+            </div>
+            <div class="stepper" aria-label="調整本次完成數量">
+              <button class="step-btn" type="button" onclick="updatePurchaseDraft('${escapeJs(id)}', -1)" ${draftQty <= 0 ? 'disabled' : ''}>−</button>
+              <span class="step-num" id="draft-${escapeAttr(id)}">${draftQty}</span>
+              <button class="step-btn" type="button" onclick="updatePurchaseDraft('${escapeJs(id)}', 1)" ${draftQty >= remainingQty ? 'disabled' : ''}>＋</button>
+            </div>
+            <button class="finish-btn" type="button" onclick="completePurchase('${escapeJs(id)}')" ${draftQty <= 0 || remainingQty <= 0 ? 'disabled' : ''}>${t('finish')}</button>
+          </div>
+        </div>
+      `;
     }
 
     function getProductId(product){ return String(product.id ?? `${getProductName(product)}_${getProductOption(product)}`); }
