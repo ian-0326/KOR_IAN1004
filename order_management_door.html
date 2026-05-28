@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="ko">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
@@ -21,7 +21,7 @@
     }
     *{box-sizing:border-box;-webkit-tap-highlight-color:transparent} button,.step-btn,.finish-btn,.stepper,.purchase-control,.qty-block{touch-action:manipulation;-webkit-user-select:none;user-select:none}
     body{margin:0;background:var(--bg);color:var(--text);font-family:Georgia,Garamond,"Times New Roman",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang TC","Microsoft JhengHei",sans-serif;-webkit-font-smoothing:antialiased}
-    .app{max-width:980px;margin:0 auto;min-height:100vh;padding:18px 16px 110px}
+    .app{max-width:980px;margin:0 auto;min-height:100vh;padding:18px 16px 40px}
     .system-error{display:none;background:#fff0f0;color:#d93636;border:1px solid #ffd1d1;border-radius:20px;padding:14px 16px;margin-bottom:12px;font-size:13px;font-weight:800;line-height:1.6}
     .topbar{position:sticky;top:0;z-index:20;margin:0 -16px;padding:18px 16px 14px;background:rgba(242,244,246,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(229,232,235,.72)}
     .brand-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
@@ -34,7 +34,7 @@
     .language-btn.icon-only{width:44px;height:44px;padding:0;justify-content:center;gap:0}.language-btn.icon-only iconify-icon{font-size:22px!important}
     .filters{display:grid;grid-template-columns:1fr;gap:10px;margin-top:16px}.filter-card{background:#fff;border-radius:22px;padding:12px 14px;box-shadow:0 3px 14px rgba(0,0,0,.035)}
     .filter-label{font-size:11px;color:var(--gray);font-weight:900;margin-bottom:6px}.filter-input{width:100%;border:0;background:#f7f9fb;border-radius:14px;padding:12px 13px;font-size:14px;outline:none;color:var(--text);font-weight:700}
-    .section-title{font-size:16px;font-weight:900;margin:18px 0 10px;display:flex;align-items:center;gap:8px}
+    .section-title{font-size:16px;font-weight:900;margin:18px 0 10px;display:flex;align-items:center;gap:8px}.section-title iconify-icon{font-size:28px!important}
     .product-card{background:#fff;border-radius:28px;padding:16px 16px;margin-bottom:12px;box-shadow:var(--shadow);position:relative;overflow:hidden;display:flex;flex-direction:column;gap:12px}.product-card:before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--primary);opacity:.9}.product-card.completed:before{background:var(--green)}
     .product-top{display:block;position:relative;z-index:1}.product-main{min-width:0;position:relative;z-index:1}.product-name{font-size:16px;font-weight:900;line-height:1.45;word-break:break-word}.product-name-link{display:block;color:inherit;text-decoration:none;cursor:pointer}.product-name-link:active{opacity:.72}.product-name-link:hover{text-decoration:underline;text-underline-offset:3px}.product-option{font-size:13px;color:var(--gray);font-weight:900;margin-top:4px}.product-card.completed .product-main,.product-card.completed .qty-row{opacity:.45;text-decoration:line-through;text-decoration-thickness:2px}.product-url{display:flex;justify-content:flex-start;align-items:center;gap:8px;flex-shrink:0}.product-link-btn{border:0;border-radius:999px;background:var(--primary);color:#fff;font-size:12px;font-weight:900;letter-spacing:.8px;line-height:1;text-decoration:none;padding:10px 13px;display:inline-flex;align-items:center;gap:5px;box-shadow:0 6px 18px rgba(40,176,235,.24);white-space:nowrap}.product-link-btn:active{transform:scale(.98)}.product-url.empty-url{font-size:12px;color:var(--gray);font-weight:900;line-height:1.45;justify-content:flex-start}.product-qty{position:relative;z-index:1;display:flex;flex-direction:column;gap:10px}.qty-row{display:flex;align-items:center;justify-content:flex-start;gap:8px;flex-shrink:0}.qty-block{background:#f7f9fb;border-radius:16px;padding:8px 10px;text-align:center;min-width:86px}.qty-label{font-size:11px;color:var(--gray);font-weight:900;white-space:nowrap}.qty-num{font-size:20px;color:var(--primary);font-weight:900;line-height:1.05;margin-top:4px}.qty-num.purchased{color:var(--green)}.purchase-control{display:flex;align-items:center;justify-content:flex-start;gap:10px;flex-wrap:nowrap;position:relative;z-index:1}.purchase-control .product-url{margin-right:0}.stepper{display:flex;align-items:center;background:#f7f9fb;border-radius:999px;padding:5px;gap:4px;flex-shrink:0}.step-btn{width:36px;height:36px;border:0;border-radius:999px;background:#fff;color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,.05);font-size:20px;font-weight:900;display:flex;align-items:center;justify-content:center;cursor:pointer}.step-btn:disabled{opacity:.35;cursor:not-allowed}.step-num{min-width:34px;text-align:center;font-size:18px;font-weight:900;color:var(--text)}.finish-btn{border:0;border-radius:999px;background:var(--green);color:#fff;font-size:14px;font-weight:900;padding:13px 18px;box-shadow:0 6px 18px rgba(33,198,122,.22);cursor:pointer;white-space:nowrap;flex-shrink:0}.finish-btn:disabled{background:#d1d6dc;box-shadow:none;cursor:not-allowed}.finish-btn.is-loading{opacity:.7;pointer-events:none}
     .empty{background:#fff;border-radius:28px;padding:40px 20px;text-align:center;color:var(--gray);font-weight:900;box-shadow:var(--shadow);margin-top:20px}.empty iconify-icon{font-size:46px;color:var(--gray);display:block;margin:0 auto 12px}
@@ -56,7 +56,7 @@
           </div>
         </div>
         <button class="language-btn icon-only" onclick="toggleAdminLanguage()" type="button" aria-label="語言切換" title="語言切換">
-          <iconify-icon id="adminLangIcon" icon="emojione-v1:flag-for-taiwan"></iconify-icon>
+          <iconify-icon id="adminLangIcon" icon="twemoji:flag-south-korea"></iconify-icon>
         </button>
       </div>
       <div class="filters">
@@ -73,10 +73,6 @@
     </section>
   </main>
 
-  <div class="bottom-actions">
-    <button class="copy-btn" onclick="copyPurchaseText()"><iconify-icon icon="solar:copy-bold" style="font-size:18px"></iconify-icon><span id="copyBtnText">複製清單</span></button>
-    <button class="clear-btn" onclick="window.print()"><iconify-icon icon="solar:printer-bold" style="font-size:18px"></iconify-icon><span id="printBtnText">列印</span></button>
-  </div>
 
   <script>
     const SUPABASE_URL = 'https://ivpctyqlrkjstfsoweeh.supabase.co';
@@ -87,7 +83,7 @@
     const REAL_SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml2cGN0eXFscmtqc3Rmc293ZWVoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxOTk1MTksImV4cCI6MjA4ODc3NTUxOX0.DYgzhaTH3_5NFwv009ZfZAshfUnCW2PeTuNcJ9feyMU';
     let supabaseClient = null;
     let allProducts = [];
-    let currentLang = 'zh';
+    let currentLang = 'ko';
     let lastUpdatedAt = null;
     const purchaseDrafts = {};
 
@@ -197,9 +193,7 @@
       const map = {
         pageTitle: t('title'),
         searchLabel: t('searchLabel'),
-        sectionTitleText: t('sectionTitle'),
-        copyBtnText: t('copy'),
-        printBtnText: t('print')
+        sectionTitleText: t('sectionTitle')
       };
       Object.entries(map).forEach(([id, value]) => {
         const el = document.getElementById(id);
