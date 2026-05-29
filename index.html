@@ -19,6 +19,10 @@
     <link rel="shortcut icon" href="./Link%20Mark.jpg?v=20260525" type="image/jpeg">
     <link rel="apple-touch-icon" href="./Link%20Mark.jpg?v=20260525">
     
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=TASA+Explorer:wght@400..800&display=swap" rel="stylesheet">
+    
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.0/feather.min.js"></script>
@@ -27,7 +31,7 @@
     <style>
         :root { --primary: #28b0eb; --pink: #ff85a2; --bg: #f2f4f6; --white: #ffffff; --text: #191f28; --sub: #4e5968; --gray: #adb5bd; --error: #f44336; --app-height: 100dvh; --passport-design-height: 780px; --passport-layout-height: min(var(--app-height), var(--passport-design-height)); }
         
-        body { font-family: Georgia, Garamond, "Times New Roman", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", "Helvetica Neue", "Microsoft JhengHei", sans-serif; background-color: #f2f4f6; margin: 0; padding: 0; color: #191f28; -webkit-font-smoothing: antialiased; touch-action: manipulation; }
+        body { font-family: "TASA Explorer", Georgia, Garamond, "Times New Roman", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", "Helvetica Neue", "Microsoft JhengHei", sans-serif; background-color: #f2f4f6; margin: 0; padding: 0; color: #191f28; -webkit-font-smoothing: antialiased; touch-action: manipulation; }
         body.modal-open { overflow: hidden; }
 
         /* 強制登入天藍色開屏安全牆 */
@@ -89,6 +93,32 @@
         .category-wrapper { position: sticky; top: 75px; background: #f2f4f6; margin: 0 -16px 20px -16px; padding: 10px 16px; overflow-x: auto; display: flex; gap: 8px; scrollbar-width: none; z-index: 90; }
         .cat-pill { white-space: nowrap; padding: 10px 20px; background: #fff; border-radius: 50px; font-size: 14px; font-weight: 700; color: #4e5968; box-shadow: 0 2px 6px rgba(0,0,0,0.05); flex-shrink: 0; cursor: pointer; }
         .cat-pill.active { background: #28b0eb; color: #fff; }
+
+
+
+        /* 弘大漫遊頁固定分類列：讓 Logo 區與商品分類在滑動時固定於畫面上方 */
+        #page-shop.active {
+            padding-top: 162px;
+        }
+        #page-shop .fixed-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            box-sizing: border-box;
+            z-index: 130;
+        }
+        #page-shop .category-wrapper {
+            position: fixed;
+            top: 94px;
+            left: 0;
+            right: 0;
+            margin: 0;
+            padding: 10px 16px 14px 16px;
+            box-sizing: border-box;
+            z-index: 120;
+            box-shadow: 0 10px 18px rgba(242, 244, 246, 0.92);
+        }
 
         /* 商品卡片 */
         .item-card { background: #fff; padding: 20px; border-radius: 28px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 12px rgba(0,0,0,0.04); margin-bottom: 12px; position: relative; } /* 確保卡片容器具備相對定位以利皇冠貼附 */
