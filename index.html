@@ -82,6 +82,14 @@
             z-index: 9999; 
         }
         .add-btn * { pointer-events: none; } /* 阻擋 icon吃掉點擊事件 */
+        .shop-actions { display: flex; align-items: center; gap: 10px; }
+        .search-modal-card { max-width: 360px; }
+        .search-input-wrap { width: 100%; box-sizing: border-box; display: flex; align-items: center; gap: 10px; background: #f2f4f6; border-radius: 20px; padding: 0 16px; }
+        .search-input-wrap iconify-icon { color: #28b0eb; flex-shrink: 0; }
+        .search-input { flex: 1; min-width: 0; border: none; outline: none; background: transparent; padding: 16px 0; font-size: 16px; font-weight: 700; color: #191f28; }
+        .search-input::placeholder { color: #adb5bd; font-weight: 700; }
+        .search-hint { font-size: 12px; color: #8b95a1; text-align: center; margin-top: 12px; line-height: 1.5; }
+        .empty-product-state { text-align: center; color: #adb5bd; font-size: 14px; font-weight: 700; padding: 34px 20px; }
 
         .nav-header { display: flex; align-items: center; padding: 20px 16px; background: #f2f4f6; position: sticky; top: 0; z-index: 100; }
         .back-btn { background: none; border: none; padding: 10px; cursor: pointer; color: #191f28; display: flex; align-items: center; }
@@ -368,7 +376,10 @@
         <section id="page-shop" class="page-content">
             <div class="fixed-header">
                 <img src="https://raw.githubusercontent.com/ian-0326/KOR_IAN1004/main/KORIAN.png" alt="Logo" class="page-logo">
-                <button type="button" class="add-btn" onclick="openAddModal()"><iconify-icon icon="si:ai-note-fill" style="font-size: 24px; color: var(--primary);"></iconify-icon></button>
+                <div class="shop-actions">
+                    <button type="button" class="add-btn" onclick="openProductSearch()" aria-label="商品搜尋"><iconify-icon icon="icon-park-outline:search" style="font-size: 24px; color: var(--primary);"></iconify-icon></button>
+                    <button type="button" class="add-btn" onclick="openAddModal()"><iconify-icon icon="si:ai-note-fill" style="font-size: 24px; color: var(--primary);"></iconify-icon></button>
+                </div>
             </div>
             <div class="category-wrapper" id="category-bar">
                 <div class="cat-pill active" data-cat="全部" onclick="filterCategory('全部', this)">全部</div>
@@ -525,6 +536,20 @@
         </div>
     </div>
 
+    <div id="product-search-modal" class="modal" onclick="closeProductSearch()">
+        <div class="modal-card search-modal-card" onclick="event.stopPropagation()">
+            <div class="modal-header-centered" style="margin-bottom: 16px;">
+                <h2 style="font-weight:900; margin:0; font-size: 20px;">商品搜尋</h2>
+            </div>
+            <div class="search-input-wrap">
+                <iconify-icon icon="icon-park-outline:search" style="font-size: 22px;"></iconify-icon>
+                <input type="search" id="product-search-input" class="search-input" placeholder="輸入商品名稱搜尋" oninput="applyProductSearch(this.value)">
+            </div>
+            <div class="search-hint">可用商品名稱、款式規格搜尋所有商品</div>
+            <div class="modal-footer" style="margin-top: 18px;"><button type="button" class="btn-main" onclick="closeProductSearch()">完成</button></div>
+        </div>
+    </div>
+
     <div id="add-modal" class="modal" onclick="closeModal('add-modal')">
         <div class="modal-card" onclick="event.stopPropagation()">
             <div id="add-modal-content" style="display: flex; flex-direction: column; height: 100%;">
@@ -588,6 +613,7 @@
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         let userLineId = "", userLinePicture = "", userData = null, selectedGender = "", allProducts = [], cart = {}, shipMethod = '', packingQty = 1, currentRawOrderId = "", allUserOrders = [], isFromCheckout = false;
         let productImageModeEnabled = false;
+        let currentCategory = '全部', productSearchKeyword = '';
         
         let currentLang = 'zh';
         const TRANSLATIONS = {
@@ -951,14 +977,33 @@
                         if (nameCompare !== 0) return nameCompare;
                         return (b.order_count || 0) - (a.order_count || 0);
                     });
-                    renderProducts(allProducts);
+                    renderVisibleProducts();
                 }
             } catch (err) { console.error(err); }
+        }
+
+        function getVisibleProducts() {
+            const keyword = productSearchKeyword.trim().toLowerCase();
+            if (keyword) {
+                return allProducts.filter(p => {
+                    const searchText = [p.name_zh, p.name_ko, p.name_en, p.option, p.category].filter(Boolean).join(' ').toLowerCase();
+                    return searchText.includes(keyword);
+                });
+            }
+            return currentCategory === '全部' ? allProducts : allProducts.filter(p => p.category === currentCategory);
+        }
+
+        function renderVisibleProducts() {
+            renderProducts(getVisibleProducts());
         }
 
         function renderProducts(ps) {
             const container = document.getElementById('item-list');
             if(!container) return;
+            if (!ps || ps.length === 0) {
+                container.innerHTML = '<div class="card-box empty-product-state">找不到符合的商品～</div>';
+                return;
+            }
             container.innerHTML = ps.map(p => {
                 const imageUrl = productImageModeEnabled ? getProductImageUrl(p.image_file) : '';
                 const productImageHtml = productImageModeEnabled
@@ -992,9 +1037,37 @@
         }
 
         function filterCategory(cat, el) {
+            currentCategory = cat;
+            productSearchKeyword = '';
+            const searchInput = document.getElementById('product-search-input');
+            if (searchInput) searchInput.value = '';
             document.querySelectorAll('.cat-pill').forEach(p=>p.classList.remove('active'));
             el.classList.add('active');
-            renderProducts(cat==='全部' ? allProducts : allProducts.filter(p=>p.category===cat));
+            renderVisibleProducts();
+        }
+
+        function openProductSearch() {
+            const modal = document.getElementById('product-search-modal');
+            const input = document.getElementById('product-search-input');
+            if (modal) modal.style.display = 'flex';
+            if (input) {
+                input.value = productSearchKeyword;
+                setTimeout(() => input.focus(), 80);
+            }
+        }
+
+        function closeProductSearch() {
+            const modal = document.getElementById('product-search-modal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function applyProductSearch(value) {
+            productSearchKeyword = value || '';
+            if (productSearchKeyword.trim()) {
+                currentCategory = '全部';
+                document.querySelectorAll('.cat-pill').forEach(p => p.classList.toggle('active', p.getAttribute('data-cat') === '全部'));
+            }
+            renderVisibleProducts();
         }
 
         function updateQty(id, d) {
@@ -1140,7 +1213,7 @@
                 if(error) throw error;
                 for(let i of Object.values(cart)){ if(i.qty>0) await supabaseClient.rpc('increment_order_count',{row_id:i.id, inc_val:parseInt(i.qty)}); }
                 showOrderDetail(data[0], true); 
-                cart={}; renderProducts(allProducts); 
+                cart={}; renderVisibleProducts(); 
             } catch(e){ alert("失敗："+e.message); btn.disabled=false; btn.innerText="確認下單"; }
         }
 
@@ -1288,7 +1361,7 @@
                 document.getElementById('cart-bar').style.display = 'none';
             }
             
-            if(p === 'shop') renderProducts(allProducts);
+            if(p === 'shop') renderVisibleProducts();
             if(p === 'checkout') renderCheckout();
             if(p === 'shipping') calculateFinal();
             if(p === 'orders') fetchUserOrders(); 
