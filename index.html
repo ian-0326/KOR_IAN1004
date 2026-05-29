@@ -968,6 +968,13 @@
             return String(value ?? '').replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\n/g, '\\n').replace(/\r/g, '');
         }
 
+        function normalizeSearchText(value) {
+            return String(value ?? '')
+                .normalize('NFKC')
+                .toLowerCase()
+                .replace(/\s+/g, '');
+        }
+
         async function fetchProducts() {
             try {
                 const { data } = await supabaseClient.from('products').select('*').eq('is_active', true);
@@ -983,11 +990,12 @@
         }
 
         function getVisibleProducts() {
-            const keyword = productSearchKeyword.trim().toLowerCase();
-            if (keyword) {
+            const keyword = productSearchKeyword.trim();
+            const normalizedKeyword = normalizeSearchText(keyword);
+            if (normalizedKeyword) {
                 return allProducts.filter(p => {
-                    const searchText = [p.name_zh, p.name_ko, p.name_en, p.option, p.category].filter(Boolean).join(' ').toLowerCase();
-                    return searchText.includes(keyword);
+                    const searchText = [p.name_zh, p.name_ko, p.name_en, p.option, p.category].filter(Boolean).join(' ');
+                    return normalizeSearchText(searchText).includes(normalizedKeyword);
                 });
             }
             return currentCategory === '全部' ? allProducts : allProducts.filter(p => p.category === currentCategory);
