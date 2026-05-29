@@ -976,16 +976,19 @@
         }
 
         function getSearchTokens(value) {
-            const raw = String(value ?? '').normalize('NFKC').toLowerCase();
+            const raw = String(value ?? '').normalize('NFKC').toLowerCase().trim();
+            if (!raw) return [];
+
             const spaced = raw
                 .replace(/([a-z0-9]+)([\u4e00-\u9fff\u3040-\u30ff\uac00-\ud7af]+)/gi, '$1 $2')
                 .replace(/([\u4e00-\u9fff\u3040-\u30ff\uac00-\ud7af]+)([a-z0-9]+)/gi, '$1 $2');
-            const tokens = spaced
-                .split(/[\s\u3000]+/)
-                .map(token => normalizeSearchText(token))
-                .filter(Boolean);
-            const compact = normalizeSearchText(value);
-            return Array.from(new Set([compact, ...tokens].filter(Boolean)));
+
+            return Array.from(new Set(
+                spaced
+                    .split(/[\s\u3000]+/)
+                    .map(token => normalizeSearchText(token))
+                    .filter(Boolean)
+            ));
         }
 
         async function fetchProducts() {
@@ -1007,11 +1010,9 @@
             const searchTokens = getSearchTokens(keyword);
             if (searchTokens.length) {
                 return allProducts.filter(p => {
-                    const searchText = [p.name_zh, p.name_ko, p.name_en, p.option, p.category].filter(Boolean).join(' ');
-                    const normalizedProductText = normalizeSearchText(searchText);
-                    const exactKeyword = searchTokens[0];
-                    if (normalizedProductText.includes(exactKeyword)) return true;
-                    return searchTokens.slice(1).every(token => normalizedProductText.includes(token));
+                    const productNameText = [p.name_zh, p.name_ko, p.name_en].filter(Boolean).join(' ');
+                    const normalizedProductName = normalizeSearchText(productNameText);
+                    return searchTokens.every(token => normalizedProductName.includes(token));
                 });
             }
             return currentCategory === '全部' ? allProducts : allProducts.filter(p => p.category === currentCategory);
