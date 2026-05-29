@@ -83,12 +83,11 @@
         }
         .add-btn * { pointer-events: none; } /* 阻擋 icon吃掉點擊事件 */
         .shop-actions { display: flex; align-items: center; gap: 10px; }
-        .search-modal-card { max-width: 360px; }
-        .search-input-wrap { width: 100%; box-sizing: border-box; display: flex; align-items: center; gap: 10px; background: #f2f4f6; border-radius: 20px; padding: 0 16px; }
+        .search-modal-card { background: transparent; box-shadow: none; padding: 0; max-width: 360px; border-radius: 0; }
+        .search-input-wrap { width: 100%; box-sizing: border-box; display: flex; align-items: center; gap: 10px; background: #ffffff; border-radius: 999px; padding: 0 18px; box-shadow: 0 12px 34px rgba(0,0,0,0.16); }
         .search-input-wrap iconify-icon { color: #28b0eb; flex-shrink: 0; }
-        .search-input { flex: 1; min-width: 0; border: none; outline: none; background: transparent; padding: 16px 0; font-size: 16px; font-weight: 700; color: #191f28; }
+        .search-input { flex: 1; min-width: 0; border: none; outline: none; background: transparent; padding: 18px 0; font-size: 16px; font-weight: 700; color: #191f28; }
         .search-input::placeholder { color: #adb5bd; font-weight: 700; }
-        .search-hint { font-size: 12px; color: #8b95a1; text-align: center; margin-top: 12px; line-height: 1.5; }
         .empty-product-state { text-align: center; color: #adb5bd; font-size: 14px; font-weight: 700; padding: 34px 20px; }
 
         .nav-header { display: flex; align-items: center; padding: 20px 16px; background: #f2f4f6; position: sticky; top: 0; z-index: 100; }
@@ -538,15 +537,10 @@
 
     <div id="product-search-modal" class="modal" onclick="closeProductSearch()">
         <div class="modal-card search-modal-card" onclick="event.stopPropagation()">
-            <div class="modal-header-centered" style="margin-bottom: 16px;">
-                <h2 style="font-weight:900; margin:0; font-size: 20px;">商品搜尋</h2>
-            </div>
             <div class="search-input-wrap">
                 <iconify-icon icon="icon-park-outline:search" style="font-size: 22px;"></iconify-icon>
                 <input type="search" id="product-search-input" class="search-input" placeholder="輸入商品名稱搜尋" oninput="applyProductSearch(this.value)">
             </div>
-            <div class="search-hint">可用商品名稱、款式規格搜尋所有商品</div>
-            <div class="modal-footer" style="margin-top: 18px;"><button type="button" class="btn-main" onclick="closeProductSearch()">完成</button></div>
         </div>
     </div>
 
