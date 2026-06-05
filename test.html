@@ -382,12 +382,19 @@
             text-align: center;
             box-shadow: 0 18px 48px rgba(0,0,0,0.18);
         }
+        .shop-closed-icon {
+            font-size: 58px;
+            color: #adb5bd;
+            margin-bottom: 14px;
+            display: block;
+        }
         .shop-closed-message {
             font-size: 18px;
             font-weight: 900;
             color: #191f28;
             line-height: 1.6;
             letter-spacing: 0.5px;
+            white-space: pre-line;
         }
 
         /* 穩定優化層：避免 item-card 的人氣皇冠被 paint containment 裁切 */
@@ -554,7 +561,9 @@
 
     <div id="shop-closed-modal" class="shop-closed-modal" aria-hidden="true">
         <div class="shop-closed-card">
-            <div class="shop-closed-message">代購活動已經結束囉～<br>我們下次見吧！</div>
+            <iconify-icon icon="si:lock-fill" class="shop-closed-icon"></iconify-icon>
+            <div class="shop-closed-message i-trans" data-key="shopClosedText">代購活動已經結束囉～
+我們下次見吧！</div>
         </div>
     </div>
 
@@ -667,7 +676,7 @@
                 regTelLabel: "聯絡電話", regTelPlace: "09xxxxxxxx", regBirthLabel: "出生日期", regEmailLabel: "電子信箱", regEmailPlace: "example@mail.com", regBtnText: "登機報到",
                 detailTitle: "訂單明細", copyBtnText: "複製", sectionReceiver: "收件資訊", detailName: "取件姓名", detailTel: "聯絡電話", detailMethod: "取件方式",
                 sectionProducts: "訂購商品", detailAmount: "匯款金額", detailAlert: "請截圖此畫面回傳至 LINE@\n核對金額無誤後即可進行匯款。", detailConfirm: "我知道了",
-                emptyOrders: "行李箱空空如也～", popClosedText: "尚無活動，請繞道而行～", cartSelected: "已選 {qty} 件商品", viewCart: "查看清單 →", step0: "休息等候", step1: "大促開團", step2: "最後倒數", step3: "行程結束"
+                emptyOrders: "行李箱空空如也～", popClosedText: "尚無活動，請繞道而行～", shopClosedText: "代購活動已經結束囉～\n我們下次見吧！", cartSelected: "已選 {qty} 件商品", viewCart: "查看清單 →", step0: "休息等候", step1: "大促開團", step2: "最後倒數", step3: "行程結束"
             },
             ko: {
                 checkoutTitle: "구매 대행 목록", checkoutTotal: "총 합계", fillDataBtn: "정보 입력하기",
@@ -683,7 +692,7 @@
                 regTelLabel: "연락처", regTelPlace: "09xxxxxxxx", regBirthLabel: "생년월일", regEmailLabel: "이메일", regEmailPlace: "example@mail.com", regBtnText: "탑승 수속",
                 detailTitle: "주문 상세", copyBtnText: "복사", sectionReceiver: "수령 정보", detailName: "수령인 이름", detailTel: "연락처", detailMethod: "배송 방식",
                 sectionProducts: "주문 상품", detailAmount: "송금 금액", detailAlert: "이 화면을 캡처하여 LINE@으로 보내주세요.\n금액 확인 후 송금이 진행됩니다.", detailConfirm: "확인했습니다",
-                emptyOrders: "캐리어가 텅 비어 있습니다~", popClosedText: "아직 진행 중인 이벤트가 없습니다~", cartSelected: "{qty}개의 상품 선택됨", viewCart: "장바구니 보기 →", step0: "대기 중", step1: "공구 오픈", step2: "마감 임박", step3: "진행 종료"
+                emptyOrders: "캐리어가 텅 비어 있습니다~", popClosedText: "아직 진행 중인 이벤트가 없습니다~", shopClosedText: "구매 대행 이벤트가 종료되었습니다~\n다음에 또 만나요!", cartSelected: "{qty}개의 상품 선택됨", viewCart: "장바구니 보기 →", step0: "대기 중", step1: "공구 오픈", step2: "마감 임박", step3: "진행 종료"
             },
             en: {
                 checkoutTitle: "Shopping List", checkoutTotal: "Total Summary", fillDataBtn: "Fill Information",
@@ -699,7 +708,7 @@
                 regTelLabel: "Phone Number", regTelPlace: "09xxxxxxxx", regBirthLabel: "Birth Date", regEmailLabel: "Email Address", regEmailPlace: "example@mail.com", regBtnText: "Check In",
                 detailTitle: "Order Details", copyBtnText: "Copy", sectionReceiver: "Shipping Info", detailName: "Recipient Name", detailTel: "Phone Number", detailMethod: "Method",
                 sectionProducts: "Ordered Items", detailAmount: "Total Paid", detailAlert: "Please screenshot this page and send to LINE@.\nTransfer after confirmation.", detailConfirm: "I Got It",
-                emptyOrders: "The suitcase is empty~", popClosedText: "No event yet. Please take a detour~", cartSelected: "{qty} items selected", viewCart: "View List →", step0: "Waiting", step1: "Group Buy Open", step2: "Final Countdown", step3: "Trip Ended"
+                emptyOrders: "The suitcase is empty~", popClosedText: "No event yet. Please take a detour~", shopClosedText: "The shopping event has ended~\nSee you next time!", cartSelected: "{qty} items selected", viewCart: "View List →", step0: "Waiting", step1: "Group Buy Open", step2: "Final Countdown", step3: "Trip Ended"
             }
         };
 
