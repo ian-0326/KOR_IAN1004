@@ -355,6 +355,52 @@
         .locked-message { font-size: 13px; font-weight: 700; color: #8b95a1; letter-spacing: 0.5px; }
 
 
+
+        /* 代購活動結束提示：只在弘大漫遊頁面顯示，無關閉按鈕，不因點擊背景關閉 */
+        .shop-closed-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.42);
+            z-index: 180;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            box-sizing: border-box;
+            pointer-events: auto;
+        }
+        .shop-closed-modal.active {
+            display: flex;
+        }
+        .shop-closed-card {
+            width: 100%;
+            max-width: 340px;
+            background: #ffffff;
+            border-radius: 32px;
+            padding: 34px 24px;
+            box-sizing: border-box;
+            text-align: center;
+            box-shadow: 0 18px 48px rgba(0,0,0,0.18);
+        }
+        .shop-closed-icon {
+            width: 58px;
+            height: 58px;
+            font-size: 58px;
+            color: #adb5bd;
+            margin: 0 auto 14px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .shop-closed-message {
+            font-size: 18px;
+            font-weight: 900;
+            color: #191f28;
+            line-height: 1.6;
+            letter-spacing: 0.5px;
+            white-space: pre-line;
+        }
+
         /* 穩定優化層：避免 item-card 的人氣皇冠被 paint containment 裁切 */
         .order-list-item {
             content-visibility: auto;
@@ -517,6 +563,14 @@
         </nav>
     </div>
 
+    <div id="shop-closed-modal" class="shop-closed-modal" aria-hidden="true">
+        <div class="shop-closed-card">
+            <iconify-icon icon="si:lock-fill" class="shop-closed-icon"></iconify-icon>
+            <div class="shop-closed-message i-trans" data-key="shopClosedText">代購活動已經結束囉～
+我們下次見吧！</div>
+        </div>
+    </div>
+
     <div id="register-modal" class="modal">
         <div class="modal-card">
             <div style="text-align: center; margin-bottom: 20px;"><h2 class="i-trans" data-key="regTitle" style="font-weight:900; margin:0; font-size: 20px;">報到櫃檯</h2></div>
@@ -608,6 +662,7 @@
         let userLineId = "", userLinePicture = "", userData = null, selectedGender = "", allProducts = [], cart = {}, shipMethod = '', packingQty = 1, currentRawOrderId = "", allUserOrders = [], isFromCheckout = false;
         let productImageModeEnabled = false;
         let currentCategory = '全部', productSearchKeyword = '';
+        let isPurchaseActivityFinished = false;
         
         let currentLang = 'zh';
         const TRANSLATIONS = {
@@ -625,7 +680,7 @@
                 regTelLabel: "聯絡電話", regTelPlace: "09xxxxxxxx", regBirthLabel: "出生日期", regEmailLabel: "電子信箱", regEmailPlace: "example@mail.com", regBtnText: "登機報到",
                 detailTitle: "訂單明細", copyBtnText: "複製", sectionReceiver: "收件資訊", detailName: "取件姓名", detailTel: "聯絡電話", detailMethod: "取件方式",
                 sectionProducts: "訂購商品", detailAmount: "匯款金額", detailAlert: "請截圖此畫面回傳至 LINE@\n核對金額無誤後即可進行匯款。", detailConfirm: "我知道了",
-                emptyOrders: "行李箱空空如也～", popClosedText: "尚無活動，請繞道而行～", cartSelected: "已選 {qty} 件商品", viewCart: "查看清單 →", step0: "休息等候", step1: "大促開團", step2: "最後倒數", step3: "行程結束"
+                emptyOrders: "行李箱空空如也～", popClosedText: "尚無活動，請繞道而行～", shopClosedText: "代購活動已經結束囉～\n我們下次見吧！", cartSelected: "已選 {qty} 件商品", viewCart: "查看清單 →", step0: "休息等候", step1: "大促開團", step2: "最後倒數", step3: "行程結束"
             },
             ko: {
                 checkoutTitle: "구매 대행 목록", checkoutTotal: "총 합계", fillDataBtn: "정보 입력하기",
@@ -641,7 +696,7 @@
                 regTelLabel: "연락처", regTelPlace: "09xxxxxxxx", regBirthLabel: "생년월일", regEmailLabel: "이메일", regEmailPlace: "example@mail.com", regBtnText: "탑승 수속",
                 detailTitle: "주문 상세", copyBtnText: "복사", sectionReceiver: "수령 정보", detailName: "수령인 이름", detailTel: "연락처", detailMethod: "배송 방식",
                 sectionProducts: "주문 상품", detailAmount: "송금 금액", detailAlert: "이 화면을 캡처하여 LINE@으로 보내주세요.\n금액 확인 후 송금이 진행됩니다.", detailConfirm: "확인했습니다",
-                emptyOrders: "캐리어가 텅 비어 있습니다~", popClosedText: "아직 진행 중인 이벤트가 없습니다~", cartSelected: "{qty}개의 상품 선택됨", viewCart: "장바구니 보기 →", step0: "대기 중", step1: "공구 오픈", step2: "마감 임박", step3: "진행 종료"
+                emptyOrders: "캐리어가 텅 비어 있습니다~", popClosedText: "아직 진행 중인 이벤트가 없습니다~", shopClosedText: "구매 대행 이벤트가 종료되었습니다~\n다음에 또 만나요!", cartSelected: "{qty}개의 상품 선택됨", viewCart: "장바구니 보기 →", step0: "대기 중", step1: "공구 오픈", step2: "마감 임박", step3: "진행 종료"
             },
             en: {
                 checkoutTitle: "Shopping List", checkoutTotal: "Total Summary", fillDataBtn: "Fill Information",
@@ -657,7 +712,7 @@
                 regTelLabel: "Phone Number", regTelPlace: "09xxxxxxxx", regBirthLabel: "Birth Date", regEmailLabel: "Email Address", regEmailPlace: "example@mail.com", regBtnText: "Check In",
                 detailTitle: "Order Details", copyBtnText: "Copy", sectionReceiver: "Shipping Info", detailName: "Recipient Name", detailTel: "Phone Number", detailMethod: "Method",
                 sectionProducts: "Ordered Items", detailAmount: "Total Paid", detailAlert: "Please screenshot this page and send to LINE@.\nTransfer after confirmation.", detailConfirm: "I Got It",
-                emptyOrders: "The suitcase is empty~", popClosedText: "No event yet. Please take a detour~", cartSelected: "{qty} items selected", viewCart: "View List →", step0: "Waiting", step1: "Group Buy Open", step2: "Final Countdown", step3: "Trip Ended"
+                emptyOrders: "The suitcase is empty~", popClosedText: "No event yet. Please take a detour~", shopClosedText: "The shopping event has ended~\nSee you next time!", cartSelected: "{qty} items selected", viewCart: "View List →", step0: "Waiting", step1: "Group Buy Open", step2: "Final Countdown", step3: "Trip Ended"
             }
         };
 
@@ -757,6 +812,31 @@
             }
         }
 
+
+        function isFinishDateTodayOrPast(finishDateText) {
+            if (!finishDateText) return false;
+            const datePart = String(finishDateText).trim().split('T')[0];
+            const parts = datePart.split('-').map(Number);
+            if (parts.length < 3 || parts.some(Number.isNaN)) return false;
+
+            const finishDate = new Date(parts[0], parts[1] - 1, parts[2]);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            finishDate.setHours(0, 0, 0, 0);
+
+            return finishDate <= today;
+        }
+
+        function syncShopClosedModal() {
+            const modal = document.getElementById('shop-closed-modal');
+            const shopPage = document.getElementById('page-shop');
+            if (!modal || !shopPage) return;
+
+            const shouldShow = isPurchaseActivityFinished && shopPage.classList.contains('active');
+            modal.classList.toggle('active', shouldShow);
+            modal.setAttribute('aria-hidden', shouldShow ? 'false' : 'true');
+        }
+
         // 修正 1：全面重構時序判斷，改用 Date 對象大於等於比較（now >= finishTarget），完美防止跨日重設
         async function fetchSystemControl() {
             try {
@@ -770,12 +850,10 @@
                     if (sys.open) activeStep = 1;
                     if (sys.finally) activeStep = 2;
                     
-                    // 修正核心：只要目前時間一超過截止日中午 12 點，就永久鎖定在 activeStep = 3，不再因為天數刷新而跳回
-                    if (sys.finish) {
-                        const finishTarget = new Date(`${sys.finish}T12:00:00`);
-                        if (now >= finishTarget) {
-                            activeStep = 3;
-                        }
+                    // 代購結束判斷：finish 為今天或過期日期時，鎖定結束階段並啟用弘大漫遊封鎖提示
+                    isPurchaseActivityFinished = isFinishDateTodayOrPast(sys.finish);
+                    if (isPurchaseActivityFinished) {
+                        activeStep = 3;
                     }
 
                     // 判斷截止日期的動態顯示與格式化限制
@@ -797,12 +875,17 @@
                     }
 
                     renderTimelineUI(activeStep);
+                    syncShopClosedModal();
                 } else {
+                    isPurchaseActivityFinished = false;
                     renderTimelineUI(0);
+                    syncShopClosedModal();
                 }
             } catch (err) {
                 console.error(err);
+                isPurchaseActivityFinished = false;
                 renderTimelineUI(0);
+                syncShopClosedModal();
             }
         }
 
@@ -1380,7 +1463,10 @@
                 document.getElementById('cart-bar').style.display = 'none';
             }
             
-            if(p === 'shop') renderVisibleProducts();
+            if(p === 'shop') {
+                renderVisibleProducts();
+                fetchSystemControl();
+            }
             if(p === 'checkout') renderCheckout();
             if(p === 'shipping') calculateFinal();
             if(p === 'orders') fetchUserOrders(); 
@@ -1388,6 +1474,7 @@
             if(p === 'passport') fetchSystemControl();
             
             translatePageUI(); 
+            syncShopClosedModal();
             window.scrollTo(0,0); feather.replace();
         }
 
