@@ -42,10 +42,11 @@
     .logo-mark{width:48px;height:48px;border-radius:18px;background:linear-gradient(135deg,#fff,#eaf7ff);display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow);color:var(--primary);flex-shrink:0}
     h1{font-size:22px;line-height:1.1;margin:0;font-weight:900;letter-spacing:.2px}
     .subline{font-size:12px;color:var(--gray);font-weight:700;margin-top:4px}
-    .refresh-btn,.language-btn,.copy-btn,.clear-btn{border:0;border-radius:999px;background:#fff;color:var(--text);font-weight:900;padding:12px 14px;box-shadow:0 4px 14px rgba(0,0,0,.05);display:inline-flex;align-items:center;gap:6px;cursor:pointer;white-space:nowrap}
-    .refresh-btn,.language-btn{color:var(--primary)}
-    .language-btn.icon-only{width:44px;height:44px;padding:0;justify-content:center;gap:0}.language-btn.icon-only iconify-icon{font-size:22px!important}
-    .filters{display:grid;grid-template-columns:1fr;gap:10px;margin-top:16px}.filter-card{background:#fff;border-radius:22px;padding:12px 14px;box-shadow:0 3px 14px rgba(0,0,0,.035)}
+    .refresh-btn,.language-btn,.copy-btn,.clear-btn,.search-toggle-btn{border:0;border-radius:999px;background:#fff;color:var(--text);font-weight:900;padding:12px 14px;box-shadow:0 4px 14px rgba(0,0,0,.05);display:inline-flex;align-items:center;gap:6px;cursor:pointer;white-space:nowrap}
+    .refresh-btn,.language-btn,.search-toggle-btn{color:var(--primary)}
+    .top-actions{display:flex;align-items:center;gap:10px;flex-shrink:0}
+    .language-btn.icon-only,.search-toggle-btn.icon-only{width:44px;height:44px;padding:0;justify-content:center;gap:0}.language-btn.icon-only iconify-icon,.search-toggle-btn.icon-only iconify-icon{font-size:22px!important}
+    .filters{display:none;grid-template-columns:1fr;gap:10px;margin-top:16px}.filters.is-open{display:grid}.filter-card{background:#fff;border-radius:22px;padding:12px 14px;box-shadow:0 3px 14px rgba(0,0,0,.035)}
     .filter-label{font-size:11px;color:var(--gray);font-weight:900;margin-bottom:6px}.filter-input{width:100%;border:0;background:#f7f9fb;border-radius:14px;padding:12px 13px;font-size:14px;outline:none;color:var(--text);font-weight:700}
     .section-title{font-size:16px;font-weight:900;margin:18px 0 10px;display:flex;align-items:center;gap:8px}.section-title iconify-icon{font-size:28px!important}
     .product-card{background:#fff;border-radius:28px;padding:16px 16px;margin-bottom:12px;box-shadow:var(--shadow);position:relative;overflow:hidden;display:flex;flex-direction:column;gap:12px}.product-card:before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--primary);opacity:.9}
@@ -69,11 +70,16 @@
             <div class="subline" id="lastUpdated">尚未載入資料</div>
           </div>
         </div>
-        <button class="language-btn icon-only" onclick="toggleAdminLanguage()" type="button" aria-label="語言切換" title="語言切換">
-          <iconify-icon id="adminLangIcon" icon="twemoji:flag-south-korea"></iconify-icon>
-        </button>
+        <div class="top-actions">
+          <button class="search-toggle-btn icon-only" onclick="toggleSearchPanel()" type="button" aria-label="搜尋" title="搜尋">
+            <iconify-icon icon="solar:magnifer-bold"></iconify-icon>
+          </button>
+          <button class="language-btn icon-only" onclick="toggleAdminLanguage()" type="button" aria-label="語言切換" title="語言切換">
+            <iconify-icon id="adminLangIcon" icon="twemoji:flag-south-korea"></iconify-icon>
+          </button>
+        </div>
       </div>
-      <div class="filters">
+      <div class="filters" id="searchPanel">
         <div class="filter-card">
           <div class="filter-label" id="searchLabel">搜尋商品名稱、款式、商品網址</div>
           <input id="keyword" class="filter-input" type="search" placeholder="輸入關鍵字即時篩選" oninput="renderAll()" />
@@ -129,7 +135,8 @@
         writeFailPrefix: '寫入 purchase_count 失敗',
         noUrl: '未設定網址',
         copyOrderQty: '下單數量',
-        urlLabel: '商品網址'
+        urlLabel: '商品網址',
+        searchToggle: '搜尋'
       },
       ko: {
         title: '주문 관리',
@@ -158,7 +165,8 @@
         writeFailPrefix: 'purchase_count 저장 실패',
         noUrl: '상품 링크 미설정',
         copyOrderQty: '주문 수량',
-        urlLabel: '상품 링크'
+        urlLabel: '상품 링크',
+        searchToggle: '검색'
       }
     };
 
@@ -190,6 +198,7 @@
     window.updatePurchaseDraft = updatePurchaseDraft;
     window.completePurchase = completePurchase;
     window.toggleAdminLanguage = toggleAdminLanguage;
+    window.toggleSearchPanel = toggleSearchPanel;
 
     document.addEventListener('DOMContentLoaded', () => {
       initSupabaseClient();
@@ -201,6 +210,16 @@
       currentLang = currentLang === 'zh' ? 'ko' : 'zh';
       applyAdminLanguage();
       renderAll();
+    }
+
+    function toggleSearchPanel(){
+      const filters = document.getElementById('searchPanel');
+      const keyword = document.getElementById('keyword');
+      if(!filters) return;
+      filters.classList.toggle('is-open');
+      if(filters.classList.contains('is-open') && keyword){
+        setTimeout(() => keyword.focus(), 80);
+      }
     }
 
     function applyAdminLanguage(){
@@ -221,6 +240,11 @@
       if(langButton){
         langButton.setAttribute('aria-label', t('langButton'));
         langButton.setAttribute('title', t('langButton'));
+      }
+      const searchButton = document.querySelector('.search-toggle-btn');
+      if(searchButton){
+        searchButton.setAttribute('aria-label', t('searchToggle'));
+        searchButton.setAttribute('title', t('searchToggle'));
       }
       const keyword = document.getElementById('keyword');
       if(keyword) keyword.setAttribute('placeholder', t('searchPlaceholder'));
@@ -274,14 +298,18 @@
     }
 
     function sortProductsByDisplayName(products){
-      const locale = currentLang === 'ko' ? 'ko-KR' : 'zh-Hant-TW';
-      const collator = new Intl.Collator(locale, { numeric: true, sensitivity: 'base' });
+      // 排序固定以 name_zh 為主要依據，確保相同中文商品名會排在一起；韓文模式只影響顯示，不影響排列規則。
+      const collator = new Intl.Collator('zh-Hant-TW', { numeric: true, sensitivity: 'base' });
       return [...products].sort((a, b) => {
-        const nameA = getProductName(a);
-        const nameB = getProductName(b);
+        const completedA = isCompletedProduct(a) ? 1 : 0;
+        const completedB = isCompletedProduct(b) ? 1 : 0;
+        if(completedA !== completedB) return completedA - completedB;
+
+        const nameA = getSortName(a);
+        const nameB = getSortName(b);
         const nameCompare = collator.compare(nameA, nameB);
         if(nameCompare !== 0) return nameCompare;
-        return collator.compare(getProductOption(a), getProductOption(b));
+        return collator.compare(getSortOption(a), getSortOption(b));
       });
     }
 
@@ -312,8 +340,8 @@
       const box = document.getElementById('productList');
       if(!products.length){ box.innerHTML = emptyHtml(t('empty')); return; }
 
-      const normalProducts = products.filter(product => !isFoodProduct(product));
-      const foodProducts = products.filter(product => isFoodProduct(product));
+      const normalProducts = sortProductsByDisplayName(products.filter(product => !isFoodProduct(product)));
+      const foodProducts = sortProductsByDisplayName(products.filter(product => isFoodProduct(product)));
       const normalHtml = normalProducts.map(product => buildProductCard(product)).join('');
       const foodHtml = foodProducts.length ? `
         <div class="food-section-title"><iconify-icon icon="solar:cart-check-bold"></iconify-icon><span>${t('foodSectionTitle')}</span></div>
@@ -327,6 +355,20 @@
       return String(product.category || '').trim() === '食品（含保健）';
     }
 
+    function isCompletedProduct(product){
+      const orderQty = Number(product.order_count || 0);
+      const purchasedQty = Number(product.purchase_count || 0);
+      return orderQty > 0 && purchasedQty >= orderQty;
+    }
+
+    function getSortName(product){
+      return product.name_zh || product.name || product.product_name || product.title || t('unnamed');
+    }
+
+    function getSortOption(product){
+      return product.option || product.variant || product.spec || '';
+    }
+
     function buildProductCard(product, extraClass = ''){
       const id = getProductId(product);
       const name = getProductName(product);
@@ -336,6 +378,8 @@
       const purchasedQty = Number(product.purchase_count || 0);
       const remainingQty = Math.max(orderQty - purchasedQty, 0);
       const draftQty = Number(purchaseDrafts[id] ?? (remainingQty > 0 ? remainingQty : 0));
+      const minDraftQty = -purchasedQty;
+      const maxDraftQty = remainingQty;
       const isCompleted = purchasedQty >= orderQty && orderQty > 0;
       return `
         <div class="product-card ${extraClass} ${isCompleted ? 'completed' : ''}" data-product-id="${escapeHtml(id)}">
@@ -357,11 +401,11 @@
               </div>
             </div>
             <div class="stepper" aria-label="調整本次完成數量">
-              <button class="step-btn" type="button" onclick="updatePurchaseDraft('${escapeJs(id)}', -1)" ${draftQty <= 0 ? 'disabled' : ''}>−</button>
+              <button class="step-btn" type="button" onclick="updatePurchaseDraft('${escapeJs(id)}', -1)" ${draftQty <= minDraftQty ? 'disabled' : ''}>−</button>
               <span class="step-num" id="draft-${escapeAttr(id)}">${draftQty}</span>
-              <button class="step-btn" type="button" onclick="updatePurchaseDraft('${escapeJs(id)}', 1)" ${draftQty >= remainingQty ? 'disabled' : ''}>＋</button>
+              <button class="step-btn" type="button" onclick="updatePurchaseDraft('${escapeJs(id)}', 1)" ${draftQty >= maxDraftQty ? 'disabled' : ''}>＋</button>
             </div>
-            <button class="finish-btn" type="button" onclick="completePurchase('${escapeJs(id)}')" ${draftQty <= 0 || remainingQty <= 0 ? 'disabled' : ''}>${t('finish')}</button>
+            <button class="finish-btn" type="button" onclick="completePurchase('${escapeJs(id)}')" ${draftQty === 0 ? 'disabled' : ''}>${t('finish')}</button>
           </div>
         </div>
       `;
@@ -390,8 +434,9 @@
       const product = findProductById(id);
       if(!product) return;
       const max = getRemainingQty(product);
+      const min = -Number(product.purchase_count || 0);
       const current = Number(purchaseDrafts[id] ?? (max > 0 ? max : 0));
-      purchaseDrafts[id] = Math.max(0, Math.min(max, current + Number(delta || 0)));
+      purchaseDrafts[id] = Math.max(min, Math.min(max, current + Number(delta || 0)));
       renderAll();
     }
 
@@ -399,15 +444,15 @@
       const product = findProductById(id);
       if(!product) return alert(t('notFound'));
 
-      const addQty = Number(purchaseDrafts[id] ?? getRemainingQty(product));
-      if(addQty <= 0) return alert(t('setQty'));
+      const changeQty = Number(purchaseDrafts[id] ?? getRemainingQty(product));
+      if(changeQty === 0) return alert(t('setQty'));
 
       const client = initSupabaseClient();
       if(!client) return;
 
       const currentPurchased = Number(product.purchase_count || 0);
       const orderQty = Number(product.order_count || 0);
-      const newPurchased = Math.min(currentPurchased + addQty, orderQty);
+      const newPurchased = Math.max(0, Math.min(currentPurchased + changeQty, orderQty));
 
       const btn = document.querySelector(`[data-product-id="${cssEscape(id)}"] .finish-btn`);
       if(btn){ btn.classList.add('is-loading'); btn.innerText = t('writing'); }
