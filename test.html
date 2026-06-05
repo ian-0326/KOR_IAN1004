@@ -19,6 +19,10 @@
     <link rel="shortcut icon" href="./Link%20Mark.jpg?v=20260525" type="image/jpeg">
     <link rel="apple-touch-icon" href="./Link%20Mark.jpg?v=20260525">
     
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=TASA+Explorer:wght@400..800&display=swap" rel="stylesheet">
+    
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.0/feather.min.js"></script>
@@ -27,11 +31,11 @@
     <style>
         :root { --primary: #28b0eb; --pink: #ff85a2; --bg: #f2f4f6; --white: #ffffff; --text: #191f28; --sub: #4e5968; --gray: #adb5bd; --error: #f44336; --app-height: 100dvh; --passport-design-height: 780px; --passport-layout-height: min(var(--app-height), var(--passport-design-height)); }
         
-        body { font-family: Georgia, Garamond, "Times New Roman", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", "Helvetica Neue", "Microsoft JhengHei", sans-serif; background-color: #f2f4f6; margin: 0; padding: 0; color: #191f28; -webkit-font-smoothing: antialiased; touch-action: manipulation; }
+        body { font-family: "TASA Explorer", Georgia, Garamond, "Times New Roman", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", "Helvetica Neue", "Microsoft JhengHei", sans-serif; background-color: #f2f4f6; margin: 0; padding: 0; color: #191f28; -webkit-font-smoothing: antialiased; touch-action: manipulation; }
         body.modal-open { overflow: hidden; }
 
         /* 強制登入天藍色開屏安全牆 */
-        #login-gate { position: fixed; inset: 0; background: #28b0eb; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        #login-gate { position: fixed; inset: 0; background-color: #28b0eb; background-image: url('loading_background.png'); background-repeat: no-repeat; background-position: center center; background-size: cover; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         
         /* 核心動效：整體內容做純粹的同頻淡入淡出 */
         #loader-content { text-align: center; animation: fadeInOut 2s ease-in-out infinite; }
@@ -78,6 +82,13 @@
             z-index: 9999; 
         }
         .add-btn * { pointer-events: none; } /* 阻擋 icon吃掉點擊事件 */
+        .shop-actions { display: flex; align-items: center; gap: 10px; }
+        .search-modal-card { background: transparent; box-shadow: none; padding: 0; max-width: 360px; border-radius: 0; }
+        .search-input-wrap { width: 100%; box-sizing: border-box; display: flex; align-items: center; gap: 10px; background: #ffffff; border-radius: 999px; padding: 0 18px; box-shadow: 0 12px 34px rgba(0,0,0,0.16); }
+        .search-input-wrap iconify-icon { color: #28b0eb; flex-shrink: 0; }
+        .search-input { flex: 1; min-width: 0; border: none; outline: none; background: transparent; padding: 18px 0; font-size: 16px; font-weight: 700; color: #191f28; }
+        .search-input::placeholder { color: #adb5bd; font-weight: 700; }
+        .empty-product-state { text-align: center; color: #adb5bd; font-size: 14px; font-weight: 700; padding: 34px 20px; }
 
         .nav-header { display: flex; align-items: center; padding: 20px 16px; background: #f2f4f6; position: sticky; top: 0; z-index: 100; }
         .back-btn { background: none; border: none; padding: 10px; cursor: pointer; color: #191f28; display: flex; align-items: center; }
@@ -89,6 +100,32 @@
         .category-wrapper { position: sticky; top: 75px; background: #f2f4f6; margin: 0 -16px 20px -16px; padding: 10px 16px; overflow-x: auto; display: flex; gap: 8px; scrollbar-width: none; z-index: 90; }
         .cat-pill { white-space: nowrap; padding: 10px 20px; background: #fff; border-radius: 50px; font-size: 14px; font-weight: 700; color: #4e5968; box-shadow: 0 2px 6px rgba(0,0,0,0.05); flex-shrink: 0; cursor: pointer; }
         .cat-pill.active { background: #28b0eb; color: #fff; }
+
+
+
+        /* 弘大漫遊頁固定分類列：讓 Logo 區與商品分類在滑動時固定於畫面上方 */
+        #page-shop.active {
+            padding-top: 162px;
+        }
+        #page-shop .fixed-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            box-sizing: border-box;
+            z-index: 130;
+        }
+        #page-shop .category-wrapper {
+            position: fixed;
+            top: 94px;
+            left: 0;
+            right: 0;
+            margin: 0;
+            padding: 10px 16px 14px 16px;
+            box-sizing: border-box;
+            z-index: 120;
+            box-shadow: 0 10px 18px rgba(242, 244, 246, 0.92);
+        }
 
         /* 商品卡片 */
         .item-card { background: #fff; padding: 20px; border-radius: 28px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 12px rgba(0,0,0,0.04); margin-bottom: 12px; position: relative; } /* 確保卡片容器具備相對定位以利皇冠貼附 */
@@ -300,6 +337,7 @@
 
         /* 訂單追蹤頁標題修正：此頁沒有返回鍵，因此移除 page-title 的右側補償距離，避免視覺偏左 */
         #page-orders .page-title { margin-right: 0; text-align: center; }
+        #page-orders .nav-header { padding-top: 30px; padding-bottom: 10px; }
 
         /* 聖水 POP 暫時封閉頁面 */
         .locked-page {
@@ -316,6 +354,41 @@
         .locked-icon { font-size: 58px; color: #adb5bd; margin-bottom: 14px; }
         .locked-message { font-size: 13px; font-weight: 700; color: #8b95a1; letter-spacing: 0.5px; }
 
+
+
+        /* 代購活動結束提示：只在弘大漫遊頁面顯示，無關閉按鈕，不因點擊背景關閉 */
+        .shop-closed-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.42);
+            z-index: 180;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            box-sizing: border-box;
+            pointer-events: auto;
+        }
+        .shop-closed-modal.active {
+            display: flex;
+        }
+        .shop-closed-card {
+            width: 100%;
+            max-width: 340px;
+            background: #ffffff;
+            border-radius: 32px;
+            padding: 34px 24px;
+            box-sizing: border-box;
+            text-align: center;
+            box-shadow: 0 18px 48px rgba(0,0,0,0.18);
+        }
+        .shop-closed-message {
+            font-size: 18px;
+            font-weight: 900;
+            color: #191f28;
+            line-height: 1.6;
+            letter-spacing: 0.5px;
+        }
 
         /* 穩定優化層：避免 item-card 的人氣皇冠被 paint containment 裁切 */
         .order-list-item {
@@ -337,7 +410,10 @@
         <section id="page-shop" class="page-content">
             <div class="fixed-header">
                 <img src="https://raw.githubusercontent.com/ian-0326/KOR_IAN1004/main/KORIAN.png" alt="Logo" class="page-logo">
-                <button type="button" class="add-btn" onclick="openAddModal()"><iconify-icon icon="si:ai-note-fill" style="font-size: 24px; color: var(--primary);"></iconify-icon></button>
+                <div class="shop-actions">
+                    <button type="button" class="add-btn" onclick="openProductSearch()" aria-label="商品搜尋"><iconify-icon icon="icon-park-outline:search" style="font-size: 24px; color: var(--primary);"></iconify-icon></button>
+                    <button type="button" class="add-btn" onclick="openAddModal()"><iconify-icon icon="si:ai-note-fill" style="font-size: 24px; color: var(--primary);"></iconify-icon></button>
+                </div>
             </div>
             <div class="category-wrapper" id="category-bar">
                 <div class="cat-pill active" data-cat="全部" onclick="filterCategory('全部', this)">全部</div>
@@ -476,6 +552,12 @@
         </nav>
     </div>
 
+    <div id="shop-closed-modal" class="shop-closed-modal" aria-hidden="true">
+        <div class="shop-closed-card">
+            <div class="shop-closed-message">代購活動已經結束囉～<br>我們下次見吧！</div>
+        </div>
+    </div>
+
     <div id="register-modal" class="modal">
         <div class="modal-card">
             <div style="text-align: center; margin-bottom: 20px;"><h2 class="i-trans" data-key="regTitle" style="font-weight:900; margin:0; font-size: 20px;">報到櫃檯</h2></div>
@@ -491,6 +573,15 @@
                 <div class="form-item"><label class="form-label i-trans" data-key="regEmailLabel">電子信箱</label><input type="email" id="reg-email" class="input-box i-trans-placeholder" placeholder="example@mail.com" data-placeholder-key="regEmailPlace"></div>
             </div>
             <div class="modal-footer"><button class="btn-sub-small i-trans" data-key="regBtnText" id="btn-register" onclick="handleRegister()">登機報到</button></div>
+        </div>
+    </div>
+
+    <div id="product-search-modal" class="modal" onclick="closeProductSearch()">
+        <div class="modal-card search-modal-card" onclick="event.stopPropagation()">
+            <div class="search-input-wrap">
+                <iconify-icon icon="icon-park-outline:search" style="font-size: 22px;"></iconify-icon>
+                <input type="search" id="product-search-input" class="search-input" placeholder="輸入商品名稱搜尋" oninput="applyProductSearch(this.value)">
+            </div>
         </div>
     </div>
 
@@ -557,6 +648,8 @@
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         let userLineId = "", userLinePicture = "", userData = null, selectedGender = "", allProducts = [], cart = {}, shipMethod = '', packingQty = 1, currentRawOrderId = "", allUserOrders = [], isFromCheckout = false;
         let productImageModeEnabled = false;
+        let currentCategory = '全部', productSearchKeyword = '';
+        let isPurchaseActivityFinished = false;
         
         let currentLang = 'zh';
         const TRANSLATIONS = {
@@ -706,6 +799,31 @@
             }
         }
 
+
+        function isFinishDateTodayOrPast(finishDateText) {
+            if (!finishDateText) return false;
+            const datePart = String(finishDateText).trim().split('T')[0];
+            const parts = datePart.split('-').map(Number);
+            if (parts.length < 3 || parts.some(Number.isNaN)) return false;
+
+            const finishDate = new Date(parts[0], parts[1] - 1, parts[2]);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            finishDate.setHours(0, 0, 0, 0);
+
+            return finishDate <= today;
+        }
+
+        function syncShopClosedModal() {
+            const modal = document.getElementById('shop-closed-modal');
+            const shopPage = document.getElementById('page-shop');
+            if (!modal || !shopPage) return;
+
+            const shouldShow = isPurchaseActivityFinished && shopPage.classList.contains('active');
+            modal.classList.toggle('active', shouldShow);
+            modal.setAttribute('aria-hidden', shouldShow ? 'false' : 'true');
+        }
+
         // 修正 1：全面重構時序判斷，改用 Date 對象大於等於比較（now >= finishTarget），完美防止跨日重設
         async function fetchSystemControl() {
             try {
@@ -719,12 +837,10 @@
                     if (sys.open) activeStep = 1;
                     if (sys.finally) activeStep = 2;
                     
-                    // 修正核心：只要目前時間一超過截止日中午 12 點，就永久鎖定在 activeStep = 3，不再因為天數刷新而跳回
-                    if (sys.finish) {
-                        const finishTarget = new Date(`${sys.finish}T12:00:00`);
-                        if (now >= finishTarget) {
-                            activeStep = 3;
-                        }
+                    // 代購結束判斷：finish 為今天或過期日期時，鎖定結束階段並啟用弘大漫遊封鎖提示
+                    isPurchaseActivityFinished = isFinishDateTodayOrPast(sys.finish);
+                    if (isPurchaseActivityFinished) {
+                        activeStep = 3;
                     }
 
                     // 判斷截止日期的動態顯示與格式化限制
@@ -746,12 +862,17 @@
                     }
 
                     renderTimelineUI(activeStep);
+                    syncShopClosedModal();
                 } else {
+                    isPurchaseActivityFinished = false;
                     renderTimelineUI(0);
+                    syncShopClosedModal();
                 }
             } catch (err) {
                 console.error(err);
+                isPurchaseActivityFinished = false;
                 renderTimelineUI(0);
+                syncShopClosedModal();
             }
         }
 
@@ -911,19 +1032,67 @@
             return String(value ?? '').replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\n/g, '\\n').replace(/\r/g, '');
         }
 
+        function normalizeSearchText(value) {
+            return String(value ?? '')
+                .normalize('NFKC')
+                .toLowerCase()
+                .replace(/[\s\u3000]+/g, '');
+        }
+
+        function getSearchTokens(value) {
+            const raw = String(value ?? '').normalize('NFKC').toLowerCase().trim();
+            if (!raw) return [];
+
+            const spaced = raw
+                .replace(/([a-z0-9]+)([\u4e00-\u9fff\u3040-\u30ff\uac00-\ud7af]+)/gi, '$1 $2')
+                .replace(/([\u4e00-\u9fff\u3040-\u30ff\uac00-\ud7af]+)([a-z0-9]+)/gi, '$1 $2');
+
+            return Array.from(new Set(
+                spaced
+                    .split(/[\s\u3000]+/)
+                    .map(token => normalizeSearchText(token))
+                    .filter(Boolean)
+            ));
+        }
+
         async function fetchProducts() {
             try {
                 const { data } = await supabaseClient.from('products').select('*').eq('is_active', true);
                 if(data) {
-                    allProducts = data.sort((a,b)=>(b.order_count||0)-(a.order_count||0));
-                    renderProducts(allProducts);
+                    allProducts = data.sort((a, b) => {
+                        const nameCompare = String(a.name_zh || '').localeCompare(String(b.name_zh || ''), 'zh-Hant');
+                        if (nameCompare !== 0) return nameCompare;
+                        return (b.order_count || 0) - (a.order_count || 0);
+                    });
+                    renderVisibleProducts();
                 }
             } catch (err) { console.error(err); }
+        }
+
+        function getVisibleProducts() {
+            const keyword = productSearchKeyword.trim();
+            const searchTokens = getSearchTokens(keyword);
+            if (searchTokens.length) {
+                return allProducts.filter(p => {
+                    const productNameText = [p.name_zh, p.name_ko, p.name_en].filter(Boolean).join(' ');
+                    const normalizedProductName = normalizeSearchText(productNameText);
+                    return searchTokens.every(token => normalizedProductName.includes(token));
+                });
+            }
+            return currentCategory === '全部' ? allProducts : allProducts.filter(p => p.category === currentCategory);
+        }
+
+        function renderVisibleProducts() {
+            renderProducts(getVisibleProducts());
         }
 
         function renderProducts(ps) {
             const container = document.getElementById('item-list');
             if(!container) return;
+            if (!ps || ps.length === 0) {
+                container.innerHTML = '<div class="card-box empty-product-state">找不到符合的商品～</div>';
+                return;
+            }
             container.innerHTML = ps.map(p => {
                 const imageUrl = productImageModeEnabled ? getProductImageUrl(p.image_file) : '';
                 const productImageHtml = productImageModeEnabled
@@ -957,9 +1126,37 @@
         }
 
         function filterCategory(cat, el) {
+            currentCategory = cat;
+            productSearchKeyword = '';
+            const searchInput = document.getElementById('product-search-input');
+            if (searchInput) searchInput.value = '';
             document.querySelectorAll('.cat-pill').forEach(p=>p.classList.remove('active'));
             el.classList.add('active');
-            renderProducts(cat==='全部' ? allProducts : allProducts.filter(p=>p.category===cat));
+            renderVisibleProducts();
+        }
+
+        function openProductSearch() {
+            const modal = document.getElementById('product-search-modal');
+            const input = document.getElementById('product-search-input');
+            if (modal) modal.style.display = 'flex';
+            if (input) {
+                input.value = productSearchKeyword;
+                setTimeout(() => input.focus(), 80);
+            }
+        }
+
+        function closeProductSearch() {
+            const modal = document.getElementById('product-search-modal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function applyProductSearch(value) {
+            productSearchKeyword = value || '';
+            if (productSearchKeyword.trim()) {
+                currentCategory = '全部';
+                document.querySelectorAll('.cat-pill').forEach(p => p.classList.toggle('active', p.getAttribute('data-cat') === '全部'));
+            }
+            renderVisibleProducts();
         }
 
         function updateQty(id, d) {
@@ -1105,7 +1302,7 @@
                 if(error) throw error;
                 for(let i of Object.values(cart)){ if(i.qty>0) await supabaseClient.rpc('increment_order_count',{row_id:i.id, inc_val:parseInt(i.qty)}); }
                 showOrderDetail(data[0], true); 
-                cart={}; renderProducts(allProducts); 
+                cart={}; renderVisibleProducts(); 
             } catch(e){ alert("失敗："+e.message); btn.disabled=false; btn.innerText="確認下單"; }
         }
 
@@ -1253,7 +1450,10 @@
                 document.getElementById('cart-bar').style.display = 'none';
             }
             
-            if(p === 'shop') renderProducts(allProducts);
+            if(p === 'shop') {
+                renderVisibleProducts();
+                fetchSystemControl();
+            }
             if(p === 'checkout') renderCheckout();
             if(p === 'shipping') calculateFinal();
             if(p === 'orders') fetchUserOrders(); 
@@ -1261,6 +1461,7 @@
             if(p === 'passport') fetchSystemControl();
             
             translatePageUI(); 
+            syncShopClosedModal();
             window.scrollTo(0,0); feather.replace();
         }
 
